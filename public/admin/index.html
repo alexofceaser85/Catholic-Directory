@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Admin · CLM Business Directory</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="/admin/">
+        <img class="brand-logo" src="/img/logo.svg" alt="">
+        <span><span class="brand-name">CLM Business Directory</span><span class="brand-sub">Admin dashboard</span></span>
+      </a>
+      <div class="header-actions">
+        <span id="admin-email" class="muted small"></span>
+        <a class="button secondary small" href="/" target="_blank" rel="noopener">View public site</a>
+        <button id="logout-button" type="button" class="button secondary small" hidden>Sign out</button>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Dark mode" aria-pressed="false">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Shown when nobody is signed in -->
+    <section id="login-view" class="card login-card" hidden>
+      <img class="brand-logo" src="/img/logo.svg" alt="">
+      <h1>Admin sign-in</h1>
+      <p class="muted">Sign in with a Google account that is on the chapter's admin list.</p>
+      <div id="google-button"></div>
+
+      <form id="dev-login-form" class="dev-login" hidden novalidate>
+        <p><strong>Local testing sign-in.</strong> No password is checked here, so the server
+           only offers this when it runs with NODE_ENV=development. The live site only
+           shows the Google button.</p>
+        <label for="dev-email">Admin email</label>
+        <input id="dev-email" name="email" type="email" required>
+        <button type="submit" class="button">Sign in</button>
+      </form>
+
+      <p id="login-status" class="status" role="status" hidden></p>
+    </section>
+
+    <!-- Shown after sign-in -->
+    <section id="dashboard-view" hidden>
+      <nav id="tabs" class="tabs" aria-label="Listing queues"></nav>
+      <p id="tab-description" class="muted"></p>
+      <p id="panel-status" class="status" role="status" hidden></p>
+      <ul id="panel" class="admin-list"></ul>
+    </section>
+  </main>
+
+  <!-- Edit listing -->
+  <dialog id="edit-dialog" class="dialog wide" aria-labelledby="edit-title">
+    <form id="edit-form" method="dialog" class="form" novalidate>
+      <h2 id="edit-title">Edit listing</h2>
+      <p class="hint">Changes go live immediately for approved listings. Submitter names can't be edited.</p>
+
+      <div class="field">
+        <label for="edit-business-name">Business name *</label>
+        <input id="edit-business-name" name="businessName" maxlength="200" required>
+        <p class="field-error" data-error-for="businessName"></p>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="edit-email">Business email *</label>
+          <input id="edit-email" name="email" type="email" maxlength="254" required>
+          <p class="field-error" data-error-for="email"></p>
+        </div>
+        <div class="field">
+          <label for="edit-phone">Business phone</label>
+          <input id="edit-phone" name="phone" maxlength="40">
+          <p class="field-error" data-error-for="phone"></p>
+        </div>
+      </div>
+      <div class="field">
+        <label for="edit-address">Business address</label>
+        <input id="edit-address" name="address" maxlength="500">
+        <p class="field-error" data-error-for="address"></p>
+      </div>
+      <div class="field">
+        <label for="edit-description">Description *</label>
+        <textarea id="edit-description" name="description" rows="5" maxlength="2000" required></textarea>
+        <p class="field-error" data-error-for="description"></p>
+      </div>
+      <div class="field">
+        <label for="edit-website">Website</label>
+        <input id="edit-website" name="website" maxlength="500">
+        <p class="field-error" data-error-for="website"></p>
+      </div>
+      <div class="field">
+        <label for="edit-links">Marketing &amp; social links (one per line)</label>
+        <textarea id="edit-links" name="links" rows="3"></textarea>
+        <p class="field-error" data-error-for="links"></p>
+      </div>
+      <div class="field">
+        <label for="edit-notes">Admin notes <span class="badge private">Private</span></label>
+        <textarea id="edit-notes" name="adminNotes" rows="3" maxlength="5000"
+                  placeholder="e.g. Called on 3/4, left voicemail."></textarea>
+        <p class="field-error" data-error-for="adminNotes"></p>
+      </div>
+
+      <p id="edit-status" class="status" role="status" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" class="button secondary" data-close-dialog>Cancel</button>
+        <button type="submit" class="button">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Confirm approve / deny / remove / reverify, with an optional note -->
+  <dialog id="action-dialog" class="dialog" aria-labelledby="action-title">
+    <form id="action-form" method="dialog" novalidate>
+      <h2 id="action-title"></h2>
+      <p id="action-message"></p>
+      <label for="action-note">Note for the history log (optional)</label>
+      <textarea id="action-note" name="note" rows="2" maxlength="1000"></textarea>
+      <div class="dialog-actions">
+        <button type="button" class="button secondary" data-close-dialog>Cancel</button>
+        <button id="action-confirm" type="submit" class="button"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="/admin/js/main.js"></script>
+</body>
+</html>

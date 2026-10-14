@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Wheat">
+  <!-- A sprig of wheat: the directory's logo and browser-tab icon. -->
+  <circle cx="32" cy="32" r="31" fill="#4d6b3c"/>
+  <g fill="#f1cf86">
+    <path d="M31 50 C31 40 31 26 32 14 C33 26 33 40 33 50 Z"/>
+    <ellipse cx="32" cy="13" rx="3" ry="5.5"/>
+    <ellipse cx="27" cy="20" rx="2.8" ry="5.5" transform="rotate(-35 27 20)"/>
+    <ellipse cx="37" cy="20" rx="2.8" ry="5.5" transform="rotate(35 37 20)"/>
+    <ellipse cx="27" cy="28" rx="2.8" ry="5.5" transform="rotate(-35 27 28)"/>
+    <ellipse cx="37" cy="28" rx="2.8" ry="5.5" transform="rotate(35 37 28)"/>
+    <ellipse cx="27" cy="36" rx="2.8" ry="5.5" transform="rotate(-35 27 36)"/>
+    <ellipse cx="37" cy="36" rx="2.8" ry="5.5" transform="rotate(35 37 36)"/>
+  </g>
+</svg>

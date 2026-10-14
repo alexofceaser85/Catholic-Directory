@@ -1,0 +1,54 @@
+// Reads settings from environment variables (and the .env file) in one place,
+// so the rest of the code never touches process.env directly.
+import 'dotenv/config';
+
+// Secure by default: anything other than an explicit NODE_ENV=development is treated
+// as production (HTTPS-only cookies, no email-only test sign-in).
+const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = !isDevelopment;
+
+function requireEnv(name) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name} (see .env.example)`);
+  }
+  return value;
+}
+
+function readEmailList(name) {
+  return (process.env[name] || '')
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function readSessionSecret() {
+  const secret = requireEnv('SESSION_SECRET');
+  if (secret.length < 32) {
+    throw new Error('SESSION_SECRET must be at least 32 characters long.');
+  }
+  return secret;
+}
+
+const config = {
+  port: Number(process.env.PORT || 3000),
+  isProduction,
+  trustProxy: process.env.TRUST_PROXY === 'true',
+
+  db: {
+    host: requireEnv('DB_HOST'),
+    port: Number(process.env.DB_PORT || 3306),
+    user: requireEnv('DB_USER'),
+    password: process.env.DB_PASSWORD || '',
+    database: requireEnv('DB_NAME'),
+  },
+
+  sessionSecret: readSessionSecret(),
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+  adminEmails: readEmailList('ADMIN_EMAILS'),
+  devAdminLogin: isDevelopment && process.env.DEV_ADMIN_LOGIN === 'true',
+
+  reverifyAfterDays: Number(process.env.REVERIFY_AFTER_DAYS || 90),
+};
+
+export default config;

@@ -1,0 +1,42 @@
+# Runs the app and MySQL together on your machine:  docker compose up --build
+# Open http://localhost:3000 (directory) and http://localhost:3000/admin/ (admin).
+# Port 3000 taken?  APP_PORT=3100 docker compose up --build
+# The database schema is created automatically the first time MySQL starts.
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: clm_directory
+      MYSQL_USER: clm_directory
+      MYSQL_PASSWORD: local-dev-password
+      MYSQL_ROOT_PASSWORD: local-dev-root-password
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    # No ports published: only the app container talks to MySQL.
+    # To inspect the data:  docker compose exec db mysql -uclm_directory -plocal-dev-password clm_directory
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uclm_directory", "-plocal-dev-password"]
+      interval: 5s
+      retries: 20
+
+  app:
+    build: .
+    env_file: .env
+    environment:
+      # Point at the db container instead of whatever DB_* is in .env.
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: clm_directory
+      DB_PASSWORD: local-dev-password
+      DB_NAME: clm_directory
+      NODE_ENV: ${NODE_ENV:-development}
+    ports:
+      # Change the left number (or set APP_PORT) if 3000 is already used on your machine.
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
