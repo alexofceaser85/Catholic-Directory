@@ -176,3 +176,4 @@ docs/                       Longer guides (below)
 - [docs/architecture.md](docs/architecture.md): how the code fits together, the data model and security
 - [docs/api.md](docs/api.md): every API endpoint
 - [docs/deployment.md](docs/deployment.md): Google sign-in, email, and putting the site online
+- [docs/logo.md](docs/logo.md): how the logo is built and how to swap the crucifix picture
