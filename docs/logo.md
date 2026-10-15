@@ -3,7 +3,10 @@
 `public/img/logo.svg` is both the header logo and the browser-tab icon:
 
 - **Drawn shapes:** the green circle (`#1f6b3a`, the green of Ordinary Time vestments), the
-  gold ring, the claw hammer (the trades) and the sickle (the harvest). Edit these as SVG.
+  gold ring, and two Roman tools drawn as gilded bronze to match the crucifix: a claw hammer
+  (*malleus*, the trades) and a sickle (*falx*, the harvest). The sickle's handle is the
+  hammer's handle mirrored (`<use href="#handle">`). The gold gradients and the shared shadow
+  (`#relief`) are in `<defs>`. Edit these as SVG.
 - **Embedded picture:** the gilded crucifix in the middle, stored inside the SVG as a PNG.
   Browsers don't load separate image files from inside an SVG used as a logo, so it has to
   be embedded.
