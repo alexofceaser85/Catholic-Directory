@@ -6,17 +6,17 @@ services:
   db:
     image: mysql:8.4
     environment:
-      MYSQL_DATABASE: clm_directory
-      MYSQL_USER: clm_directory
+      MYSQL_DATABASE: directory
+      MYSQL_USER: directory
       MYSQL_PASSWORD: local-dev-password
       MYSQL_ROOT_PASSWORD: local-dev-root-password
     volumes:
       - db-data:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     # No ports published: only the app container talks to MySQL.
-    # To inspect the data:  docker compose exec db mysql -uclm_directory -plocal-dev-password clm_directory
+    # To inspect the data:  docker compose exec db mysql -udirectory -plocal-dev-password directory
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uclm_directory", "-plocal-dev-password"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-udirectory", "-plocal-dev-password"]
       interval: 5s
       retries: 20
 
@@ -27,10 +27,12 @@ services:
       # Point at the db container instead of whatever DB_* is in .env.
       DB_HOST: db
       DB_PORT: 3306
-      DB_USER: clm_directory
+      DB_USER: directory
       DB_PASSWORD: local-dev-password
-      DB_NAME: clm_directory
+      DB_NAME: directory
       NODE_ENV: ${NODE_ENV:-development}
+      # Used in the "manage your post" links. Without MAIL_HOST in .env, emails print to this log.
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:${APP_PORT:-3000}}
     ports:
       # Change the left number (or set APP_PORT) if 3000 is already used on your machine.
       - "${APP_PORT:-3000}:3000"

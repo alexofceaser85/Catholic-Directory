@@ -5,7 +5,7 @@
 const MIN_NAME_LENGTH = 2;
 
 const PUBLIC_FIELDS = {
-  businessName: 'Business name',
+  title: 'Title',
   email: 'Email',
   address: 'Address',
   description: 'Description',

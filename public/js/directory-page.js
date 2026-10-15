@@ -1,6 +1,8 @@
 // Entry point for the public directory page (index.html):
-// loads live listings, renders them, and filters as you type in the search box.
+// loads live listings from the server, renders them, and filters them by
+// post type, category and the search box.
 import { api } from './api.js';
+import { setUpFilters } from './directory-filters.js';
 import { showStatus } from './dom.js';
 import { plural } from './format.js';
 import { renderListingCard, searchableText } from './listing-card.js';
@@ -10,6 +12,7 @@ const listContainer = document.getElementById('listings');
 const searchInput = document.getElementById('search');
 const resultCount = document.getElementById('result-count');
 const pageStatus = document.getElementById('page-status');
+const filters = setUpFilters(document.getElementById('type-filter'), document.getElementById('category-filter'), render);
 
 let allListings = [];
 
@@ -20,18 +23,18 @@ function matchesSearch(listing, words) {
 
 function render() {
   const words = searchInput.value.toLowerCase().split(/\s+/).filter(Boolean);
-  const visible = allListings.filter((listing) => matchesSearch(listing, words));
+  const visible = allListings.filter((listing) => filters.matches(listing) && matchesSearch(listing, words));
 
   listContainer.replaceChildren(...visible.map((listing) => renderListingCard(listing, openReportDialog)));
-  resultCount.textContent = plural(visible.length, 'business', 'businesses');
+  resultCount.textContent = plural(visible.length, 'listing');
 
-  if (allListings.length === 0) showStatus(pageStatus, 'No businesses are listed yet. Be the first to add yours!');
-  else if (visible.length === 0) showStatus(pageStatus, 'No businesses match your search.');
+  if (allListings.length === 0) showStatus(pageStatus, 'Nothing is listed yet. Be the first to add yours!');
+  else if (visible.length === 0) showStatus(pageStatus, 'Nothing matches your filters. Try "Everything" or "All categories".');
   else showStatus(pageStatus, '');
 }
 
 async function loadListings() {
-  showStatus(pageStatus, 'Loading businesses…');
+  showStatus(pageStatus, 'Loading the directory…');
   try {
     allListings = await api.get('/api/listings');
     render();

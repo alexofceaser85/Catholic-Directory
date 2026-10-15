@@ -30,8 +30,10 @@ function readSessionSecret() {
   return secret;
 }
 
+const port = Number(process.env.PORT || 3000);
+
 const config = {
-  port: Number(process.env.PORT || 3000),
+  port,
   isProduction,
   trustProxy: process.env.TRUST_PROXY === 'true',
 
@@ -49,6 +51,19 @@ const config = {
   devAdminLogin: isDevelopment && process.env.DEV_ADMIN_LOGIN === 'true',
 
   reverifyAfterDays: Number(process.env.REVERIFY_AFTER_DAYS || 90),
+
+  // The address people type to reach the site. Used to build the "manage your post" links in emails.
+  publicUrl: (process.env.PUBLIC_URL || `http://localhost:${port}`).replace(/\/$/, ''),
+
+  // Outgoing email (SMTP). With no MAIL_HOST, emails are printed to the console in development
+  // and skipped (with a warning) in production.
+  mail: {
+    host: process.env.MAIL_HOST || '',
+    port: Number(process.env.MAIL_PORT || 587),
+    user: process.env.MAIL_USER || '',
+    password: process.env.MAIL_PASSWORD || '',
+    from: process.env.MAIL_FROM || 'Catholic Business Directory <no-reply@example.com>',
+  },
 };
 
 export default config;

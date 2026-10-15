@@ -18,7 +18,7 @@ router.use(requireJson);
 
 function signInAsAdmin(res, email) {
   if (!isAdminEmail(email)) {
-    throw new HttpError(403, `${email} is not on the admin list. Ask a chapter admin to add you.`);
+    throw new HttpError(403, `${email} is not on the admin list. Ask an admin to add you.`);
   }
   startSession(res, email);
   res.json({ email });

@@ -6,6 +6,7 @@ import config from './config.js';
 import publicRoutes from './routes/publicRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import manageRoutes from './routes/manageRoutes.js';
 import { securityHeaders } from './middleware/securityHeaders.js';
 import { apiNotFound, errorHandler } from './middleware/errorHandler.js';
 
@@ -23,10 +24,11 @@ export function createApp() {
 
   app.use('/api/auth', authRoutes);
   app.use('/api/admin', adminRoutes);
+  app.use('/api/manage', manageRoutes);
   app.use('/api', publicRoutes);
   app.use('/api', apiNotFound);
 
-  // The website itself: plain HTML/CSS/JS files. "/submit" serves public/submit.html.
+  // The website itself: plain HTML/CSS/JS files. "/submit" serves public/submit.html, "/manage" manage.html.
   app.use(express.static(PUBLIC_DIR, { extensions: ['html'] }));
 
   app.use(errorHandler);

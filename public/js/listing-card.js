@@ -1,6 +1,28 @@
-// Builds one business card for the public directory.
+// Builds one listing card for the public directory.
 import { el, externalLink, safeHref } from './dom.js';
 import { formatDate, shortUrl } from './format.js';
+import { findPostType } from './post-options.js';
+
+/** Used for the card's color: "Help wanted" -> "help-wanted". */
+function typeSlug(postType) {
+  return postType.toLowerCase().replace(/[^a-z]+/g, '-');
+}
+
+/** Post type badge plus category, above the title. */
+function tagsLine(listing) {
+  return el('p', { class: 'card-tags' }, [
+    el('span', { class: `badge type-badge type-${typeSlug(listing.postType)}` }, [listing.postType]),
+    listing.category && el('span', { class: 'category' }, [listing.category]),
+  ]);
+}
+
+/** Businesses show when they were last checked. Posts with a shelf life show until when they run. */
+function freshnessNote(listing) {
+  if (findPostType(listing.postType).expiresAfterDays === null) {
+    return listing.lastVerified ? el('span', { class: 'verified' }, [`✓ Verified ${formatDate(listing.lastVerified)}`]) : el('span');
+  }
+  return listing.expires ? el('span', { class: 'muted small' }, [`Listed until ${formatDate(listing.expires)}`]) : el('span');
+}
 
 function contactLine(label, node) {
   return el('p', { class: 'contact-line' }, [el('span', { class: 'contact-label' }, [label]), node]);
@@ -22,17 +44,18 @@ function linksSection(links) {
 }
 
 /**
- * @param {object} listing  Public listing from GET /api/listings.
+ * @param {object} listing  Listing from the published directory sheet (see listing-rows.js).
  * @param {(listing: object) => void} onReport  Called when "Report outdated info" is clicked.
  */
 export function renderListingCard(listing, onReport) {
-  return el('li', { class: 'card listing-card' }, [
-    el('h2', { class: 'card-title' }, [listing.businessName]),
+  return el('li', { class: `card listing-card type-${typeSlug(listing.postType)}` }, [
+    tagsLine(listing),
+    el('h2', { class: 'card-title' }, [listing.title]),
     el('p', { class: 'description' }, [listing.description]),
     contactSection(listing),
     linksSection(listing.links),
     el('div', { class: 'card-footer' }, [
-      el('span', { class: 'verified' }, [`✓ Verified ${formatDate(listing.lastVerifiedAt)}`]),
+      freshnessNote(listing),
       el('button', { type: 'button', class: 'link-button subtle small', onclick: () => onReport(listing) }, [
         'Report outdated info',
       ]),
@@ -42,7 +65,7 @@ export function renderListingCard(listing, onReport) {
 
 /** Text used by the search box to match a listing. */
 export function searchableText(listing) {
-  return [listing.businessName, listing.description, listing.address, listing.website, ...listing.links]
+  return [listing.title, listing.category, listing.description, listing.address, listing.website, ...listing.links]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();

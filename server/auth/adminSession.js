@@ -3,7 +3,7 @@ import config from '../config.js';
 import { parseCookies } from '../lib/cookies.js';
 import { createSessionToken, readSessionToken } from '../lib/sessionToken.js';
 
-const COOKIE_NAME = 'clm_admin_session';
+const COOKIE_NAME = 'directory_admin_session';
 const MAX_AGE_MS = 8 * 60 * 60 * 1000; // 8 hours
 
 const cookieOptions = {

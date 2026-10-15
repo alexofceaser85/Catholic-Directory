@@ -8,14 +8,24 @@ const ACTION_LABELS = {
   denied: 'Denied',
   removed: 'Removed',
   reverified: 'Reverified',
+  renewed: 'Renewed',
   edited: 'Edited',
+  edit_requested: 'Asked for changes',
+  edit_approved: 'Approved requested changes',
+  edit_rejected: 'Rejected requested changes',
+  check_in_sent: 'Sent a check-in email',
   report_dismissed: 'Dismissed a report',
 };
+
+/** "poster" is the person who posted it, acting through their private link. */
+function actorName(actor) {
+  return actor === 'poster' ? 'the poster' : actor;
+}
 
 function historyEntry(entry) {
   const label = ACTION_LABELS[entry.action] || entry.action;
   return el('li', {}, [
-    `${formatDate(entry.createdAt)} · ${label} by ${entry.adminEmail}`,
+    `${formatDate(entry.createdAt)} · ${label} by ${actorName(entry.actor)}`,
     entry.detail && el('span', { class: 'muted' }, [` — ${entry.detail}`]),
   ]);
 }

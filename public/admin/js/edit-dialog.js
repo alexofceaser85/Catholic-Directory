@@ -1,16 +1,24 @@
 // The "Edit listing" pop-up. Fills the form from a listing and saves with PUT /api/admin/listings/:id.
 import { api } from '/js/api.js';
 import { showStatus } from '/js/dom.js';
+import { el } from '/js/dom.js';
 import { clearFieldErrors, showFieldErrors, readForm } from '/js/form-errors.js';
+import { CATEGORIES, POST_TYPES } from '/js/post-options.js';
 
 const dialog = document.getElementById('edit-dialog');
 const form = document.getElementById('edit-form');
 const statusNode = document.getElementById('edit-status');
 const saveButton = form.querySelector('button[type="submit"]');
 
-const EDITABLE_FIELDS = ['businessName', 'email', 'phone', 'address', 'description', 'website', 'adminNotes'];
+const EDITABLE_FIELDS = ['title', 'postType', 'category', 'email', 'phone', 'address', 'description', 'website', 'adminNotes'];
 
 dialog.querySelector('[data-close-dialog]').addEventListener('click', () => dialog.close());
+
+function fillOptions(select, values) {
+  select.replaceChildren(...values.map((value) => el('option', { value }, [value])));
+}
+fillOptions(form.elements.postType, POST_TYPES.map((type) => type.label));
+fillOptions(form.elements.category, CATEGORIES);
 
 function fillForm(listing) {
   for (const field of EDITABLE_FIELDS) {

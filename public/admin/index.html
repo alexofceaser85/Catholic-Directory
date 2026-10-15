@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Admin · CLM Business Directory</title>
+  <title>Admin · Catholic Business Directory</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/admin/admin.css">
   <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
@@ -15,7 +15,7 @@
     <div class="container header-row">
       <a class="brand" href="/admin/">
         <img class="brand-logo" src="/img/logo.svg" alt="">
-        <span><span class="brand-name">CLM Business Directory</span><span class="brand-sub">Admin dashboard</span></span>
+        <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Admin dashboard</span></span>
       </a>
       <div class="header-actions">
         <span id="admin-email" class="muted small"></span>
@@ -34,7 +34,7 @@
     <section id="login-view" class="card login-card" hidden>
       <img class="brand-logo" src="/img/logo.svg" alt="">
       <h1>Admin sign-in</h1>
-      <p class="muted">Sign in with a Google account that is on the chapter's admin list.</p>
+      <p class="muted">Sign in with a Google account that is on the admin list.</p>
       <div id="google-button"></div>
 
       <form id="dev-login-form" class="dev-login" hidden novalidate>
@@ -65,24 +65,37 @@
       <p class="hint">Changes go live immediately for approved listings. Submitter names can't be edited.</p>
 
       <div class="field">
-        <label for="edit-business-name">Business name *</label>
-        <input id="edit-business-name" name="businessName" maxlength="200" required>
-        <p class="field-error" data-error-for="businessName"></p>
+        <label for="edit-title">Title / business name *</label>
+        <input id="edit-title" name="title" maxlength="200" required>
+        <p class="field-error" data-error-for="title"></p>
       </div>
       <div class="field-row">
         <div class="field">
-          <label for="edit-email">Business email *</label>
+          <label for="edit-post-type">Post type *</label>
+          <select id="edit-post-type" name="postType" required></select>
+          <p class="hint">Changing it takes effect on the next approval, reverification or renewal.</p>
+          <p class="field-error" data-error-for="postType"></p>
+        </div>
+        <div class="field">
+          <label for="edit-category">Category *</label>
+          <select id="edit-category" name="category" required></select>
+          <p class="field-error" data-error-for="category"></p>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="edit-email">Contact email *</label>
           <input id="edit-email" name="email" type="email" maxlength="254" required>
           <p class="field-error" data-error-for="email"></p>
         </div>
         <div class="field">
-          <label for="edit-phone">Business phone</label>
+          <label for="edit-phone">Contact phone</label>
           <input id="edit-phone" name="phone" maxlength="40">
           <p class="field-error" data-error-for="phone"></p>
         </div>
       </div>
       <div class="field">
-        <label for="edit-address">Business address</label>
+        <label for="edit-address">Address or area</label>
         <input id="edit-address" name="address" maxlength="500">
         <p class="field-error" data-error-for="address"></p>
       </div>

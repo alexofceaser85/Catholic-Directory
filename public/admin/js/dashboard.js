@@ -3,6 +3,7 @@ import { api } from '/js/api.js';
 import { el } from '/js/dom.js';
 import { TABS } from './tabs.js';
 import { renderAdminCard } from './admin-card.js';
+import { renderEditRequestCard } from './edit-request-card.js';
 import { notify, clearNotice } from './notify.js';
 
 const dashboardView = document.getElementById('dashboard-view');
@@ -52,9 +53,9 @@ function renderCounts() {
 
 function renderItem(item) {
   const onChange = refresh;
-  return activeTab.grouped
-    ? renderAdminCard(item.listing, { reports: item.reports, onChange })
-    : renderAdminCard(item, { onChange });
+  if (activeTab.kind === 'edit') return renderEditRequestCard(item, onChange);
+  if (activeTab.kind === 'reports') return renderAdminCard(item.listing, { reports: item.reports, onChange });
+  return renderAdminCard(item, { onChange });
 }
 
 async function loadSummary() {

@@ -5,7 +5,7 @@ import { findNameMatches } from '../server/lib/nameCheck.js';
 const base = {
   submitterFirstName: 'Taylor',
   submitterLastName: 'Nguyen',
-  businessName: 'Bright Lens Studio',
+  title: 'Bright Lens Studio',
   email: 'hello@brightlens.example',
   address: 'Atlanta, GA',
   description: 'Portrait photography.',
@@ -18,8 +18,8 @@ test('returns no matches when the name is absent', () => {
 });
 
 test('finds the first or last name as a whole word', () => {
-  const listing = { ...base, businessName: 'Taylor Photography', description: 'Ask for nguyen.' };
-  assert.deepEqual(findNameMatches(listing), ['Business name', 'Description']);
+  const listing = { ...base, title: 'Taylor Photography', description: 'Ask for nguyen.' };
+  assert.deepEqual(findNameMatches(listing), ['Title', 'Description']);
 });
 
 test('does not match a name hidden inside a longer word', () => {

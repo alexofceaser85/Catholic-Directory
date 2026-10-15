@@ -7,6 +7,7 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   timezone: 'Z', // Read and write DATETIME values as UTC.
+  dateStrings: ['DATE'], // DATE columns (expires_on) come back as "2026-10-14", not a Date at midnight.
 });
 
 // Make NOW() and CURRENT_TIMESTAMP use UTC too, so dates match no matter where MySQL runs.

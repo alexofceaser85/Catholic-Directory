@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CLM Business Directory</title>
-  <meta name="description" content="Businesses from our CLM chapter community.">
-  <link rel="stylesheet" href="/css/styles.css">
-  <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
-  <script src="/js/theme.js"></script>
+  <title>Catholic Business Directory</title>
+  <meta name="description" content="Catholic farms, businesses, services and help wanted around Atlanta, GA.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <script src="js/theme.js"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-row">
-      <a class="brand" href="/">
-        <img class="brand-logo" src="/img/logo.svg" alt="">
-        <span><span class="brand-name">CLM Business Directory</span><span class="brand-sub">Atlanta, GA chapter</span></span>
+      <a class="brand" href="./">
+        <img class="brand-logo" src="img/logo.svg" alt="">
+        <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Atlanta, GA</span></span>
       </a>
       <div class="header-actions">
-        <a class="button" href="/submit">Add your business</a>
+        <a class="button" href="submit.html">Add a listing</a>
         <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Dark mode" aria-pressed="false">
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -28,12 +28,17 @@
 
   <main class="container">
     <section class="hero">
-      <h1>Buy local from families in our community</h1>
-      <p>Farms, homesteads, makers and small businesses from our CLM chapter.
-         Every listing is reviewed by a chapter admin and checked regularly so it stays up to date.</p>
+      <h1>Buy local, find help, offer your skills</h1>
+      <p>Farms, homesteads, makers and tradespeople from our Catholic community, plus who's
+         hiring and who's available. Every listing is reviewed by an admin, and job and service
+         posts drop off on their own after a few weeks so the list stays fresh.</p>
     </section>
 
+    <div id="type-filter" class="chip-row" role="group" aria-label="Show"></div>
+
     <div class="toolbar">
+      <label class="visually-hidden" for="category-filter">Category</label>
+      <select id="category-filter" class="category-filter"></select>
       <label class="visually-hidden" for="search">Search the directory</label>
       <input id="search" type="search" placeholder="Search by name, service or area…" autocomplete="off">
       <p id="result-count" class="muted" aria-live="polite"></p>
@@ -46,11 +51,11 @@
   <dialog id="report-dialog" class="dialog" aria-labelledby="report-title">
     <form id="report-form" method="dialog" novalidate>
       <h2 id="report-title">Report outdated information</h2>
-      <p class="muted">Reporting <strong id="report-business"></strong>. An admin will check with the business.</p>
+      <p class="muted">Reporting <strong id="report-listing"></strong>. An admin will check with the poster.</p>
 
       <label for="report-reason">What looks wrong?</label>
       <textarea id="report-reason" name="reason" rows="4" maxlength="1000" required
-                placeholder="e.g. The phone number is disconnected, or the business has closed."></textarea>
+                placeholder="e.g. The phone number is disconnected, the job is filled, or the business has closed."></textarea>
       <p class="field-error" data-error-for="reason"></p>
 
       <div class="honeypot" aria-hidden="true">
@@ -68,11 +73,12 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p>Listings are submitted by businesses and reviewed by chapter admins.
-         Submitter names are never published. <a href="/admin/">Admin</a></p>
+      <p>Listings are submitted by the community and reviewed by our admins.
+         Submitter names are never published.
+         <a href="manage">Manage your post</a> · <a href="admin/">Admin</a></p>
     </div>
   </footer>
 
-  <script type="module" src="/js/directory-page.js"></script>
+  <script type="module" src="js/directory-page.js"></script>
 </body>
 </html>

@@ -1,12 +1,20 @@
-// Entry point for the "Add your business" page (submit.html).
+// Entry point for the "Add a listing" page (submit.html).
 import { api } from './api.js';
 import { showStatus } from './dom.js';
 import { clearFieldErrors, showFieldErrors, readForm } from './form-errors.js';
+import { setUpSubmitOptions } from './submit-options.js';
 
 const form = document.getElementById('submit-form');
 const formStatus = document.getElementById('form-status');
 const successPanel = document.getElementById('success');
 const submitButton = form.querySelector('button[type="submit"]');
+
+setUpSubmitOptions(form, {
+  typeContainer: document.getElementById('post-type-choices'),
+  categorySelect: document.getElementById('category'),
+  titleLabel: document.getElementById('title-label'),
+  titleInput: document.getElementById('title'),
+});
 
 function showSuccess() {
   form.hidden = true;

@@ -1,26 +1,26 @@
 # Deployment
 
-Getting the directory online takes three steps: create a Google sign-in client, pick a
-host, and set the environment variables.
+Getting the directory online takes four steps: create a Google sign-in client, set up
+email, pick a host, and set the environment variables.
 
 ## 1. Create the Google sign-in client
 
 Admins sign in with Google. Google needs to know which website is allowed to use the
 sign-in button. This takes about 10 minutes and is free.
 
-1. Go to <https://console.cloud.google.com/> and sign in. Use the chapter's Google
-   account (for example the atlantagaclm account) so it isn't tied to one person.
-2. Create a project (top bar → project picker → **New project**), e.g. "CLM Directory".
+1. Go to <https://console.cloud.google.com/> and sign in with the Google account that
+   will own the directory.
+2. Create a project (top bar → project picker → **New project**), e.g. "Catholic Directory".
 3. **APIs & Services → OAuth consent screen** (may be shown as **Google Auth Platform → Branding**):
    - User type: **External**
-   - App name: *CLM Business Directory*, plus a support email and developer email
+   - App name: *Catholic Business Directory*, plus a support email and developer email
    - No scopes need to be added. The button only asks for name and email.
    - Publish the app (**Audience → Publish app**), or add each admin as a *test user*.
 4. **APIs & Services → Credentials → Create credentials → OAuth client ID**:
    - Application type: **Web application**
    - **Authorized JavaScript origins**: add every address the site is opened from, e.g.
      - `http://localhost:3000` and `http://localhost` (local testing)
-     - `https://directory.yourchapter.org` (live site)
+     - `https://directory.example.org` (live site)
    - Redirect URIs: leave empty, because the button uses a pop-up.
 5. Copy the **Client ID** (ends in `.apps.googleusercontent.com`) into `GOOGLE_CLIENT_ID`.
 
@@ -31,10 +31,36 @@ leaks, delete it in the client's settings and Google will issue a new one.
 The client ID is not a secret. It's visible in the page. Security comes from the server
 checking that tokens were issued for this ID and that the email is in `ADMIN_EMAILS`.
 
-## 2. Choose where to host it
+## 2. Set up email
+
+Posters get their private "manage your post" link by email, so the live site needs a way
+to send mail. Any SMTP service works. Put its settings in `MAIL_*`:
+
+| Option | Cost | Notes |
+|---|---|---|
+| **Brevo**, **Mailjet**, **SMTP2GO** | Free tiers of a few hundred emails a day | Easiest. Sign up, verify the sending address or domain, copy the SMTP host, user and password. |
+| **Gmail** | Free, ~500 emails a day | Use a dedicated account, turn on 2-Step Verification, create an **App password** (Google Account → Security → App passwords), then `MAIL_HOST=smtp.gmail.com`, `MAIL_PORT=587`, `MAIL_USER=` the address, `MAIL_PASSWORD=` the app password. |
+| **Postmark**, **Mailgun**, **Amazon SES** | Paid / pay as you go | Best delivery if you have your own domain. |
+
+```env
+MAIL_HOST=smtp-relay.brevo.com
+MAIL_PORT=587
+MAIL_USER=you@example.org
+MAIL_PASSWORD=the-smtp-key
+MAIL_FROM=Catholic Business Directory <directory@example.org>
+PUBLIC_URL=https://directory.example.org
+```
+
+`MAIL_FROM` should use an address or domain the provider has verified, or mail may land
+in spam. `PUBLIC_URL` must be the real address, since it goes into every emailed link.
+
+To test: submit a post with your own email, or use **Manage your post → Email me my links**.
+If nothing arrives, check the server log for "Could not send email".
+
+## 3. Choose where to host it
 
 The app is one Node.js process plus a MySQL database. Any of these work. Pick the one
-your chapter is most comfortable maintaining.
+you're most comfortable maintaining.
 
 ### Option A: Railway or Render (easiest, roughly $5–10/month)
 
@@ -46,18 +72,18 @@ These platforms run the app from a GitHub repo and handle HTTPS for you.
    such as Aiven's free tier or a Railway database).
 4. Run `database/schema.sql` once against the new database using any MySQL client
    (MySQL Workbench, TablePlus, or the `mysql` command line).
-5. Set the environment variables from the [checklist](#3-production-checklist).
+5. Set the environment variables from the [checklist](#4-production-checklist).
 6. Add your custom domain in the platform's settings, then add it to the Google
    client's **Authorized JavaScript origins**.
 
 ### Option B: A small Linux server (VPS) with Docker
 
-Good if someone in the chapter is comfortable with SSH. About $5–6/month on DigitalOcean,
+Good if someone on the team is comfortable with SSH. About $5–6/month on DigitalOcean,
 Linode or Lightsail.
 
 ```bash
 # On the server, after installing Docker:
-git clone <your private repo> clm-directory && cd clm-directory
+git clone <your private repo> directory && cd directory
 cp .env.example .env && nano .env     # fill in the production values
 # Edit docker-compose.yml and replace the two local-dev passwords with strong ones
 NODE_ENV=production docker compose up -d --build
@@ -67,7 +93,7 @@ Put [Caddy](https://caddyserver.com/) in front for automatic HTTPS:
 
 ```
 # /etc/caddy/Caddyfile
-directory.yourchapter.org {
+directory.example.org {
     reverse_proxy localhost:3000
 }
 ```
@@ -87,7 +113,7 @@ Many cheap hosts (Namecheap, A2 Hosting and others) offer **Setup Node.js App** 
    environment variables and click **Run NPM Install**.
 4. Turn on HTTPS for the domain (cPanel → SSL/TLS Status → AutoSSL).
 
-## 3. Production checklist
+## 4. Production checklist
 
 | Setting | Value |
 |---|---|
@@ -99,25 +125,27 @@ Many cheap hosts (Namecheap, A2 Hosting and others) offer **Setup Node.js App** 
 | Admin Google accounts | Turn on **2-Step Verification** for every account in `ADMIN_EMAILS` (myaccount.google.com → Security). |
 | `TRUST_PROXY` | `true` on Railway, Render, cPanel or behind Caddy/nginx |
 | `DB_*` | Your production database. Give the MySQL user access to this one database only. |
+| `PUBLIC_URL` | The live `https://` address, no trailing slash |
+| `MAIL_*` | From [step 2](#2-set-up-email). Without them, posters never get their links. |
 
 The site **must** use HTTPS in production. With `NODE_ENV=production` the admin cookie
 is only sent over HTTPS, so sign-in won't stick on plain HTTP.
 
 Never load `database/sample-data.sql` into the production database.
 
-## 4. Backups
+## 5. Backups
 
 Everything worth keeping is in MySQL. Back it up at least weekly:
 
 ```bash
-mysqldump -h <host> -u <user> -p --single-transaction clm_directory > clm-directory-$(date +%F).sql
+mysqldump -h <host> -u <user> -p --single-transaction directory > directory-$(date +%F).sql
 ```
 
 Railway and most managed MySQL hosts also have automatic backups. Turn them on.
 
-Restore: `mysql -h <host> -u <user> -p clm_directory < clm-directory-YYYY-MM-DD.sql`
+Restore: `mysql -h <host> -u <user> -p directory < directory-YYYY-MM-DD.sql`
 
-## 5. Adding or removing an admin
+## 6. Adding or removing an admin
 
 Edit `ADMIN_EMAILS` and restart the app. Removing an email locks that person out on
 their next click, even if they're signed in.
@@ -131,3 +159,5 @@ their next click, even if they're signed in.
 | Signed in but immediately signed out again | The site isn't on HTTPS while `NODE_ENV=production`. |
 | "Missing required environment variable" on start | Compare `.env` with `.env.example`. |
 | Every visitor seems to share one rate limit | Set `TRUST_PROXY=true`. |
+| Posters say they never got their link | Check the log for "Could not send email" or "MAIL_HOST is empty". Check `MAIL_FROM` is verified with your provider. Ask them to check spam, or use **Email poster**. |
+| Links in emails point to localhost | Set `PUBLIC_URL` to the live address and restart. |

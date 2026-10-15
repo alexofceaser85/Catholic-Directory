@@ -6,7 +6,7 @@ All endpoints take and return JSON. Write requests (POST/PUT) **must** send
 Errors always look like:
 
 ```json
-{ "error": "Please fix the highlighted fields.", "fields": { "email": "Business email must be a valid email address." } }
+{ "error": "Please fix the highlighted fields.", "fields": { "email": "Contact email must be a valid email address." } }
 ```
 
 `fields` is only present for validation errors (`400`).
@@ -17,15 +17,31 @@ Errors always look like:
 
 ```json
 {
-  "id": 1,
-  "businessName": "Peachtree Bookkeeping",
-  "email": "hello@peachtreebooks.example",
-  "phone": "404-555-0101",
-  "address": "123 Peachtree St NE, Atlanta, GA",
-  "description": "Bookkeeping and payroll…",
-  "website": "https://peachtreebooks.example",
-  "links": ["https://instagram.com/peachtreebooks"],
-  "lastVerifiedAt": "2026-10-14T03:53:24.000Z"
+  "id": 4,
+  "postType": "Help wanted",
+  "category": "Farm & livestock",
+  "title": "Farmhand for fall harvest, 2 days a week",
+  "email": "jobs@sweetwatercreek.example",
+  "phone": null,
+  "address": "Douglasville, GA",
+  "description": "Picking, washing and packing vegetables…",
+  "website": null,
+  "links": [],
+  "lastVerified": "2026-10-12",
+  "expires": "2026-11-11"
+}
+```
+
+`postType` is the label from `public/js/post-options.js`; forms send the label too, and
+the server stores the type's id. `expires` is `""` for businesses.
+
+**Poster listing** (`/api/manage/post`) = public listing plus:
+
+```json
+{
+  "status": "approved",
+  "isExpired": false,
+  "pendingEdit": { "submittedAt": "…", "changes": { "title": "…", "…": "…" } }
 }
 ```
 
@@ -40,6 +56,7 @@ Errors always look like:
   "submittedAt": "…",
   "reviewedAt": "…",
   "daysSinceVerified": 12,
+  "isExpired": false,
   "needsReverification": false,
   "nameMatches": ["Email"]
 }
@@ -49,12 +66,28 @@ Errors always look like:
 
 | Method & path | Body | Result |
 |---|---|---|
-| `GET /api/listings` | none | Live listings, A→Z |
-| `POST /api/listings` | `submitterFirstName`, `submitterLastName`, `businessName`, `email`, `phone`, `address`, `description`, `website`, `links` (array or newline text), `consent: true` | `201 { ok: true }`. The listing is created as pending. Limited to 5 per IP per hour. |
-| `POST /api/listings/:id/reports` | `reason` | `201 { ok: true }`. Only for live listings, otherwise 404. Limited to 10 per IP per hour. |
+| `GET /api/listings` | none | Live listings (approved and not expired), A→Z |
+| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `description`, `website`, `links` (array or newline text), `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
+| `POST /api/listings/:id/reports` | `reason` | `201 { ok: true }`. Only for live listings, otherwise 404. 10 per IP per hour. |
 
 Both POSTs accept a hidden `companyFax` honeypot field. If it's filled in, the server
 replies with success but saves nothing.
+
+## Poster (token from the emailed link)
+
+Every request sends `token`, the part after `#token=` in the link, in the JSON body.
+An unknown, malformed or denied post's token gets `404` with "This link doesn't work anymore".
+60 requests per IP per 15 minutes.
+
+| Method & path | Body | Result |
+|---|---|---|
+| `POST /api/manage/post` | `token` | Poster listing |
+| `POST /api/manage/edit` | `token` + `title`, `category`, `email`, `phone`, `address`, `description`, `website`, `links` | `{ needsReview }`. Pending posts change right away (`false`). Live posts get a pending edit for an admin (`true`); a newer edit replaces an older one. Removed posts: `409`. |
+| `POST /api/manage/renew` | `token` | Approved only. Restarts the shelf life: businesses' "last verified" becomes today; other posts show for another full period. Otherwise `409`. |
+| `POST /api/manage/remove` | `token` | Pending or approved → removed. Closes open reports and drops a pending edit. |
+| `POST /api/manage/send-links` | `email` | Always `{ ok: true }`. Emails a fresh link for each pending or live post with that contact email; older links stop working. 5 per IP per hour. Accepts the `companyFax` honeypot. |
+
+Posters can't change the post type, their name, the status or admin notes.
 
 ## Auth
 
@@ -70,16 +103,21 @@ replies with success but saves nothing.
 
 | Method & path | Body | Result |
 |---|---|---|
-| `GET /api/admin/summary` | none | Counts: `{ pending, approved, denied, removed, needsReverification, openReports, reverifyAfterDays }` |
+| `GET /api/admin/summary` | none | Counts: `{ pending, approved, denied, removed, needsReverification, expired, editRequests, openReports, reverifyAfterDays }` |
 | `GET /api/admin/listings?status=pending\|approved\|denied\|removed` | none | Admin listings |
-| `GET /api/admin/listings/needs-reverification` | none | Live listings at or past the reverify age, oldest first |
-| `GET /api/admin/listings/:id/history` | none | `[{ action, adminEmail, detail, createdAt }]`, newest first |
+| `GET /api/admin/listings/needs-reverification` | none | Live businesses at or past the reverify age, oldest first |
+| `GET /api/admin/listings/expired` | none | Approved posts past their expiry date (already hidden publicly) |
+| `GET /api/admin/listings/:id/history` | none | `[{ actor, action, detail, createdAt }]`, newest first. `actor` is an admin email or `"poster"`. |
 | `GET /api/admin/reports` | none | `[{ listing, reports: [{ id, reason, createdAt }] }]`, open reports grouped by listing |
-| `PUT /api/admin/listings/:id` | Public fields + `adminNotes` | Saves edits (submitter names can't be changed) |
-| `POST /api/admin/listings/:id/approve` | `{ note? }` | pending/denied/removed → approved. Starts the counter at 0. |
+| `GET /api/admin/edits` | none | `[{ listing, edit: { id, submittedAt, changes, changedFields } }]`, pending poster edits |
+| `PUT /api/admin/listings/:id` | Public fields + `postType` (label) + `adminNotes` | Saves edits (submitter names can't be changed) |
+| `POST /api/admin/listings/:id/approve` | `{ note? }` | pending/denied/removed → approved. Starts the shelf life. |
 | `POST /api/admin/listings/:id/deny` | `{ note? }` | pending → denied |
-| `POST /api/admin/listings/:id/remove` | `{ note? }` | pending/approved → removed. Closes open reports. |
-| `POST /api/admin/listings/:id/reverify` | `{ note? }` | Live only. Resets the counter to 0 and closes open reports. |
+| `POST /api/admin/listings/:id/remove` | `{ note? }` | pending/approved → removed. Closes open reports and drops a pending edit. |
+| `POST /api/admin/listings/:id/reverify` | `{ note? }` | Live only. Restarts the shelf life (reverify a business, renew other posts) and closes open reports. |
+| `POST /api/admin/listings/:id/check-in` | `{ note? }` | Live only. Emails the poster a fresh manage link asking them to confirm/renew, edit or remove. |
+| `POST /api/admin/edits/:id/approve` | `{ note? }` | Applies a pending poster edit to the live listing |
+| `POST /api/admin/edits/:id/reject` | `{ note? }` | Discards a pending poster edit |
 | `POST /api/admin/reports/:id/dismiss` | none | Closes one report without changing the listing |
 
 An action that isn't allowed from the listing's current status returns `409`.

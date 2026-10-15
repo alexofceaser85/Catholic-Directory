@@ -5,7 +5,7 @@ import { clearFieldErrors, showFieldErrors, readForm } from './form-errors.js';
 
 const dialog = document.getElementById('report-dialog');
 const form = document.getElementById('report-form');
-const businessName = document.getElementById('report-business');
+const listingTitle = document.getElementById('report-listing');
 const statusNode = document.getElementById('report-status');
 const submitButton = form.querySelector('button[type="submit"]');
 
@@ -17,7 +17,7 @@ export function openReportDialog(listing) {
   clearFieldErrors(form);
   showStatus(statusNode, '');
   submitButton.disabled = false;
-  businessName.textContent = listing.businessName;
+  listingTitle.textContent = listing.title;
   dialog.showModal();
 }
 

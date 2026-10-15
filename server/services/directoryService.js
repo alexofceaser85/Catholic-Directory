@@ -1,22 +1,29 @@
-// What the public (no account) can do: browse, ask to be added, report outdated info.
+// What the public (no account) can do: browse, post, and report outdated info.
 import * as listings from '../repositories/listingRepository.js';
 import * as reports from '../repositories/reportRepository.js';
 import { toPublicListing } from '../presenters/listingPresenter.js';
+import { createManageToken } from '../lib/manageToken.js';
+import { sendWelcomeEmail } from './posterEmails.js';
 import { notFound } from '../lib/httpError.js';
 
 export async function getPublicListings() {
-  const rows = await listings.findApproved();
+  const rows = await listings.findLive();
   return rows.map(toPublicListing);
 }
 
-/** Saves a new request. It stays hidden (status "pending") until an admin approves it. */
-export function submitListing(fields) {
-  return listings.insert(fields);
+/**
+ * Saves a new post. It stays hidden (status "pending") until an admin approves it.
+ * The poster gets an email with their private link for editing, renewing or removing it.
+ */
+export async function submitListing(fields) {
+  const { token, hash } = createManageToken();
+  await listings.insert({ ...fields, manageTokenHash: hash });
+  await sendWelcomeEmail(fields, token);
 }
 
 /** Only live listings can be reported. */
 export async function reportListing(listingId, reason) {
-  const listing = await listings.findPublicById(listingId);
+  const listing = await listings.findLiveById(listingId);
   if (!listing) throw notFound();
   await reports.insert(listingId, reason);
 }

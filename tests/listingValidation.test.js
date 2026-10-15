@@ -4,13 +4,18 @@ import {
   validateSubmission,
   validateListingEdit,
   validateReport,
+  validatePosterEdit,
+  validateManageToken,
   isLikelyBot,
 } from '../server/validation/listingValidation.js';
+import { createManageToken } from '../server/lib/manageToken.js';
 
 const validSubmission = {
   submitterFirstName: ' Jordan ',
   submitterLastName: 'Rivera',
-  businessName: 'Peachtree Bookkeeping',
+  postType: 'Offering services',
+  category: 'Professional services',
+  title: 'Peachtree Bookkeeping',
   email: 'Hello@PeachtreeBooks.example',
   phone: '(404) 555-0101',
   address: '',
@@ -39,11 +44,37 @@ test('cleans a valid submission', () => {
   assert.equal('consent' in values, false, 'consent is checked but not stored');
 });
 
+test('stores the post type id, not its label', () => {
+  assert.equal(validateSubmission(validSubmission).postType, 'offering_services');
+  assert.equal(validateSubmission({ ...validSubmission, postType: 'Help wanted' }).postType, 'help_wanted');
+});
+
+test('post type and category must come from the lists', () => {
+  const fields = fieldErrors(() => validateSubmission({ ...validSubmission, postType: 'Classifieds', category: 'Cars' }));
+  assert.deepEqual(Object.keys(fields).sort(), ['category', 'postType']);
+});
+
+test('posters can edit public fields only', () => {
+  const values = validatePosterEdit({ ...validSubmission, adminNotes: 'sneaky', postType: 'Business' });
+  assert.equal(values.title, 'Peachtree Bookkeeping');
+  for (const field of ['adminNotes', 'postType', 'submitterFirstName', 'status']) {
+    assert.equal(field in values, false, `${field} must not be editable by posters`);
+  }
+});
+
+test('malformed manage tokens get the same 404 as wrong ones', () => {
+  const { token } = createManageToken();
+  assert.equal(validateManageToken({ token }), token);
+  for (const bad of [undefined, '', 'abc', `${token}x`, { $ne: null }]) {
+    assert.throws(() => validateManageToken({ token: bad }), (error) => error.status === 404);
+  }
+});
+
 test('reports every invalid field at once', () => {
   const fields = fieldErrors(() =>
-    validateSubmission({ ...validSubmission, businessName: '', email: 'nope', website: 'javascript:alert(1)', consent: false }),
+    validateSubmission({ ...validSubmission, title: '', email: 'nope', website: 'javascript:alert(1)', consent: false }),
   );
-  assert.deepEqual(Object.keys(fields).sort(), ['businessName', 'consent', 'email', 'website']);
+  assert.deepEqual(Object.keys(fields).sort(), ['consent', 'email', 'title', 'website']);
 });
 
 test('rejects links that are not web URLs', () => {
@@ -70,6 +101,7 @@ test('rejects phone numbers with letters', () => {
 test('edits do not accept submitter names but do accept admin notes', () => {
   const values = validateListingEdit({ ...validSubmission, adminNotes: 'Called 3/4' });
   assert.equal(values.adminNotes, 'Called 3/4');
+  assert.equal(values.postType, 'offering_services');
   assert.equal('submitterFirstName' in values, false);
 });
 

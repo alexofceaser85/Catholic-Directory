@@ -133,6 +133,7 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 
 .toolbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 1.5rem 0 1rem; }
 .toolbar input[type="search"] { flex: 1 1 280px; border-radius: 999px; padding-left: 1.1rem; }
+.toolbar .category-filter { flex: 0 1 230px; width: auto; border-radius: 999px; }
 .toolbar p { margin: 0; }
 
 .listing-grid { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
@@ -144,6 +145,24 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 .link-list { margin: 0.5rem 0 0.75rem; padding-left: 1.1rem; overflow-wrap: anywhere; }
 .card-footer { margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
 .verified { color: var(--color-success-text); font-size: 0.875rem; }
+
+/* Each post type gets its own top stripe and badge color. */
+.listing-card.type-offering-services { border-top-color: var(--color-accent); }
+.listing-card.type-help-wanted { border-top-color: var(--color-danger-text); }
+.card-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 0.4rem; font-size: 0.85rem; }
+.card-tags .category { color: var(--color-muted); }
+.type-badge.type-business { background: var(--color-success-bg); color: var(--color-success-text); }
+.type-badge.type-offering-services { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.type-badge.type-help-wanted { background: var(--color-danger-bg); color: var(--color-danger-text); }
+
+/* Post type filter buttons above the list. */
+.chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.25rem; }
+.chip {
+  padding: 0.4rem 1rem; border-radius: 999px; border: 1px solid var(--color-border);
+  background: var(--color-surface); color: var(--color-text); font: inherit; font-weight: 600; cursor: pointer;
+}
+.chip:hover { background: var(--color-surface-alt); }
+.chip[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-primary-text); }
 
 /* ---- Forms --------------------------------------------------------------- */
 
@@ -159,6 +178,19 @@ input, textarea, select {
 }
 input:focus, textarea:focus, select:focus { outline: 2px solid var(--color-primary); outline-offset: 1px; background: var(--color-surface); }
 [aria-invalid="true"] { border-color: var(--color-danger-text); }
+
+/* "What are you posting?" radio cards on the submit page. */
+.choice-list { display: grid; gap: 10px; margin-top: 0.5rem; }
+.choice-card {
+  display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; margin: 0;
+  padding: 0.8rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-small);
+  background: var(--color-bg); font-weight: 400; cursor: pointer;
+}
+.choice-card:hover { background: var(--color-surface-alt); }
+.choice-card:has(input:checked) { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary); background: var(--color-surface); }
+.choice-card input { width: auto; margin-top: 0.35rem; accent-color: var(--color-primary); }
+.choice-title { display: block; font-weight: 700; }
+.choice-summary { display: block; font-size: 0.875rem; color: var(--color-muted); }
 
 .checkbox-field { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; }
 .checkbox-field input { width: auto; margin-top: 0.35rem; accent-color: var(--color-primary); }
@@ -194,3 +226,13 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--color-prima
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+/* ---- Human check (Cloudflare Turnstile) ---- */
+.human-check { min-height: 65px; margin: 0.5rem 0 1rem; }
+
+/* ---- "Manage your post" page ---- */
+.manage-summary { margin: 1.25rem 0; border-top: 4px solid var(--color-primary); }
+.manage-summary p { margin: 0.4rem 0; }
+.manage-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
+.callout-note { padding: 0.6rem 0.9rem; border-radius: var(--radius-small); background: var(--color-warning-bg); color: var(--color-warning-text); font-size: 0.925rem; }
+#lost-link-view { margin-top: 1.25rem; }

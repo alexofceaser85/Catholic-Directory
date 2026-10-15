@@ -2,15 +2,20 @@
 //
 //   pending ──approve──▶ approved ──remove──▶ removed
 //      │                   │  ▲                  │
-//      └──deny──▶ denied   └──┘ reverify         │
+//      └──deny──▶ denied   └──┘ reverify/renew   │
 //                   │                            │
 //                   └──────── approve ◀──────────┘  (restore)
 //
-// Every action is written to the admin_actions audit trail.
+// Approving, reverifying and renewing all restart the post's shelf life (lib/shelfLife.js).
+// Every action is written to the listing_history table.
 import * as listings from '../repositories/listingRepository.js';
+import * as edits from '../repositories/listingEditRepository.js';
 import * as reports from '../repositories/reportRepository.js';
-import * as adminActions from '../repositories/adminActionRepository.js';
-import { toAdminListing } from '../presenters/listingPresenter.js';
+import * as history from '../repositories/historyRepository.js';
+import { toAdminListing, changedFields } from '../presenters/listingPresenter.js';
+import { createManageToken } from '../lib/manageToken.js';
+import { shelfLifeDays, isReverifiedType } from '../lib/shelfLife.js';
+import { sendCheckInEmail } from './posterEmails.js';
 import { HttpError, notFound } from '../lib/httpError.js';
 
 // Which statuses each action may start from.
@@ -19,9 +24,12 @@ const ALLOWED_FROM = {
   deny: ['pending'],
   remove: ['pending', 'approved'],
   reverify: ['approved'],
+  checkIn: ['approved'],
 };
 
-const PAST_TENSE = { approve: 'approved', deny: 'denied', remove: 'removed', reverify: 'reverified' };
+const PAST_TENSE = {
+  approve: 'approved', deny: 'denied', remove: 'removed', reverify: 'reverified', checkIn: 'sent a check-in',
+};
 
 async function loadListingFor(action, id) {
   const listing = await listings.findById(id);
@@ -36,51 +44,79 @@ async function loadListingFor(action, id) {
 }
 
 export async function approve(id, adminEmail, note) {
-  await loadListingFor('approve', id);
+  const listing = await loadListingFor('approve', id);
   await listings.updateStatus(id, 'approved');
-  await adminActions.insert(id, adminEmail, 'approved', note);
+  await listings.restartShelfLife(id, shelfLifeDays(listing.post_type));
+  await history.insert(id, adminEmail, 'approved', note);
 }
 
 export async function deny(id, adminEmail, note) {
   await loadListingFor('deny', id);
   await listings.updateStatus(id, 'denied');
-  await adminActions.insert(id, adminEmail, 'denied', note);
+  await history.insert(id, adminEmail, 'denied', note);
 }
 
-/** Takes a listing off the directory and closes any reports about it. */
+/** Takes a listing off the directory and closes any reports and edit requests about it. */
 export async function remove(id, adminEmail, note) {
   await loadListingFor('remove', id);
   await listings.updateStatus(id, 'removed');
+  await edits.discardPendingForListing(id);
   await reports.resolveAllForListing(id, 'removed', adminEmail);
-  await adminActions.insert(id, adminEmail, 'removed', note);
+  await history.insert(id, adminEmail, 'removed', note);
 }
 
-/** The owner confirmed the details are current: reset the counter and close reports. */
+/**
+ * Businesses: the owner confirmed the details are current (counter back to 0 days).
+ * Other posts: renew, i.e. show it for another full shelf life. Either way, open reports close.
+ */
 export async function reverify(id, adminEmail, note) {
-  await loadListingFor('reverify', id);
-  await listings.markVerified(id);
+  const listing = await loadListingFor('reverify', id);
+  await listings.restartShelfLife(id, shelfLifeDays(listing.post_type));
   await reports.resolveAllForListing(id, 'reverified', adminEmail);
-  await adminActions.insert(id, adminEmail, 'reverified', note);
+  await history.insert(id, adminEmail, isReverifiedType(listing.post_type) ? 'reverified' : 'renewed', note);
 }
 
-function asComparable(value) {
-  return Array.isArray(value) ? value.join('\n') : (value ?? null);
+/** Emails the poster a fresh private link asking them to confirm, renew, edit or remove the post. */
+export async function sendCheckIn(id, adminEmail) {
+  const listing = await loadListingFor('checkIn', id);
+  const { token, hash } = createManageToken();
+  await listings.setManageTokenHash(id, hash);
+  await sendCheckInEmail({ title: listing.title, email: listing.email, postType: listing.post_type }, token);
+  await history.insert(id, adminEmail, 'check_in_sent', `Emailed ${listing.email}`);
 }
 
-function changedFields(current, changes) {
-  return Object.keys(changes).filter((field) => asComparable(current[field]) !== asComparable(changes[field]));
-}
-
-/** Saves admin edits. The audit entry lists which fields actually changed. */
+/** Saves admin edits. The history entry lists which fields actually changed. */
 export async function edit(id, adminEmail, changes) {
   const row = await listings.findById(id);
   if (!row) throw notFound();
 
-  const changed = changedFields(toAdminListing(row), changes);
+  const current = { ...toAdminListing(row), postType: row.post_type };
+  const changed = changedFields(current, changes);
   if (changed.length === 0) return;
 
   await listings.update(id, changes);
-  await adminActions.insert(id, adminEmail, 'edited', `Changed: ${changed.join(', ')}`);
+  await history.insert(id, adminEmail, 'edited', `Changed: ${changed.join(', ')}`);
+}
+
+async function loadPendingEdit(editId) {
+  const edit = await edits.findById(editId);
+  if (!edit || edit.status !== 'pending') throw notFound('Pending edit');
+  return edit;
+}
+
+/** Applies a poster's requested changes to the live listing. */
+export async function approveEdit(editId, adminEmail, note) {
+  const edit = await loadPendingEdit(editId);
+  await listings.update(edit.listing_id, edit.changes);
+  await edits.markReviewed(editId, 'approved', adminEmail);
+  await history.insert(edit.listing_id, adminEmail, 'edit_approved', note);
+}
+
+/** Keeps the live listing as it is. */
+export async function rejectEdit(editId, adminEmail, note) {
+  const edit = await loadPendingEdit(editId);
+  await edits.markReviewed(editId, 'rejected', adminEmail);
+  await history.insert(edit.listing_id, adminEmail, 'edit_rejected', note);
 }
 
 /** Closes a report without changing the listing (e.g. the report was wrong). */
@@ -88,5 +124,5 @@ export async function dismissReport(reportId, adminEmail) {
   const report = await reports.findById(reportId);
   if (!report || report.status !== 'open') throw notFound('Open report');
   await reports.resolve(reportId, 'dismissed', adminEmail);
-  await adminActions.insert(report.listing_id, adminEmail, 'report_dismissed', report.reason.slice(0, 200));
+  await history.insert(report.listing_id, adminEmail, 'report_dismissed', report.reason.slice(0, 200));
 }

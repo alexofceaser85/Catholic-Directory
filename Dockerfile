@@ -1,4 +1,4 @@
-# Production image for the CLM Directory web app.
+# Production image for the Catholic Business Directory web app.
 FROM node:22-alpine
 
 WORKDIR /app

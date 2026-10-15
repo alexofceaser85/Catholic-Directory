@@ -4,7 +4,12 @@ import { createApp } from './app.js';
 import { closePool } from './db/pool.js';
 
 const server = createApp().listen(config.port, () => {
-  console.log(`CLM Directory running at http://localhost:${config.port}`);
+  console.log(`Catholic Business Directory running at http://localhost:${config.port}`);
+  if (!config.mail.host) {
+    console.warn(config.isProduction
+      ? 'WARNING: MAIL_HOST is empty, so posters will not receive their "manage your post" links.'
+      : 'MAIL_HOST is empty: emails will be printed here instead of sent.');
+  }
   if (config.devAdminLogin) {
     console.warn('WARNING: email-only test sign-in is ON (NODE_ENV=development, DEV_ADMIN_LOGIN=true).');
     console.warn('Anyone who knows an admin email can sign in. Never run the live site this way.');

@@ -47,3 +47,11 @@
 .history ol { margin: 0.5rem 0 0; padding-left: 1.2rem; }
 
 .dialog.wide { width: min(720px, calc(100vw - 32px)); }
+
+/* "Edit requests": now vs requested, side by side. */
+.diff-table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.925rem; }
+.diff-table th, .diff-table td { text-align: left; vertical-align: top; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--color-border); white-space: pre-line; overflow-wrap: anywhere; }
+.diff-table thead th { color: var(--color-muted); font-weight: 600; }
+.diff-table .old-value { color: var(--color-muted); text-decoration: line-through; text-decoration-color: var(--color-danger-text); }
+.diff-table .new-value { background: var(--color-success-bg); color: var(--color-success-text); }
+.diff-table th[scope="row"] { width: 1%; white-space: nowrap; }

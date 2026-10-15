@@ -1,8 +1,8 @@
 {
-  "name": "clm-directory",
-  "version": "1.0.0",
+  "name": "catholic-directory",
+  "version": "3.0.0",
   "private": true,
-  "description": "Public business directory for a CLM chapter, with admin review, reverification and reporting.",
+  "description": "Catholic business, services and help-wanted directory with admin review, shelf life, and self-service editing by posters.",
   "type": "module",
   "main": "server/index.js",
   "scripts": {
@@ -17,6 +17,7 @@
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "google-auth-library": "^9.15.1",
-    "mysql2": "^3.12.0"
+    "mysql2": "^3.12.0",
+    "nodemailer": "^7.0.13"
   }
 }

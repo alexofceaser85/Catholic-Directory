@@ -1,7 +1,8 @@
 // The dashboard tabs. Each tab is one queue in the workflow.
 //   countKey    -> which number from GET /api/admin/summary goes in the tab badge
 //   url         -> where the tab's items come from
-//   grouped     -> items are { listing, reports } (Reports tab) instead of plain listings
+//   kind        -> what each item is: 'listing' (default), 'reports' ({ listing, reports })
+//                  or 'edit' ({ listing, edit })
 //   needsAction -> highlight the badge when the count is above zero
 
 export const TABS = [
@@ -15,25 +16,46 @@ export const TABS = [
     empty: 'No requests are waiting for review.',
   },
   {
+    id: 'edits',
+    label: 'Edit requests',
+    countKey: 'editRequests',
+    needsAction: true,
+    kind: 'edit',
+    url: '/api/admin/edits',
+    description: () =>
+      'Posters asked to change their live posts. The live version stays up until you approve. Check for personal names first.',
+    empty: 'No edit requests.',
+  },
+  {
     id: 'reverify',
     label: 'Needs reverification',
     countKey: 'needsReverification',
     needsAction: true,
     url: '/api/admin/listings/needs-reverification',
     description: (summary) =>
-      `Live listings not verified in ${summary.reverifyAfterDays}+ days. Contact the business through its public ` +
-      'email or phone. If the details are still right, mark it reverified (resets the counter to 0). Otherwise edit or remove it.',
-    empty: 'Every live listing has been verified recently.',
+      `Businesses not verified in ${summary.reverifyAfterDays}+ days. "Email poster" sends them a private link to ` +
+      'confirm, edit or remove it themselves. Or contact them and mark it reverified (resets the counter to 0).',
+    empty: 'Every live business has been verified recently.',
+  },
+  {
+    id: 'expired',
+    label: 'Expired',
+    countKey: 'expired',
+    url: '/api/admin/listings/expired',
+    description: () =>
+      'Services and help-wanted posts past their shelf life. They are already hidden from the directory. ' +
+      'Nothing to do unless the poster wants it back (Renew); remove them to tidy up.',
+    empty: 'No expired posts.',
   },
   {
     id: 'reports',
     label: 'Reports',
     countKey: 'openReports',
     needsAction: true,
-    grouped: true,
+    kind: 'reports',
     url: '/api/admin/reports',
     description: () =>
-      'Visitors flagged these listings as out of date. Contact the business, then reverify, edit, remove, or dismiss the report.',
+      'Visitors flagged these listings as out of date. Email the poster, then reverify, edit, remove, or dismiss the report.',
     empty: 'No open reports.',
   },
   {

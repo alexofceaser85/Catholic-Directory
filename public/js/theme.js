@@ -2,7 +2,7 @@
 // choice is applied before the page is drawn, which avoids a flash of the wrong colors.
 // With no saved choice, the page follows the device's setting (see styles.css).
 (function () {
-  const STORAGE_KEY = 'clm-theme';
+  const STORAGE_KEY = 'directory-theme';
   const root = document.documentElement;
   const deviceDark = window.matchMedia('(prefers-color-scheme: dark)');
 

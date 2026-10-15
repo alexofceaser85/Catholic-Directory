@@ -74,6 +74,14 @@ export class FieldValidator {
     return this;
   }
 
+  /** The value must be exactly one of `allowed` (dropdowns and radio buttons). */
+  oneOf(field, allowed, message) {
+    const text = toTrimmedString(this.body[field]);
+    if (!allowed.includes(text)) return this.fail(field, message);
+    this.values[field] = text;
+    return this;
+  }
+
   mustBeTrue(field, message) {
     if (this.body[field] !== true && this.body[field] !== 'on') return this.fail(field, message);
     return this;

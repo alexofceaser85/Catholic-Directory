@@ -13,8 +13,16 @@ const STATUS_BADGES = {
   removed: ['Removed', 'neutral'],
 };
 
+/** Businesses: days since verified. Other posts: when they expire (or that they have). */
+function freshnessBadge(listing) {
+  if (listing.status !== 'approved') return null;
+  if (listing.isExpired) return el('span', { class: 'badge danger' }, [`Expired ${formatDate(listing.expires)}`]);
+  if (listing.expires) return el('span', { class: 'badge neutral' }, [`Shows until ${formatDate(listing.expires)}`]);
+  return verificationBadge(listing);
+}
+
 function verificationBadge(listing) {
-  if (listing.status !== 'approved' || listing.daysSinceVerified === null) return null;
+  if (listing.daysSinceVerified === null) return null;
   const kind = listing.needsReverification ? 'danger' : 'neutral';
   const days = listing.daysSinceVerified;
   const text = days === 0 ? 'Verified today' : `Verified ${plural(days, 'day')} ago`;
@@ -24,10 +32,13 @@ function verificationBadge(listing) {
 function cardHeader(listing) {
   const [statusLabel, statusKind] = STATUS_BADGES[listing.status];
   return el('div', { class: 'admin-card-header' }, [
-    el('h2', { class: 'card-title' }, [listing.businessName]),
+    el('div', {}, [
+      el('p', { class: 'card-tags' }, [el('span', { class: 'badge neutral' }, [listing.postType]), listing.category]),
+      el('h2', { class: 'card-title' }, [listing.title]),
+    ]),
     el('div', { class: 'badges' }, [
       el('span', { class: `badge ${statusKind}` }, [statusLabel]),
-      verificationBadge(listing),
+      freshnessBadge(listing),
     ]),
   ]);
 }
@@ -63,7 +74,8 @@ function detailsList(listing) {
     ...detailRow('Description', listing.description),
     ...detailRow('Website', listing.website && externalLink(listing.website)),
     ...detailRow('Links', links),
-    ...detailRow('Last verified', listing.lastVerifiedAt && formatDate(listing.lastVerifiedAt)),
+    ...detailRow('Last verified', listing.lastVerified && formatDate(listing.lastVerified)),
+    ...detailRow('Expires', listing.expires && formatDate(listing.expires)),
   ]);
 }
 

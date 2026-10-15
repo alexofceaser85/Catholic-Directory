@@ -28,7 +28,7 @@ router.get('/listings', async (req, res) => {
   res.json(await directory.getPublicListings());
 });
 
-// "Add my business" request. Goes to the admin review queue.
+// "Add a listing" request. Goes to the admin review queue; the poster is emailed their private link.
 router.post('/listings', submissionLimit, async (req, res) => {
   if (!isLikelyBot(req.body)) {
     await directory.submitListing(validateSubmission(req.body));
