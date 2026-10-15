@@ -19,14 +19,16 @@
   <circle cx="32" cy="32" r="28.5" fill="none" stroke="#e3b955" stroke-width="1.2"/>
 
   <!-- ===== Hammer and sickle, crossed behind the foot of the cross =====
-       Flat gold silhouettes in the ring's color. The handles cross at about (33.5, 51.4). -->
+       Flat gold silhouettes in the ring's color. The handles cross at (32, 49), on the
+       cross's centre line, at 45 degrees; the sickle's handle is the hammer's mirrored. -->
   <g fill="#e3b955">
-    <!-- sickle: crescent blade on the right, point curled back in; handle runs down to the lower left -->
-    <path d="M48.4 42.6 C 53.6 41, 57.2 34.4, 54.6 29.4 C 53.2 26.7, 50.4 25.6, 47.3 26.4 C 50.2 27.3, 52.2 29.4, 52.6 32.2 C 53.1 36.2, 51 39.9, 48.2 41.2 Z"/>
-    <path d="M47.6 40.9 L 49.5 42.9 L 25.4 58 C 24.7 58.4, 23.8 58.2, 23.4 57.5 C 23 56.8, 23.2 55.9, 23.9 55.5 Z"/>
-    <!-- hammer: head on the left, handle runs down to the lower right -->
-    <path d="M19.6 39.2 L 40.9 55.5 C 41.4 55.9, 41.5 56.7, 41.1 57.2 C 40.7 57.7, 39.9 57.8, 39.4 57.4 L 18.4 40.8 Z"/>
-    <path d="M14.9 42.5 L 20.4 35.4 L 23.1 37.5 L 17.6 44.6 Z"/>
+    <!-- sickle: crescent blade on the right, point curled back in -->
+    <path transform="translate(40.2 41.3) scale(0.7) translate(-48.3 -41.9)"
+          d="M48.4 42.6 C 53.6 41, 57.2 34.4, 54.6 29.4 C 53.2 26.7, 50.4 25.6, 47.3 26.4 C 50.2 27.3, 52.2 29.4, 52.6 32.2 C 53.1 36.2, 51 39.9, 48.2 41.2 Z"/>
+    <path d="M39.16 40.56 L 40.44 41.84 L 29.14 53.14 C 28.79 53.49, 28.21 53.49, 27.86 53.14 C 27.51 52.79, 27.51 52.21, 27.86 51.86 Z"/>
+    <!-- hammer: head on the left -->
+    <path d="M24.84 40.56 L 36.14 51.86 C 36.49 52.21, 36.49 52.79, 36.14 53.14 C 35.79 53.49, 35.21 53.49, 34.86 53.14 L 23.56 41.84 Z"/>
+    <path d="M25.7 37.7 L 27.7 39.7 L 22.7 44.7 L 20.7 42.7 Z"/>
   </g>
 
   <!-- ===== Crucifix ===== -->
