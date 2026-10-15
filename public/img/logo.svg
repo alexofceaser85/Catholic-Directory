@@ -1,84 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Crucifix between a Roman hammer and sickle">
-  <!-- Logo and browser-tab icon: a gilded crucifix (faith) between a Roman claw hammer
-       (the trades) and a Roman sickle (the harvest), on the green and gold of Ordinary Time
-       vestments. The tools are drawn as gilded bronze to match the crucifix, which is a photo
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Crucifix over a crossed hammer and sickle">
+  <!-- Logo and browser-tab icon: a gilded crucifix (faith) over a crossed hammer (the trades)
+       and sickle (the harvest) in flat gold, on the green and gold of Ordinary Time
+       vestments. The crucifix is a photo
        embedded below (a browser won't load a separate image file from inside an SVG logo).
        How it was made and how to swap the photo: docs/logo.md. -->
   <defs>
-    <!-- Polished gilded bronze, matching the crucifix: bands of light and shadow across the metal -->
-    <linearGradient id="gold-across" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#6b4510"/>
-      <stop offset="0.22" stop-color="#d9a441"/>
-      <stop offset="0.42" stop-color="#fff1c2"/>
-      <stop offset="0.6" stop-color="#e9b955"/>
-      <stop offset="0.85" stop-color="#a06c1c"/>
-      <stop offset="1" stop-color="#5c3a0c"/>
-    </linearGradient>
-    <linearGradient id="gold-down" href="#gold-across" x1="0" y1="0" x2="0" y2="1"/>
-    <linearGradient id="gold-blade" gradientUnits="userSpaceOnUse" x1="46" y1="18" x2="57" y2="30">
-      <stop offset="0" stop-color="#fff1c2"/>
-      <stop offset="0.35" stop-color="#e9b955"/>
-      <stop offset="0.7" stop-color="#b07a24"/>
-      <stop offset="1" stop-color="#5c3a0c"/>
-    </linearGradient>
+
     <!-- One soft shadow for the crucifix and both tools, so they read as one cast piece -->
     <filter id="relief" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0.35" dy="0.6" stdDeviation="0.45" flood-color="#0b2414" flood-opacity="0.65"/>
     </filter>
 
-    <!-- Tool handle, drawn upright; placed twice below (the sickle's is the hammer's mirror image) -->
-    <g id="handle" stroke="#4a2e08" stroke-width="0.22" stroke-linejoin="round">
-      <path d="M16.9 34.6 L19.1 34.6 C 19.2 40.5, 19.4 45.5, 19.7 49.4 L 16.3 49.4 C 16.6 45.5, 16.8 40.5, 16.9 34.6 Z" fill="url(#gold-across)"/>
-      <!-- molded rings -->
-      <rect x="16.55" y="40.2" width="2.9" height="0.9" rx="0.4" fill="url(#gold-across)"/>
-      <rect x="16.3" y="45.4" width="3.4" height="0.9" rx="0.4" fill="url(#gold-across)"/>
-      <!-- knob at the end of the grip -->
-      <ellipse cx="18" cy="50.4" rx="2.1" ry="1.3" fill="url(#gold-across)"/>
-      <path d="M17.6 35.5 C 17.5 39, 17.4 44, 17.2 48.8" fill="none" stroke="#fff6d6" stroke-width="0.25" opacity="0.7"/>
-    </g>
+
+
   </defs>
 
   <circle cx="32" cy="32" r="31" fill="#1f6b3a"/>
   <circle cx="32" cy="32" r="28.5" fill="none" stroke="#e3b955" stroke-width="1.2"/>
 
-  <g filter="url(#relief)">
-    <!-- ===== Hammer: Roman claw hammer (malleus), leaning left ===== -->
-    <g transform="rotate(-25 18 42)" stroke="#4a2e08" stroke-width="0.22" stroke-linejoin="round">
-      <use href="#handle"/>
-      <!-- iron straps (langets) riveted down the handle -->
-      <path d="M16.4 33.4 H 19.6 L 19.4 37.6 L 18.9 37.9 H 17.1 L 16.6 37.6 Z" fill="url(#gold-across)"/>
-      <circle cx="18" cy="36.4" r="0.3" fill="#fff1c2"/>
-      <!-- square head with a flared striking face -->
-      <path d="M13 30.5 L 20.8 30.5 L 20.8 33.9 L 13 33.9 Z" fill="url(#gold-down)"/>
-      <path d="M10.6 29.6 C 11.5 29.9, 12.4 30.2, 13.1 30.4 L 13.1 34 C 12.4 34.2, 11.5 34.5, 10.6 34.8 Z" fill="url(#gold-down)"/>
-      <path d="M10.6 29.6 L 10.6 34.8" stroke="#fff1c2" stroke-width="0.3"/>
-      <!-- split claw curling down -->
-      <path d="M20.6 30.5 C 22.8 30.4, 24.8 31.4, 26 33.9 C 25.3 33.5, 24.5 33.3, 23.8 33.3 C 23.1 32.6, 22.1 32.1, 20.6 32.2 Z" fill="url(#gold-down)"/>
-      <path d="M21.4 31.3 C 23 31.4, 24.4 32.1, 25.4 33.4" fill="none" stroke="#4a2e08" stroke-width="0.22"/>
-      <!-- highlight along the top edge and the forging mark -->
-      <path d="M11.2 30 L 13.2 30.8 H 20.6" fill="none" stroke="#fff6d6" stroke-width="0.3" opacity="0.8"/>
-      <path d="M14.6 32.2 H 16 M14.6 32.8 H 16" stroke="#7a4f12" stroke-width="0.15"/>
-    </g>
-
-    <!-- ===== Sickle: Roman falx, the hammer's mirror image, leaning right ===== -->
-    <use href="#handle" transform="translate(64 0) scale(-1 1) rotate(-25 18 42)"/>
-    <g stroke="#4a2e08" stroke-width="0.22" stroke-linejoin="round">
-      <!-- gilded blade: sweeps out and up, then curls back with the point turned in -->
-      <path d="M48.4 34.6 C 53.6 33, 57.2 26.4, 54.6 21.4 C 53.2 18.7, 50.4 17.6, 47.3 18.4 C 50.2 19.3, 52.2 21.4, 52.6 24.2 C 53.1 28.2, 51 31.9, 48.2 33.2 Z"
-            fill="url(#gold-blade)"/>
-      <!-- serrated cutting edge on the inside of the curve -->
-      <path d="M48.6 32.7 C 51 31.5, 52.8 28.2, 52.4 24.6 C 52.1 22, 50.6 20.1, 48.4 19" fill="none"
-            stroke="#5c3a0c" stroke-width="0.35" stroke-dasharray="0.25 0.3"/>
-      <!-- engraved line along the spine, and a polished highlight -->
-      <path d="M49.6 33.2 C 53.4 31.4, 55.6 26.4, 53.8 22.2 C 52.9 20.4, 51.3 19.3, 49.6 18.9" fill="none" stroke="#7a4f12" stroke-width="0.18"/>
-      <path d="M50 33.8 C 54 31.6, 56.2 26.2, 54.3 21.9" fill="none" stroke="#fff6d6" stroke-width="0.3" opacity="0.75"/>
-      <!-- socket where the blade's tang enters the handle, with a rivet -->
-      <g transform="translate(64 0) scale(-1 1) rotate(-25 18 42)">
-        <path d="M16.3 33.2 H 19.7 L 19.5 36.6 L 19 37 H 17 L 16.5 36.6 Z" fill="url(#gold-across)"/>
-        <rect x="16.4" y="34.2" width="3.2" height="0.5" fill="#7a4f12" stroke="none"/>
-        <circle cx="18" cy="35.8" r="0.3" fill="#fff1c2"/>
-      </g>
-    </g>
+  <!-- ===== Hammer and sickle, crossed behind the foot of the cross =====
+       Flat gold silhouettes in the ring's color. The handles cross at about (33.5, 51.4). -->
+  <g fill="#e3b955">
+    <!-- sickle: crescent blade on the right, point curled back in; handle runs down to the lower left -->
+    <path d="M48.4 42.6 C 53.6 41, 57.2 34.4, 54.6 29.4 C 53.2 26.7, 50.4 25.6, 47.3 26.4 C 50.2 27.3, 52.2 29.4, 52.6 32.2 C 53.1 36.2, 51 39.9, 48.2 41.2 Z"/>
+    <path d="M47.6 40.9 L 49.5 42.9 L 25.4 58 C 24.7 58.4, 23.8 58.2, 23.4 57.5 C 23 56.8, 23.2 55.9, 23.9 55.5 Z"/>
+    <!-- hammer: head on the left, handle runs down to the lower right -->
+    <path d="M19.6 39.2 L 40.9 55.5 C 41.4 55.9, 41.5 56.7, 41.1 57.2 C 40.7 57.7, 39.9 57.8, 39.4 57.4 L 18.4 40.8 Z"/>
+    <path d="M14.9 42.5 L 20.4 35.4 L 23.1 37.5 L 17.6 44.6 Z"/>
   </g>
 
   <!-- ===== Crucifix ===== -->
