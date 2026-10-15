@@ -1,14 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Wheat">
-  <!-- A sprig of wheat: the directory's logo and browser-tab icon. -->
-  <circle cx="32" cy="32" r="31" fill="#4d6b3c"/>
-  <g fill="#f1cf86">
-    <path d="M31 50 C31 40 31 26 32 14 C33 26 33 40 33 50 Z"/>
-    <ellipse cx="32" cy="13" rx="3" ry="5.5"/>
-    <ellipse cx="27" cy="20" rx="2.8" ry="5.5" transform="rotate(-35 27 20)"/>
-    <ellipse cx="37" cy="20" rx="2.8" ry="5.5" transform="rotate(35 37 20)"/>
-    <ellipse cx="27" cy="28" rx="2.8" ry="5.5" transform="rotate(-35 27 28)"/>
-    <ellipse cx="37" cy="28" rx="2.8" ry="5.5" transform="rotate(35 37 28)"/>
-    <ellipse cx="27" cy="36" rx="2.8" ry="5.5" transform="rotate(-35 27 36)"/>
-    <ellipse cx="37" cy="36" rx="2.8" ry="5.5" transform="rotate(35 37 36)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Crucifix between a hammer and a sickle">
+  <!-- Logo and browser-tab icon: a crucifix (faith) between a hammer (the trades) and a
+       sickle (the harvest), in the green and gold of Ordinary Time vestments. -->
+  <circle cx="32" cy="32" r="31" fill="#1f6b3a"/>
+  <circle cx="32" cy="32" r="28.5" fill="none" stroke="#e3b955" stroke-width="1.2"/>
+
+  <!-- Hammer, leaning left -->
+  <g transform="rotate(-25 18 42)" fill="#e3b955">
+    <rect x="16.6" y="33.5" width="2.8" height="17.5" rx="1.2"/>
+    <path d="M11.5 30 h11 a1.4 1.4 0 0 1 1.4 1.4 v2.4 a1.4 1.4 0 0 1 -1.4 1.4 h-11 l-1.6 -2.6 z"/>
+  </g>
+
+  <!-- Sickle, leaning right: a crescent blade on a short handle -->
+  <g fill="#e3b955">
+    <path d="M43 41 C 56.5 41, 59 22.5, 45.5 17 C 53.5 23.5, 52 37, 43 37.6 Z"/>
+    <path d="M43 39.3 L 47.4 51" stroke="#e3b955" stroke-width="3.2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Crucifix -->
+  <g fill="#e3b955">
+    <rect x="29.6" y="9" width="4.8" height="46" rx="0.8"/>
+    <rect x="20.5" y="17.5" width="23" height="4.6" rx="0.8"/>
+  </g>
+  <g fill="#7a4f12">
+    <circle cx="32" cy="15.2" r="2.2"/>
+    <path d="M22.5 19 L30 20.6 L34 20.6 L41.5 19 L41.5 20.8 L34.2 23 L33.5 31 L34 34 L33 34.6 L32.7 44 L31.3 44 L31 34.6 L30 34 L30.5 31 L29.8 23 L22.5 20.8 Z"/>
   </g>
 </svg>

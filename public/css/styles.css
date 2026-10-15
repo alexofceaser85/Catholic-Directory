@@ -6,19 +6,19 @@
 :root {
   color-scheme: light dark;
 
-  /* Warm, earthy palette: linen, sage green, wheat gold, terracotta. */
+  /* Warm palette: linen, the green and gold of Ordinary Time vestments, terracotta. */
   --color-bg:            light-dark(#f8f4ea, #1b1a16);
   --color-surface:       light-dark(#fffdf7, #25231e);
   --color-surface-alt:   light-dark(#f1ead9, #2e2b24);
   --color-text:          light-dark(#2e2a22, #ece6d6);
   --color-muted:         light-dark(#6b6354, #b0a792);
   --color-border:        light-dark(#e3dac6, #3a362d);
-  --color-primary:       light-dark(#4d6b3c, #a3c48a);
-  --color-primary-hover: light-dark(#3d5630, #b8d4a2);
-  --color-primary-text:  light-dark(#ffffff, #1b2414);
+  --color-primary:       light-dark(#1f6b3a, #7cc49a);
+  --color-primary-hover: light-dark(#17552e, #98d4b0);
+  --color-primary-text:  light-dark(#ffffff, #0f2417);
   --color-accent:        light-dark(#b9852f, #e0b465);
-  --color-success-bg:    light-dark(#e5efdc, #26331d);
-  --color-success-text:  light-dark(#3d5a2a, #b5d69c);
+  --color-success-bg:    light-dark(#e2f0e6, #1b3324);
+  --color-success-text:  light-dark(#1f6b3a, #9fd6b2);
   --color-warning-bg:    light-dark(#fbefd2, #3a2f15);
   --color-warning-text:  light-dark(#7a5410, #f0cd85);
   --color-danger-bg:     light-dark(#f8e1da, #3d211a);
