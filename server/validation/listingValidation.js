@@ -3,12 +3,13 @@ import { FieldValidator } from './FieldValidator.js';
 import { HttpError } from '../lib/httpError.js';
 import { isWellFormedToken } from '../lib/manageToken.js';
 import { CATEGORIES, POST_TYPES, findPostType } from '../../public/js/post-options.js';
+import { MAX_PHOTOS, MAX_UPLOAD_BYTES } from '../../public/js/photo-rules.js';
 
 const MAX_LINKS = 10;
 const POST_TYPE_LABELS = POST_TYPES.map((type) => type.label);
 
 /** The fields shown on the public directory. Posters and admins can both edit these. */
-function checkPublicFields(validator) {
+function checkPublicFields(validator, { isNewPost = false } = {}) {
   return validator
     .requiredText('title', 'Title', 200)
     .oneOf('category', CATEGORIES, 'Please choose a category.')
@@ -17,7 +18,9 @@ function checkPublicFields(validator) {
     .text('address', 'Address', 500)
     .requiredText('description', 'Description', 2000)
     .url('website', 'Website')
-    .urlList('links', 'Links', MAX_LINKS);
+    .urlList('links', 'Links', MAX_LINKS)
+    // A new post has no saved photos yet, so it can only upload.
+    .photoList('photos', { maxCount: MAX_PHOTOS, maxBytes: MAX_UPLOAD_BYTES, allowKeep: !isNewPost });
 }
 
 /** The forms send the post type's label ("Help wanted"); the database stores its id ("help_wanted"). */
@@ -32,7 +35,7 @@ export function validateSubmission(body) {
     .requiredText('submitterFirstName', 'First name', 100)
     .requiredText('submitterLastName', 'Last name', 100)
     .mustBeTrue('consent', 'Please confirm these details may be shown publicly.');
-  return withPostTypeId(checkPublicFields(validator).result());
+  return withPostTypeId(checkPublicFields(validator, { isNewPost: true }).result());
 }
 
 /** A poster editing their own post. They can't change the post type or their name. */

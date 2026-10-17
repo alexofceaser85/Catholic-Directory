@@ -5,9 +5,10 @@ import { findNameMatches } from '../lib/nameCheck.js';
 import { isReverifiedType } from '../lib/shelfLife.js';
 import { findPostTypeById } from '../../public/js/post-options.js';
 
-function splitLinks(links) {
-  if (Array.isArray(links)) return links;
-  return links ? links.split('\n').filter(Boolean) : [];
+/** Links and photo keys are stored as newline-separated text. */
+function splitLines(value) {
+  if (Array.isArray(value)) return value;
+  return value ? value.split('\n').filter(Boolean) : [];
 }
 
 /** A DATETIME as "2026-10-14" (UTC), or '' when empty. */
@@ -26,7 +27,8 @@ export function toPublicListing(row) {
     address: row.address,
     description: row.description,
     website: row.website,
-    links: splitLinks(row.links),
+    links: splitLines(row.links),
+    photos: splitLines(row.photos),
     lastVerified: toIsoDate(row.last_verified_at),
     expires: row.expires_on || '',
   };
@@ -69,7 +71,7 @@ export function toPosterListing(row, pendingEdit) {
 /** Field-by-field comparison for the admin "Edit requests" tab. */
 export function toEditRequest(editRow, listingRow) {
   const listing = toAdminListing(listingRow);
-  const changes = { ...editRow.changes, links: splitLinks(editRow.changes.links) };
+  const changes = { ...editRow.changes, links: splitLines(editRow.changes.links) };
   return {
     listing,
     edit: {

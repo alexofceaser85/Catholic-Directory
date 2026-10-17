@@ -4,6 +4,7 @@ import * as reports from '../repositories/reportRepository.js';
 import { toPublicListing } from '../presenters/listingPresenter.js';
 import { createManageToken } from '../lib/manageToken.js';
 import { sendWelcomeEmail } from './posterEmails.js';
+import { preparePhotos, savePhotos } from './photoService.js';
 import { notFound } from '../lib/httpError.js';
 
 export async function getPublicListings() {
@@ -16,8 +17,11 @@ export async function getPublicListings() {
  * The poster gets an email with their private link for editing, renewing or removing it.
  */
 export async function submitListing(fields) {
+  const prepared = await preparePhotos(fields);
   const { token, hash } = createManageToken();
-  await listings.insert({ ...fields, manageTokenHash: hash });
+  const { photos, ...details } = prepared;
+  const id = await listings.insert({ ...details, manageTokenHash: hash });
+  if (photos?.length) await listings.update(id, await savePhotos(id, { photos }));
   await sendWelcomeEmail(fields, token);
 }
 

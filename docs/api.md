@@ -27,13 +27,15 @@ Errors always look like:
   "description": "Picking, washing and packing vegetables…",
   "website": null,
   "links": [],
+  "photos": ["3f9c…e01a"],
   "lastVerified": "2026-10-12",
   "expires": "2026-11-11"
 }
 ```
 
 `postType` is the label from `public/js/post-options.js`; forms send the label too, and
-the server stores the type's id. `expires` is `""` for businesses.
+the server stores the type's id. `expires` is `""` for businesses. `photos` are photo keys in
+display order; each one is served at `GET /photos/<key>.webp`.
 
 **Poster listing** (`/api/manage/post`) = public listing plus:
 
@@ -67,8 +69,25 @@ the server stores the type's id. `expires` is `""` for businesses.
 | Method & path | Body | Result |
 |---|---|---|
 | `GET /api/listings` | none | Live listings (approved and not expired), A→Z |
-| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `description`, `website`, `links` (array or newline text), `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
+| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
 | `POST /api/listings/:id/reports` | `reason` | `201 { ok: true }`. Only for live listings, otherwise 404. 10 per IP per hour. |
+
+### Photos
+
+Forms that save a post (`POST /api/listings`, `POST /api/manage/edit`, `PUT /api/admin/listings/:id`)
+may send `photos`: the full, ordered list the post should have, at most `MAX_PHOTOS` (4).
+Each entry is either `{ "keep": "<key>" }` for a photo the post already has, or
+`{ "upload": "<base64 JPEG/PNG/WebP>" }` for a new one (at most 2.5 MB each). New posts can only
+upload. Leaving `photos` out keeps the post's photos as they are. The server re-encodes every
+upload as WebP (max 1600px, all metadata including GPS removed); anything that isn't a real
+photo gets a `400` with `fields.photos`. These three routes accept bodies up to about 14 MB;
+every other route is limited to 20 KB.
+
+On a live post, a poster's photo change waits in their pending edit like any other field.
+Photos no longer used by the post or its pending edit are deleted.
+
+`GET /photos/<key>.webp` serves a stored photo (`404` if unknown). Keys are random, so photos
+of posts that aren't public yet can only be found by the poster and admins.
 
 Both POSTs accept a hidden `companyFax` honeypot field. If it's filled in, the server
 replies with success but saves nothing.
@@ -82,7 +101,7 @@ An unknown, malformed or denied post's token gets `404` with "This link doesn't 
 | Method & path | Body | Result |
 |---|---|---|
 | `POST /api/manage/post` | `token` | Poster listing |
-| `POST /api/manage/edit` | `token` + `title`, `category`, `email`, `phone`, `address`, `description`, `website`, `links` | `{ needsReview }`. Pending posts change right away (`false`). Live posts get a pending edit for an admin (`true`); a newer edit replaces an older one. Removed posts: `409`. |
+| `POST /api/manage/edit` | `token` + `title`, `category`, `email`, `phone`, `address`, `description`, `website`, `links`, `photos` | `{ needsReview }`. Pending posts change right away (`false`). Live posts get a pending edit for an admin (`true`); a newer edit replaces an older one. Removed posts: `409`. |
 | `POST /api/manage/renew` | `token` | Approved only. Restarts the shelf life: businesses' "last verified" becomes today; other posts show for another full period. Otherwise `409`. |
 | `POST /api/manage/remove` | `token` | Pending or approved → removed. Closes open reports and drops a pending edit. |
 | `POST /api/manage/send-links` | `email` | Always `{ ok: true }`. Emails a fresh link for each pending or live post with that contact email; older links stop working. 5 per IP per hour. Accepts the `companyFax` honeypot. |
@@ -110,7 +129,7 @@ Posters can't change the post type, their name, the status or admin notes.
 | `GET /api/admin/listings/:id/history` | none | `[{ actor, action, detail, createdAt }]`, newest first. `actor` is an admin email or `"poster"`. |
 | `GET /api/admin/reports` | none | `[{ listing, reports: [{ id, reason, createdAt }] }]`, open reports grouped by listing |
 | `GET /api/admin/edits` | none | `[{ listing, edit: { id, submittedAt, changes, changedFields } }]`, pending poster edits |
-| `PUT /api/admin/listings/:id` | Public fields + `postType` (label) + `adminNotes` | Saves edits (submitter names can't be changed) |
+| `PUT /api/admin/listings/:id` | Public fields (including `photos`) + `postType` (label) + `adminNotes` | Saves edits (submitter names can't be changed) |
 | `POST /api/admin/listings/:id/approve` | `{ note? }` | pending/denied/removed → approved. Starts the shelf life. |
 | `POST /api/admin/listings/:id/deny` | `{ note? }` | pending → denied |
 | `POST /api/admin/listings/:id/remove` | `{ note? }` | pending/approved → removed. Closes open reports and drops a pending edit. |

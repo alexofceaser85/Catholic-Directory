@@ -52,8 +52,9 @@ directory filters by type, category and search text.
 | Database | MySQL 8 | Any MySQL 8 / MariaDB 10.6+ host works |
 | Admin sign-in | Google Identity Services | No passwords to store or reset |
 | Email | Any SMTP provider, via `nodemailer` | Sends posters their private links |
+| Photos | [`sharp`](https://sharp.pixelplumbing.com/) | Re-encodes uploads and strips their GPS location; ships ready-built, nothing to compile |
 
-Five npm packages: `express`, `mysql2`, `google-auth-library`, `dotenv`, `nodemailer`.
+Six npm packages: `express`, `mysql2`, `google-auth-library`, `dotenv`, `nodemailer`, `sharp`.
 
 ## Quick start (local, with Docker)
 
@@ -148,23 +149,26 @@ server/                     Node.js back end
 │   ├── posterService.js      What a poster can do with their link
 │   ├── posterEmails.js       The emails posters get (welcome, lost link, check-in)
 │   ├── moderationService.js  Approve / deny / remove / reverify / edits / check-ins
+│   ├── photoService.js       Saving photos and deleting ones nothing uses
 │   └── dashboardService.js   Read-only data for the admin tabs
 ├── repositories/           All SQL, one file per table
 ├── presenters/             Database rows → JSON (decides what's public, poster-only, admin-only)
 ├── validation/             Form rules and the FieldValidator helper
 ├── auth/                   Admin session cookie + Google token check
 ├── middleware/             requireAdmin, rate limits, security headers, errors
-├── lib/                    Small helpers (name check, manage tokens, mailer, shelf life…)
+├── lib/                    Small helpers (name check, manage tokens, mailer, shelf life, photos…)
 └── db/pool.js              MySQL connection pool
 public/                     Everything the browser loads (served as-is)
 ├── index.html              Public directory (filters by type and category)
 ├── submit.html             "Add a listing" form
 ├── manage.html             "Manage your post" (from the emailed link)
-├── css/styles.css          Shared styles (colors are variables at the top)
+├── css/styles.css          Shared styles (colors and the background photo are variables at the top)
+├── img/background.jpg      Page background photo (add your own; a green gradient shows until then)
 ├── js/                     Page scripts + shared helpers; post-options.js has the lists
 └── admin/                  Admin dashboard (index.html, admin.css, js/)
 database/
 ├── schema.sql              Creates the tables
+├── migrations/             Changes for databases created before a feature existed
 └── sample-data.sql         Fake data for local testing only
 tests/                      `npm test`
 docs/                       Longer guides (below)

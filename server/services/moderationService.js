@@ -16,6 +16,7 @@ import { toAdminListing, changedFields } from '../presenters/listingPresenter.js
 import { createManageToken } from '../lib/manageToken.js';
 import { shelfLifeDays, isReverifiedType } from '../lib/shelfLife.js';
 import { sendCheckInEmail } from './posterEmails.js';
+import { preparePhotos, savePhotos, pruneUnusedPhotos } from './photoService.js';
 import { HttpError, notFound } from '../lib/httpError.js';
 
 // Which statuses each action may start from.
@@ -61,6 +62,7 @@ export async function remove(id, adminEmail, note) {
   await loadListingFor('remove', id);
   await listings.updateStatus(id, 'removed');
   await edits.discardPendingForListing(id);
+  await pruneUnusedPhotos(id);
   await reports.resolveAllForListing(id, 'removed', adminEmail);
   await history.insert(id, adminEmail, 'removed', note);
 }
@@ -86,15 +88,17 @@ export async function sendCheckIn(id, adminEmail) {
 }
 
 /** Saves admin edits. The history entry lists which fields actually changed. */
-export async function edit(id, adminEmail, changes) {
+export async function edit(id, adminEmail, requested) {
   const row = await listings.findById(id);
   if (!row) throw notFound();
+  const changes = await savePhotos(id, await preparePhotos(requested));
 
   const current = { ...toAdminListing(row), postType: row.post_type };
   const changed = changedFields(current, changes);
   if (changed.length === 0) return;
 
   await listings.update(id, changes);
+  await pruneUnusedPhotos(id);
   await history.insert(id, adminEmail, 'edited', `Changed: ${changed.join(', ')}`);
 }
 
@@ -109,6 +113,7 @@ export async function approveEdit(editId, adminEmail, note) {
   const edit = await loadPendingEdit(editId);
   await listings.update(edit.listing_id, edit.changes);
   await edits.markReviewed(editId, 'approved', adminEmail);
+  await pruneUnusedPhotos(edit.listing_id);
   await history.insert(edit.listing_id, adminEmail, 'edit_approved', note);
 }
 
@@ -116,6 +121,7 @@ export async function approveEdit(editId, adminEmail, note) {
 export async function rejectEdit(editId, adminEmail, note) {
   const edit = await loadPendingEdit(editId);
   await edits.markReviewed(editId, 'rejected', adminEmail);
+  await pruneUnusedPhotos(edit.listing_id); // drops photos that were only in the rejected edit
   await history.insert(edit.listing_id, adminEmail, 'edit_rejected', note);
 }
 

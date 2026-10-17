@@ -2,6 +2,7 @@
 // Each method checks one field, stores a cleaned value, and records a friendly
 // error message if the value is invalid. Call `result()` at the end.
 import { HttpError } from '../lib/httpError.js';
+import { isPhotoKey } from '../lib/photos.js';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[0-9+().\-\s]*(ext\.?\s*\d+)?$/i;
@@ -71,6 +72,32 @@ export class FieldValidator {
     const invalid = lines.find((line) => !isWebUrl(line) || line.length > 500);
     if (invalid) return this.fail(field, `${label}: "${invalid.slice(0, 60)}" is not a full link starting with https://`);
     this.values[field] = lines;
+    return this;
+  }
+
+  /**
+   * Photos, in order: { keep: key } for one already saved, { upload: base64 } for a new one.
+   * Stores [{ keep }, { upload: Buffer }]. Left out entirely when the form sent no `photos`,
+   * so the post's photos stay as they are.
+   */
+  photoList(field, { maxCount, maxBytes, allowKeep }) {
+    const raw = this.body[field];
+    if (raw === undefined) return this;
+    if (!Array.isArray(raw)) return this.fail(field, 'Photos could not be read. Please try again.');
+    if (raw.length > maxCount) return this.fail(field, `Please add ${maxCount} photos or fewer.`);
+
+    const photos = [];
+    for (const entry of raw) {
+      if (allowKeep && isPhotoKey(entry?.keep)) {
+        photos.push({ keep: entry.keep });
+        continue;
+      }
+      const upload = typeof entry?.upload === 'string' ? Buffer.from(entry.upload, 'base64') : null;
+      if (!upload || upload.length === 0) return this.fail(field, 'Photos could not be read. Please try again.');
+      if (upload.length > maxBytes) return this.fail(field, 'One of the photos is too large. Please choose a smaller one.');
+      photos.push({ upload });
+    }
+    this.values[field] = photos;
     return this;
   }
 

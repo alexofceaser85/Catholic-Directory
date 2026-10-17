@@ -1,39 +1,55 @@
 /* Shared styles for every page.
-   All colors live in the variables below, so the look can be changed in one place.
-   Each color is written as light-dark(<light mode>, <dark mode>). The browser picks
-   the side that matches the device setting, or the header toggle (js/theme.js). */
+   The look: a full-page background photo with frosted green "glass" panels on top
+   (header, listings, forms), in the spirit of macOS. All colors live in the variables
+   below, so the look can be changed in one place.
+
+   To change the background, replace public/img/background.jpg (or point
+   --background-image somewhere else). Until that file exists, the green gradient shows.
+   If text gets hard to read over a busy photo, raise --glass-opacity. */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
-  /* Warm palette: linen, the green and gold of Ordinary Time vestments, terracotta. */
-  --color-bg:            light-dark(#f8f4ea, #1b1a16);
-  --color-surface:       light-dark(#fffdf7, #25231e);
-  --color-surface-alt:   light-dark(#f1ead9, #2e2b24);
-  --color-text:          light-dark(#2e2a22, #ece6d6);
-  --color-muted:         light-dark(#6b6354, #b0a792);
-  --color-border:        light-dark(#e3dac6, #3a362d);
-  --color-primary:       light-dark(#1f6b3a, #7cc49a);
-  --color-primary-hover: light-dark(#17552e, #98d4b0);
-  --color-primary-text:  light-dark(#ffffff, #0f2417);
-  --color-accent:        light-dark(#b9852f, #e0b465);
-  --color-success-bg:    light-dark(#e2f0e6, #1b3324);
-  --color-success-text:  light-dark(#1f6b3a, #9fd6b2);
-  --color-warning-bg:    light-dark(#fbefd2, #3a2f15);
-  --color-warning-text:  light-dark(#7a5410, #f0cd85);
-  --color-danger-bg:     light-dark(#f8e1da, #3d211a);
-  --color-danger-text:   light-dark(#a3402a, #f2a893);
+  --background-image: url("../img/background.jpg");
+  --background-fallback: linear-gradient(160deg, #6f8f5e 0%, #3f6b45 45%, #24402c 100%);
 
-  --radius: 14px;
+  /* The glass: Ordinary Time green, see-through, with the photo blurred behind it. */
+  --glass-opacity: 0.62;
+  --glass:              rgb(24 84 46 / var(--glass-opacity));
+  --glass-strong:       rgb(20 70 38 / 0.86);   /* header, dialogs: always readable */
+  --glass-blur:         blur(22px) saturate(170%);
+  --glass-edge:         rgb(255 255 255 / 0.22); /* thin light rim, like macOS windows */
+
+  /* Text and lines on the glass. */
+  --color-text:          #ffffff;
+  --color-muted:         rgb(255 255 255 / 0.78);
+  --color-border:        rgb(255 255 255 / 0.2);
+  --color-surface:       var(--glass);
+  --color-surface-alt:   rgb(255 255 255 / 0.12);
+  --color-primary:       #f3d27a;  /* gold: links and the main button */
+  --color-primary-hover: #fae3a4;
+  --color-primary-text:  #2b220c;
+  --color-accent:        #e8b94f;
+
+  /* Form fields stay near-white so typing is easy to read. */
+  --color-field-bg:      rgb(255 255 255 / 0.92);
+  --color-field-text:    #23261f;
+  --color-field-border:  rgb(255 255 255 / 0.5);
+
+  /* Solid little badges and messages, readable on any background. */
+  --color-success-bg:    #dff0e3;
+  --color-success-text:  #1d5e34;
+  --color-warning-bg:    #fbefd2;
+  --color-warning-text:  #6e4b0c;
+  --color-danger-bg:     #f9e0d8;
+  --color-danger-text:   #9b3a25;
+
+  --radius: 16px;
   --radius-small: 10px;
-  --shadow: 0 1px 2px rgb(60 45 20 / 0.06), 0 4px 14px rgb(60 45 20 / 0.06);
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --shadow: 0 1px 1px rgb(0 0 0 / 0.08), 0 10px 30px rgb(0 0 0 / 0.22);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
   --font-heading: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
 }
-
-/* The header toggle saves a choice that overrides the device setting. */
-:root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"] { color-scheme: dark; }
 
 /* ---- Base ---------------------------------------------------------------- */
 
@@ -44,10 +60,24 @@
 
 body {
   margin: 0;
-  background: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #2f5537;
   color: var(--color-text);
   font-family: var(--font);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+main { flex: 1; }
+
+/* The photo sits on its own fixed layer (background-attachment: fixed is unreliable on phones). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--background-image) center / cover no-repeat, var(--background-fallback);
 }
 
 a { color: var(--color-primary); text-underline-offset: 2px; }
@@ -58,7 +88,7 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 :focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
 
 .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 16px; }
-.container.narrow { max-width: 720px; }
+.container.narrow { max-width: 820px; }
 .muted { color: var(--color-muted); }
 .small { font-size: 0.875rem; }
 
@@ -70,10 +100,28 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 /* Hidden spam trap: people never see it, bots fill it in. */
 .honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 
+/* ---- Glass panels -------------------------------------------------------- */
+/* Everything that sits on the photo gets the same frosted green finish. */
+
+.glass, .card, .hero, .filter-panel, .status, .site-footer, .glass-note, .tab {
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow);
+}
+
 /* ---- Header & footer ----------------------------------------------------- */
 
-.site-header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); }
-.header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 72px; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; }
+.site-header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-edge);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 0.18);
+}
+.header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; }
 .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .brand { display: flex; align-items: center; gap: 10px; color: var(--color-text); text-decoration: none; }
@@ -82,87 +130,97 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 .brand-name { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 1.15rem; line-height: 1.2; }
 .brand-sub { display: block; color: var(--color-muted); font-size: 0.8rem; }
 
-.theme-toggle {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 40px; height: 40px; padding: 0; border-radius: 999px;
-  border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); cursor: pointer;
+.site-footer {
+  margin: 3rem auto 1.5rem; width: calc(100% - 32px); max-width: 788px;
+  padding: 1rem 0; border-radius: var(--radius); color: var(--color-muted); font-size: 0.875rem; text-align: center;
 }
-.theme-toggle:hover { background: var(--color-surface-alt); }
-.theme-toggle svg { width: 20px; height: 20px; }
-/* Show the moon in light mode (click for dark) and the sun in dark mode. */
-.theme-toggle .icon-sun { display: none; }
-.theme-toggle[aria-pressed="true"] .icon-sun { display: block; }
-.theme-toggle[aria-pressed="true"] .icon-moon { display: none; }
-
-.site-footer { margin-top: 3rem; padding: 1.5rem 0; border-top: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-muted); font-size: 0.875rem; }
+.site-footer p { margin: 0; }
 
 /* ---- Welcome banner ------------------------------------------------------ */
 
-.hero {
-  margin-top: 1.5rem; padding: 1.75rem 1.5rem; border-radius: var(--radius);
-  background: var(--color-surface-alt); border: 1px solid var(--color-border);
-  border-top: 4px solid var(--color-accent);
-}
+.hero { margin-top: 1.5rem; padding: 1.75rem 1.5rem; border-radius: var(--radius); }
 .hero h1 { margin-top: 0; }
 .hero p { margin: 0.25rem 0 0; max-width: 62ch; }
-.hero + .card, .hero + .toolbar { margin-top: 1.25rem; }
+.hero + .card, .hero + .filter-panel { margin-top: 1rem; }
 
 /* ---- Buttons ------------------------------------------------------------- */
 
 .button {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 0.6rem 1.2rem; border: 1px solid var(--color-primary); border-radius: 999px;
+  padding: 0.55rem 1.15rem; border: 1px solid var(--color-primary); border-radius: 999px;
   background: var(--color-primary); color: var(--color-primary-text);
   font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
   transition: background-color 0.15s ease;
 }
 .button:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); color: var(--color-primary-text); }
 .button:disabled { opacity: 0.6; cursor: not-allowed; }
-.button.secondary { background: transparent; color: var(--color-primary); }
-.button.secondary:hover { background: var(--color-surface-alt); color: var(--color-primary-hover); }
-.button.danger { background: var(--color-danger-text); border-color: var(--color-danger-text); color: var(--color-surface); }
+.button.secondary { background: rgb(255 255 255 / 0.12); border-color: rgb(255 255 255 / 0.35); color: var(--color-text); box-shadow: none; }
+.button.secondary:hover { background: rgb(255 255 255 / 0.22); color: var(--color-text); }
+.button.danger { background: var(--color-danger-text); border-color: var(--color-danger-text); color: #fff; }
 .button.small { padding: 0.3rem 0.85rem; font-size: 0.875rem; }
 
 .link-button { background: none; border: none; padding: 0; color: var(--color-primary); font: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .link-button.subtle { color: var(--color-muted); }
 
-/* ---- Cards & directory grid ---------------------------------------------- */
+/* ---- Cards & the directory list ------------------------------------------ */
 
-.card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.35rem; }
-.card-title { margin: 0 0 0.5rem; font-size: 1.25rem; }
+.card { border-radius: var(--radius); padding: 1.35rem; }
+.card-title { margin: 0 0 0.4rem; font-size: 1.25rem; }
 
-.toolbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 1.5rem 0 1rem; }
-.toolbar input[type="search"] { flex: 1 1 280px; border-radius: 999px; padding-left: 1.1rem; }
-.toolbar .category-filter { flex: 0 1 230px; width: auto; border-radius: 999px; }
-.toolbar p { margin: 0; }
+.filter-panel { margin-top: 1rem; padding: 1rem 1.1rem; border-radius: var(--radius); }
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 0.85rem; }
+.toolbar input[type="search"] { flex: 1 1 260px; border-radius: 999px; padding-left: 1.1rem; }
+.toolbar .category-filter { flex: 0 1 220px; width: auto; border-radius: 999px; }
+.toolbar p { margin: 0; font-size: 0.9rem; }
 
-.listing-grid { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-.listing-card { display: flex; flex-direction: column; border-top: 4px solid var(--color-primary); }
-.description { margin: 0 0 0.85rem; white-space: pre-line; }
-.contact { margin-bottom: 0.5rem; padding: 0.6rem 0.8rem; border-radius: var(--radius-small); background: var(--color-surface-alt); }
-.contact-line { display: grid; grid-template-columns: 4.5rem 1fr; align-items: baseline; margin: 0.15rem 0; overflow-wrap: anywhere; }
-.contact-label { color: var(--color-muted); font-size: 0.875rem; }
-.link-list { margin: 0.5rem 0 0.75rem; padding-left: 1.1rem; overflow-wrap: anywhere; }
-.card-footer { margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-.verified { color: var(--color-success-text); font-size: 0.875rem; }
+/* One listing per row, scrolling down the page. */
+.listing-list { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 14px; }
 
-/* Each post type gets its own top stripe and badge color. */
-.listing-card.type-offering-services { border-top-color: var(--color-accent); }
-.listing-card.type-help-wanted { border-top-color: var(--color-danger-text); }
-.card-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 0.4rem; font-size: 0.85rem; }
+/* Inside a row: details on the left, contact box on the right (stacked on phones). */
+.listing-card { display: grid; grid-template-columns: 1fr; gap: 0.75rem 1.5rem; }
+@media (min-width: 680px) {
+  .listing-card { grid-template-columns: minmax(0, 1fr) 17rem; }
+  .listing-card .card-footer { grid-column: 1 / -1; }
+}
+.listing-main { min-width: 0; }
+
+.description { margin: 0; white-space: pre-line; }
+/* Collapsed: show the first three lines. */
+.description.is-collapsed { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+.description-toggle {
+  margin-top: 0.3rem; padding: 0; border: none; background: none; cursor: pointer;
+  color: var(--color-primary); font: inherit; font-size: 0.875rem; font-weight: 600;
+}
+.description-toggle::after { content: " ▾"; }
+.description-toggle[aria-expanded="true"]::after { content: " ▴"; }
+.description-toggle:hover { color: var(--color-primary-hover); }
+
+.contact { align-self: start; padding: 0.6rem 0.8rem; border-radius: var(--radius-small); background: var(--color-surface-alt); border: 1px solid var(--color-border); font-size: 0.925rem; }
+.contact-line { display: grid; grid-template-columns: 4.2rem 1fr; align-items: baseline; margin: 0.15rem 0; overflow-wrap: anywhere; }
+.contact-label { color: var(--color-muted); font-size: 0.8rem; }
+.link-list { margin: 0.6rem 0 0; padding-left: 1.1rem; overflow-wrap: anywhere; font-size: 0.925rem; }
+.card-footer { padding-top: 0.65rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.verified { color: #bfe8c9; font-size: 0.875rem; }
+
+/* Each post type gets its own color: a stripe down the left edge and a badge. */
+.listing-card { box-shadow: inset 4px 0 0 #9fd6b2, var(--shadow); }
+.listing-card.type-offering-services { box-shadow: inset 4px 0 0 var(--color-accent), var(--shadow); }
+.listing-card.type-help-wanted { box-shadow: inset 4px 0 0 #f0a58f, var(--shadow); }
+.card-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 0.35rem; font-size: 0.85rem; }
 .card-tags .category { color: var(--color-muted); }
 .type-badge.type-business { background: var(--color-success-bg); color: var(--color-success-text); }
 .type-badge.type-offering-services { background: var(--color-warning-bg); color: var(--color-warning-text); }
 .type-badge.type-help-wanted { background: var(--color-danger-bg); color: var(--color-danger-text); }
 
-/* Post type filter buttons above the list. */
-.chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.25rem; }
+/* Post type filter: a macOS-style segmented row. */
+.chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
 .chip {
-  padding: 0.4rem 1rem; border-radius: 999px; border: 1px solid var(--color-border);
-  background: var(--color-surface); color: var(--color-text); font: inherit; font-weight: 600; cursor: pointer;
+  padding: 0.35rem 0.95rem; border-radius: 999px; border: 1px solid var(--color-border);
+  background: var(--color-surface-alt); color: var(--color-text); font: inherit; font-size: 0.925rem; font-weight: 600; cursor: pointer;
 }
-.chip:hover { background: var(--color-surface-alt); }
-.chip[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-primary-text); }
+.chip:hover { background: rgb(255 255 255 / 0.22); }
+.chip[aria-pressed="true"] { background: #fff; border-color: #fff; color: #1d5e34; }
 
 /* ---- Forms --------------------------------------------------------------- */
 
@@ -173,21 +231,21 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
 
 input, textarea, select {
-  width: 100%; padding: 0.6rem 0.8rem; font: inherit; color: var(--color-text);
-  background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-small);
+  width: 100%; padding: 0.6rem 0.8rem; font: inherit; color: var(--color-field-text);
+  background: var(--color-field-bg); border: 1px solid var(--color-field-border); border-radius: var(--radius-small);
 }
-input:focus, textarea:focus, select:focus { outline: 2px solid var(--color-primary); outline-offset: 1px; background: var(--color-surface); }
-[aria-invalid="true"] { border-color: var(--color-danger-text); }
+input:focus, textarea:focus, select:focus { outline: 3px solid var(--color-accent); outline-offset: 1px; background: #fff; }
+[aria-invalid="true"] { border-color: var(--color-danger-text); box-shadow: 0 0 0 2px #ffb4a1; }
 
 /* "What are you posting?" radio cards on the submit page. */
 .choice-list { display: grid; gap: 10px; margin-top: 0.5rem; }
 .choice-card {
   display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; margin: 0;
   padding: 0.8rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-small);
-  background: var(--color-bg); font-weight: 400; cursor: pointer;
+  background: var(--color-surface-alt); font-weight: 400; cursor: pointer;
 }
-.choice-card:hover { background: var(--color-surface-alt); }
-.choice-card:has(input:checked) { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary); background: var(--color-surface); }
+.choice-card:hover { background: rgb(255 255 255 / 0.2); }
+.choice-card:has(input:checked) { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary); background: rgb(255 255 255 / 0.2); }
 .choice-card input { width: auto; margin-top: 0.35rem; accent-color: var(--color-primary); }
 .choice-title { display: block; font-weight: 700; }
 .choice-summary { display: block; font-size: 0.875rem; color: var(--color-muted); }
@@ -198,7 +256,7 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--color-prima
 .checkbox-field .field-error { grid-column: 1 / -1; }
 
 .hint { margin: 0.25rem 0 0; font-size: 0.875rem; color: var(--color-muted); }
-.field-error { margin: 0.25rem 0 0; font-size: 0.875rem; color: var(--color-danger-text); }
+.field-error { margin: 0.25rem 0 0; font-size: 0.875rem; font-weight: 600; color: #ffc4b5; }
 .field-error:empty { display: none; }
 
 /* ---- Badges & status messages -------------------------------------------- */
@@ -209,7 +267,7 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--color-prima
 .badge.danger { background: var(--color-danger-bg); color: var(--color-danger-text); }
 .badge.neutral { background: var(--color-surface-alt); color: var(--color-muted); border: 1px solid var(--color-border); }
 
-.status { padding: 0.85rem 1.1rem; border-radius: var(--radius); background: var(--color-surface); border: 1px solid var(--color-border); }
+.status { padding: 0.85rem 1.1rem; border-radius: var(--radius); }
 .status[data-kind="error"] { background: var(--color-danger-bg); color: var(--color-danger-text); border-color: transparent; }
 .status[data-kind="success"] { background: var(--color-success-bg); color: var(--color-success-text); border-color: transparent; }
 
@@ -218,8 +276,12 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--color-prima
 
 /* ---- Dialogs ------------------------------------------------------------- */
 
-.dialog { width: min(560px, calc(100vw - 32px)); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1.5rem; background: var(--color-surface); color: var(--color-text); box-shadow: 0 12px 40px rgb(0 0 0 / 0.25); }
-.dialog::backdrop { background: rgb(30 25 15 / 0.5); }
+.dialog {
+  width: min(560px, calc(100vw - 32px)); border: 1px solid var(--glass-edge); border-radius: var(--radius); padding: 1.5rem;
+  background: var(--glass-strong); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+  color: var(--color-text); box-shadow: 0 20px 60px rgb(0 0 0 / 0.4);
+}
+.dialog::backdrop { background: rgb(10 20 12 / 0.35); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
 .dialog h2 { margin-top: 0; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
 
@@ -227,12 +289,37 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--color-prima
   * { transition: none !important; }
 }
 
+/* Admin dashboard's line of help text above each queue. */
+.glass-note { padding: 0.6rem 1rem; border-radius: var(--radius-small); color: var(--color-muted); }
+
 /* ---- Human check (Cloudflare Turnstile) ---- */
 .human-check { min-height: 65px; margin: 0.5rem 0 1rem; }
 
 /* ---- "Manage your post" page ---- */
-.manage-summary { margin: 1.25rem 0; border-top: 4px solid var(--color-primary); }
+.manage-summary { margin: 1.25rem 0; box-shadow: inset 4px 0 0 var(--color-primary), var(--shadow); }
 .manage-summary p { margin: 0.4rem 0; }
 .manage-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
 .callout-note { padding: 0.6rem 0.9rem; border-radius: var(--radius-small); background: var(--color-warning-bg); color: var(--color-warning-text); font-size: 0.925rem; }
 #lost-link-view { margin-top: 1.25rem; }
+
+/* ---- Photos ---- */
+.field-label { margin: 0 0 0.3rem; font-weight: 600; }
+
+/* Thumbnails on a listing; each links to the full photo. */
+.photo-strip { list-style: none; display: flex; gap: 8px; flex-wrap: wrap; margin: 0.75rem 0 0; padding: 0; }
+.photo-strip a { display: block; border-radius: var(--radius-small); overflow: hidden; border: 1px solid var(--glass-edge); }
+.photo-strip img { display: block; width: 104px; height: 104px; object-fit: cover; transition: transform 0.2s ease; }
+.photo-strip a:hover img { transform: scale(1.05); }
+
+/* The picker on the forms. */
+.photo-grid { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin: 0 0 0.6rem; padding: 0; }
+.photo-tile { position: relative; aspect-ratio: 1; border-radius: var(--radius-small); overflow: hidden; border: 1px solid var(--glass-edge); }
+.photo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-remove {
+  position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; padding: 0; border: none; border-radius: 999px;
+  background: rgb(0 0 0 / 0.6); color: #fff; font-size: 1.1rem; line-height: 1; cursor: pointer;
+}
+.photo-remove:hover { background: rgb(0 0 0 / 0.8); }
+.photo-controls { display: flex; align-items: center; gap: 12px; }
+.photo-add { margin: 0; cursor: pointer; }
+.photo-controls input:focus-visible + .photo-add { outline: 3px solid var(--color-accent); outline-offset: 2px; }

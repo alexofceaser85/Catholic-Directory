@@ -62,16 +62,21 @@ No framework and no build step. Each page loads one entry script as an ES module
 | `public/admin/js/admin-card.js` | One listing card. The buttons come from `card-actions.js`. |
 | `public/admin/js/edit-request-card.js` | A poster's requested changes, "now" vs "requested". |
 | `public/js/post-options.js` | Post types, shelf lives and categories. Also imported by the server. |
+| `public/js/photo-rules.js` | Photo limits (count, size, pixels) and photo URLs. Also imported by the server. |
+| `public/js/photo-picker.js` | The "Photos" field: shrinks photos in the browser, previews them, sends `{ keep }` / `{ upload }`. |
+| `public/js/listing-card.js` | One row of the public directory, with the collapsible description. |
 | `public/js/manage-page.js` | "Manage your post": reads the token from the link, then summary, edit form, renew/remove. |
 
 ## Data model
 
-Four tables (see `database/schema.sql`):
+Five tables (see `database/schema.sql`):
 
 ```
 listings ──< reports          "this listing is out of date" from the public
     │
     ├────< listing_edits      changes a poster asked for on a live post (at most one pending)
+    │
+    ├────< listing_photos     uploaded photos; listings.photos (or a pending edit) lists which show, in order
     │
     └────< listing_history    every admin and poster action ("actor" = admin email or "poster")
 ```

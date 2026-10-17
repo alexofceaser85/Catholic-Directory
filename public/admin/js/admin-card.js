@@ -2,6 +2,7 @@
 // to make a decision, plus the action buttons and the history log.
 import { el, externalLink } from '/js/dom.js';
 import { formatDate, plural } from '/js/format.js';
+import { renderPhotoStrip } from '/js/photo-strip.js';
 import { renderActions } from './card-actions.js';
 import { renderReports } from './reports.js';
 import { renderHistory } from './history.js';
@@ -74,6 +75,7 @@ function detailsList(listing) {
     ...detailRow('Description', listing.description),
     ...detailRow('Website', listing.website && externalLink(listing.website)),
     ...detailRow('Links', links),
+    ...detailRow('Photos', renderPhotoStrip(listing.photos, listing.title)),
     ...detailRow('Last verified', listing.lastVerified && formatDate(listing.lastVerified)),
     ...detailRow('Expires', listing.expires && formatDate(listing.expires)),
   ]);

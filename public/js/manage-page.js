@@ -59,7 +59,7 @@ async function saveEdits(event) {
   const button = editForm.querySelector('button[type="submit"]');
   button.disabled = true;
   try {
-    const { needsReview } = await api.post('/api/manage/edit', { ...readEditForm(), token });
+    const { needsReview } = await api.post('/api/manage/edit', { ...(await readEditForm()), token });
     await load(needsReview
       ? 'Thanks! Your changes were sent to an admin. The directory shows them once approved.'
       : 'Your changes are saved.');

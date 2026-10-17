@@ -3,6 +3,7 @@
 import { api } from '/js/api.js';
 import { el } from '/js/dom.js';
 import { formatDate } from '/js/format.js';
+import { renderPhotoStrip } from '/js/photo-strip.js';
 import { confirmAction } from './action-dialog.js';
 import { renderHistory } from './history.js';
 import { notify } from './notify.js';
@@ -16,6 +17,7 @@ const FIELD_LABELS = {
   description: 'Description',
   website: 'Website',
   links: 'Links',
+  photos: 'Photos',
 };
 
 function asText(value) {
@@ -23,11 +25,17 @@ function asText(value) {
   return text || '(empty)';
 }
 
+/** Photos show as thumbnails; everything else as text. */
+function cellContent(field, value, title) {
+  if (field === 'photos') return renderPhotoStrip(value, title) || '(no photos)';
+  return asText(value);
+}
+
 function changeRow(field, listing, changes) {
   return el('tr', {}, [
     el('th', { scope: 'row' }, [FIELD_LABELS[field] || field]),
-    el('td', { class: 'old-value' }, [asText(listing[field])]),
-    el('td', { class: 'new-value' }, [asText(changes[field])]),
+    el('td', { class: `old-value field-${field}` }, [cellContent(field, listing[field], listing.title)]),
+    el('td', { class: `new-value field-${field}` }, [cellContent(field, changes[field], listing.title)]),
   ]);
 }
 

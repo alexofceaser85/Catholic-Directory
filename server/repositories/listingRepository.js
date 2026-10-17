@@ -15,6 +15,7 @@ const COLUMNS = {
   description: 'description',
   website: 'website',
   links: 'links',
+  photos: 'photos',
   adminNotes: 'admin_notes',
   manageTokenHash: 'manage_token_hash',
 };
@@ -23,7 +24,7 @@ const COLUMNS = {
 const IS_LIVE = "status = 'approved' AND (expires_on IS NULL OR expires_on >= CURRENT_DATE())";
 
 const PUBLIC_SELECT = `
-  SELECT id, post_type, category, title, email, phone, address, description, website, links,
+  SELECT id, post_type, category, title, email, phone, address, description, website, links, photos,
          last_verified_at, expires_on
   FROM listings`;
 

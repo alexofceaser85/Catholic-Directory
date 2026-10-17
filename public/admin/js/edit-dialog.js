@@ -4,11 +4,13 @@ import { showStatus } from '/js/dom.js';
 import { el } from '/js/dom.js';
 import { clearFieldErrors, showFieldErrors, readForm } from '/js/form-errors.js';
 import { CATEGORIES, POST_TYPES } from '/js/post-options.js';
+import { createPhotoPicker } from '/js/photo-picker.js';
 
 const dialog = document.getElementById('edit-dialog');
 const form = document.getElementById('edit-form');
 const statusNode = document.getElementById('edit-status');
 const saveButton = form.querySelector('button[type="submit"]');
+const photoPicker = createPhotoPicker(document.getElementById('edit-photo-picker'));
 
 const EDITABLE_FIELDS = ['title', 'postType', 'category', 'email', 'phone', 'address', 'description', 'website', 'adminNotes'];
 
@@ -25,6 +27,7 @@ function fillForm(listing) {
     form.elements[field].value = listing[field] ?? '';
   }
   form.elements.links.value = listing.links.join('\n');
+  photoPicker.setPhotos(listing.photos);
 }
 
 /**
@@ -44,7 +47,7 @@ export function openEditDialog(listing) {
       event.preventDefault();
       saveButton.disabled = true;
       try {
-        await api.put(`/api/admin/listings/${listing.id}`, readForm(form));
+        await api.put(`/api/admin/listings/${listing.id}`, { ...readForm(form), photos: await photoPicker.entries() });
         saved = true;
         dialog.close();
       } catch (error) {

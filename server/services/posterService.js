@@ -13,6 +13,7 @@ import { toPosterListing } from '../presenters/listingPresenter.js';
 import { createManageToken, hashManageToken } from '../lib/manageToken.js';
 import { shelfLifeDays, isReverifiedType } from '../lib/shelfLife.js';
 import { sendLinksEmail } from './posterEmails.js';
+import { preparePhotos, savePhotos, pruneUnusedPhotos } from './photoService.js';
 import { LINK_NOT_VALID } from '../validation/listingValidation.js';
 import { HttpError } from '../lib/httpError.js';
 
@@ -38,18 +39,21 @@ export async function getOwnPost(token) {
  * Not yet reviewed: the changes apply right away. Already live: they wait for an admin,
  * and the live version stays up meanwhile. Returns { needsReview }.
  */
-export async function editOwnPost(token, changes) {
+export async function editOwnPost(token, requested) {
   const row = await loadOwnListing(token);
   requireStatus(row, MANAGEABLE, 'This post has been removed, so it can no longer be edited.');
+  const changes = await savePhotos(row.id, await preparePhotos(requested));
 
-  if (row.status === 'pending') {
+  const needsReview = row.status === 'approved';
+  if (needsReview) {
+    await edits.replacePending(row.id, changes);
+    await history.insert(row.id, history.POSTER, 'edit_requested');
+  } else {
     await listings.update(row.id, changes);
     await history.insert(row.id, history.POSTER, 'edited', 'Before review');
-    return { needsReview: false };
   }
-  await edits.replacePending(row.id, changes);
-  await history.insert(row.id, history.POSTER, 'edit_requested');
-  return { needsReview: true };
+  await pruneUnusedPhotos(row.id);
+  return { needsReview };
 }
 
 /** Businesses: "my details are still right". Other posts: show it for another full shelf life. */
@@ -67,6 +71,7 @@ export async function removeOwnPost(token) {
 
   await listings.updateStatus(row.id, 'removed');
   await edits.discardPendingForListing(row.id);
+  await pruneUnusedPhotos(row.id);
   await reports.resolveAllForListing(row.id, 'removed', history.POSTER);
   await history.insert(row.id, history.POSTER, 'removed');
 }

@@ -2,6 +2,7 @@
 import { el, externalLink, safeHref } from './dom.js';
 import { formatDate, shortUrl } from './format.js';
 import { findPostType } from './post-options.js';
+import { renderPhotoStrip } from './photo-strip.js';
 
 /** Used for the card's color: "Help wanted" -> "help-wanted". */
 function typeSlug(postType) {
@@ -43,17 +44,39 @@ function linksSection(links) {
   return el('ul', { class: 'link-list' }, links.map((url) => el('li', {}, [externalLink(url, shortUrl(url))])));
 }
 
+let descriptionCount = 0;
+
 /**
- * @param {object} listing  Listing from the published directory sheet (see listing-rows.js).
+ * The description starts clamped to a few lines, with a "Show more" button to open it.
+ * updateDescriptionToggles() hides the button again when the text already fits.
+ */
+function descriptionSection(description) {
+  const id = `description-${++descriptionCount}`;
+  const text = el('p', { class: 'description is-collapsed', id }, [description]);
+  const toggle = el('button', { type: 'button', class: 'description-toggle', 'aria-expanded': 'false', 'aria-controls': id }, ['Show more']);
+  toggle.addEventListener('click', () => {
+    const expanding = toggle.getAttribute('aria-expanded') === 'false';
+    text.classList.toggle('is-collapsed', !expanding);
+    toggle.setAttribute('aria-expanded', String(expanding));
+    toggle.textContent = expanding ? 'Show less' : 'Show more';
+  });
+  return el('div', { class: 'description-block' }, [text, toggle]);
+}
+
+/**
+ * @param {object} listing  Listing from GET /api/listings (see listingPresenter.js).
  * @param {(listing: object) => void} onReport  Called when "Report outdated info" is clicked.
  */
 export function renderListingCard(listing, onReport) {
   return el('li', { class: `card listing-card type-${typeSlug(listing.postType)}` }, [
-    tagsLine(listing),
-    el('h2', { class: 'card-title' }, [listing.title]),
-    el('p', { class: 'description' }, [listing.description]),
+    el('div', { class: 'listing-main' }, [
+      tagsLine(listing),
+      el('h2', { class: 'card-title' }, [listing.title]),
+      descriptionSection(listing.description),
+      renderPhotoStrip(listing.photos, listing.title),
+      linksSection(listing.links),
+    ]),
     contactSection(listing),
-    linksSection(listing.links),
     el('div', { class: 'card-footer' }, [
       freshnessNote(listing),
       el('button', { type: 'button', class: 'link-button subtle small', onclick: () => onReport(listing) }, [
@@ -61,6 +84,17 @@ export function renderListingCard(listing, onReport) {
       ]),
     ]),
   ]);
+}
+
+/**
+ * Shows "Show more" only on collapsed descriptions that are actually cut off.
+ * Call after the cards are on the page, and again when the width changes.
+ */
+export function updateDescriptionToggles(container) {
+  for (const toggle of container.querySelectorAll('.description-toggle[aria-expanded="false"]')) {
+    const text = document.getElementById(toggle.getAttribute('aria-controls'));
+    toggle.hidden = text.scrollHeight <= text.clientHeight + 1;
+  }
 }
 
 /** Text used by the search box to match a listing. */

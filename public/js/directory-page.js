@@ -5,7 +5,7 @@ import { api } from './api.js';
 import { setUpFilters } from './directory-filters.js';
 import { showStatus } from './dom.js';
 import { plural } from './format.js';
-import { renderListingCard, searchableText } from './listing-card.js';
+import { renderListingCard, searchableText, updateDescriptionToggles } from './listing-card.js';
 import { openReportDialog } from './report-dialog.js';
 
 const listContainer = document.getElementById('listings');
@@ -26,6 +26,7 @@ function render() {
   const visible = allListings.filter((listing) => filters.matches(listing) && matchesSearch(listing, words));
 
   listContainer.replaceChildren(...visible.map((listing) => renderListingCard(listing, openReportDialog)));
+  updateDescriptionToggles(listContainer);
   resultCount.textContent = plural(visible.length, 'listing');
 
   if (allListings.length === 0) showStatus(pageStatus, 'Nothing is listed yet. Be the first to add yours!');
@@ -44,4 +45,6 @@ async function loadListings() {
 }
 
 searchInput.addEventListener('input', render);
+// A narrower window wraps descriptions onto more lines, so recheck which ones are cut off.
+new ResizeObserver(() => updateDescriptionToggles(listContainer)).observe(listContainer);
 loadListings();

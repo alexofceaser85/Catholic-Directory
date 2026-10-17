@@ -3,11 +3,13 @@ import { api } from './api.js';
 import { showStatus } from './dom.js';
 import { clearFieldErrors, showFieldErrors, readForm } from './form-errors.js';
 import { setUpSubmitOptions } from './submit-options.js';
+import { createPhotoPicker } from './photo-picker.js';
 
 const form = document.getElementById('submit-form');
 const formStatus = document.getElementById('form-status');
 const successPanel = document.getElementById('success');
 const submitButton = form.querySelector('button[type="submit"]');
+const photoPicker = createPhotoPicker(document.getElementById('photo-picker'));
 
 setUpSubmitOptions(form, {
   typeContainer: document.getElementById('post-type-choices'),
@@ -29,7 +31,7 @@ async function submitRequest(event) {
   submitButton.disabled = true;
 
   try {
-    await api.post('/api/listings', readForm(form));
+    await api.post('/api/listings', { ...readForm(form), photos: await photoPicker.entries() });
     showSuccess();
   } catch (error) {
     showFieldErrors(form, error.fields || {});

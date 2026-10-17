@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS listings (
   description           TEXT         NOT NULL,
   website               VARCHAR(500) NULL,
   links                 TEXT         NULL COMMENT 'Newline-separated list of URLs',
+  photos                TEXT         NULL COMMENT 'Newline-separated photo keys in display order (see listing_photos)',
 
   -- Private admin notes.
   admin_notes           TEXT         NULL,
@@ -59,6 +60,23 @@ CREATE TABLE IF NOT EXISTS listing_edits (
 
   INDEX idx_listing_edits_status (status),
   CONSTRAINT fk_listing_edits_listing FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
+);
+
+-- Uploaded photos, already shrunk and stripped of metadata (server/lib/photos.js).
+-- A photo shows only while its key is in the listing's `photos` column; one that is only in a
+-- pending edit waits for review. Unused photos are deleted (services/photoService.js).
+CREATE TABLE IF NOT EXISTS listing_photos (
+  id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  listing_id   INT UNSIGNED NOT NULL,
+  photo_key    CHAR(32)     NOT NULL COMMENT 'Random id used in the photo URL: /photos/<key>.webp',
+  image        MEDIUMBLOB   NOT NULL COMMENT 'WebP, longest side at most MAX_PHOTO_SIDE',
+  width        SMALLINT UNSIGNED NOT NULL,
+  height       SMALLINT UNSIGNED NOT NULL,
+  created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  UNIQUE INDEX idx_listing_photos_key (photo_key),
+  INDEX idx_listing_photos_listing (listing_id),
+  CONSTRAINT fk_listing_photos_listing FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
 );
 
 -- "This listing is out of date" reports from the public.

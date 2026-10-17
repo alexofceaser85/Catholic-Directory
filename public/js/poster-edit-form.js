@@ -2,11 +2,13 @@
 import { el, showStatus } from './dom.js';
 import { clearFieldErrors, readForm } from './form-errors.js';
 import { CATEGORIES, findPostType } from './post-options.js';
+import { createPhotoPicker } from './photo-picker.js';
 
 const FIELDS = ['title', 'category', 'email', 'phone', 'address', 'description', 'website'];
 
 const form = document.getElementById('edit-form');
 const hint = document.getElementById('edit-hint');
+const photoPicker = createPhotoPicker(document.getElementById('photo-picker'));
 
 function fillCategories(select) {
   select.replaceChildren(...CATEGORIES.map((category) => el('option', { value: category }, [category])));
@@ -17,6 +19,7 @@ function fillFields(post) {
   const values = post.pendingEdit ? post.pendingEdit.changes : post;
   for (const field of FIELDS) form.elements[field].value = values[field] ?? '';
   form.elements.links.value = [].concat(values.links ?? []).join('\n');
+  photoPicker.setPhotos(values.photos ?? []);
 }
 
 function hintText(post) {
@@ -38,6 +41,6 @@ export function showEditForm(post) {
   showStatus(document.getElementById('edit-status'), '');
 }
 
-export function readEditForm() {
-  return readForm(form);
+export async function readEditForm() {
+  return { ...readForm(form), photos: await photoPicker.entries() };
 }

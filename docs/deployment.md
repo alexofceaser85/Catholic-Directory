@@ -133,9 +133,12 @@ is only sent over HTTPS, so sign-in won't stick on plain HTTP.
 
 Never load `database/sample-data.sql` into the production database.
 
+**Upgrading an existing database:** if it was created before photo uploads (2026-10-15), run
+`database/migrations/2026-10-15-photos.sql` once. New databases get everything from `schema.sql`.
+
 ## 5. Backups
 
-Everything worth keeping is in MySQL. Back it up at least weekly:
+Everything worth keeping is in MySQL, including uploaded photos. Back it up at least weekly:
 
 ```bash
 mysqldump -h <host> -u <user> -p --single-transaction directory > directory-$(date +%F).sql

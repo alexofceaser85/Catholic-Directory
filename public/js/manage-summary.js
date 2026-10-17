@@ -47,7 +47,7 @@ function renewLabel(post) {
 export function renderSummary(container, post, { onRenew, onRemove }) {
   const canRenew = post.status === 'approved';
   const canRemove = post.status === 'pending' || post.status === 'approved';
-  container.replaceChildren(
+  const parts = [
     el('p', { class: 'card-tags' }, [el('span', { class: 'badge neutral' }, [post.postType]), post.category]),
     el('h2', { class: 'card-title' }, [post.title]),
     el('p', {}, statusLine(post)),
@@ -57,5 +57,7 @@ export function renderSummary(container, post, { onRenew, onRemove }) {
       canRenew && el('button', { type: 'button', class: 'button', onclick: onRenew }, [renewLabel(post)]),
       canRemove && el('button', { type: 'button', class: 'button secondary', onclick: onRemove }, ['Remove post']),
     ]),
-  );
+  ];
+  // replaceChildren() would print a skipped (null) section as the text "null".
+  container.replaceChildren(...parts.filter(Boolean));
 }
