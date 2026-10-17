@@ -15,13 +15,14 @@ export function manageUrl(token) {
   return `${config.publicUrl}/manage#token=${token}`;
 }
 
-/** A failed email must never undo a submission or an admin action: log it and carry on. */
-async function sendSafely(message) {
-  try {
-    await sendEmail(message);
-  } catch (error) {
+/**
+ * Sends in the background: a slow or failed email must never hold up or undo a submission
+ * or an admin action. Failures are logged.
+ */
+function sendSafely(message) {
+  sendEmail(message).catch((error) => {
     console.error(`Could not send email to ${message.to}:`, error.message);
-  }
+  });
 }
 
 function shelfLifeSentence(postTypeId) {

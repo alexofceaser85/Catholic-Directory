@@ -55,14 +55,20 @@ const config = {
   // The address people type to reach the site. Used to build the "manage your post" links in emails.
   publicUrl: (process.env.PUBLIC_URL || `http://localhost:${port}`).replace(/\/$/, ''),
 
-  // Outgoing email (SMTP). With no MAIL_HOST, emails are printed to the console in development
-  // and skipped (with a warning) in production.
+  // Outgoing email: the Gmail API (over HTTPS) when GMAIL_REFRESH_TOKEN is set, otherwise SMTP.
+  // With neither, emails are printed to the console in development and skipped (with a warning)
+  // in production.
   mail: {
     host: process.env.MAIL_HOST || '',
     port: Number(process.env.MAIL_PORT || 587),
     user: process.env.MAIL_USER || '',
     password: process.env.MAIL_PASSWORD || '',
     from: process.env.MAIL_FROM || 'Catholic Business Directory <no-reply@example.com>',
+    gmail: {
+      clientId: process.env.GMAIL_CLIENT_ID || '',
+      clientSecret: process.env.GMAIL_CLIENT_SECRET || '',
+      refreshToken: process.env.GMAIL_REFRESH_TOKEN || '',
+    },
   },
 };
 

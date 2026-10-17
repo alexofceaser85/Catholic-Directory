@@ -34,7 +34,52 @@ checking that tokens were issued for this ID and that the email is in `ADMIN_EMA
 ## 2. Set up email
 
 Posters get their private "manage your post" link by email, so the live site needs a way
-to send mail. Any SMTP service works. Put its settings in `MAIL_*`:
+to send mail. There are two ways: the **Gmail API** (works everywhere) or **SMTP** (simpler,
+but some hosts block it). If both are set, the Gmail API is used.
+
+### Option A: Gmail API (use this on Railway)
+
+Railway blocks outgoing SMTP on its Free, Trial and Hobby plans, so the app sends through
+Gmail's API over normal HTTPS instead. It's free and needs no domain. Use a Gmail account made
+just for the directory (not anyone's personal or chapter account). About 15 minutes, all signed
+in as that account:
+
+1. <https://console.cloud.google.com/> → create a project, e.g. "Directory mail".
+2. **APIs & Services → Library** → search **Gmail API** → **Enable**.
+3. **OAuth consent screen** (or **Google Auth Platform → Branding**): User type **External**,
+   app name e.g. *Catholic Business Directory mail*, the directory Gmail as both emails.
+   Then **Audience → Publish app** so it's **In production**. In "Testing", Google expires
+   the token after 7 days and email silently stops. Google will call the app "unverified":
+   that's fine, since the only account that ever uses it is the directory's own.
+4. **Credentials → Create credentials → OAuth client ID** → Application type **Desktop app**.
+   Keep the page open with the **Client ID** and **Client secret**.
+5. On your computer, in this folder, run the authorize script. It prints a link, you allow
+   "Send email on your behalf" in the browser, and the token goes straight into Railway
+   without being shown:
+
+   ```bash
+   read -rp "Client ID: " GMAIL_CLIENT_ID; read -rsp "Client secret: " GMAIL_CLIENT_SECRET; echo
+   export GMAIL_CLIENT_ID GMAIL_CLIENT_SECRET
+   TOKEN=$(node tools/gmail-authorize.js) && railway variables --service Catholic-Directory \
+     --set "GMAIL_CLIENT_ID=$GMAIL_CLIENT_ID" \
+     --set "GMAIL_CLIENT_SECRET=$GMAIL_CLIENT_SECRET" \
+     --set "GMAIL_REFRESH_TOKEN=$TOKEN"
+   unset TOKEN GMAIL_CLIENT_SECRET
+   ```
+
+   Google's warning page ("Google hasn't verified this app"): click **Advanced → Go to …**.
+   The script prints `Authorized: <address>`. Check it's the directory account.
+6. Set `MAIL_FROM` to that same address, e.g. `Catholic Business Directory <directory@gmail.com>`.
+   Gmail replaces any other From address with the account's own.
+
+The app can only **send**: the token can't read, search or delete the account's mail. To cut
+it off, remove the app at <https://myaccount.google.com/permissions> (signed in as the
+directory account) and delete `GMAIL_REFRESH_TOKEN`. On startup the log says
+"Sending email with the Gmail API" when it's set up.
+
+### Option B: SMTP
+
+Any SMTP service works on hosts that allow it (a VPS, cPanel, Railway Pro). Put its settings in `MAIL_*`:
 
 | Option | Cost | Notes |
 |---|---|---|
@@ -52,7 +97,12 @@ PUBLIC_URL=https://directory.example.org
 ```
 
 `MAIL_FROM` should use an address or domain the provider has verified, or mail may land
-in spam. `PUBLIC_URL` must be the real address, since it goes into every emailed link.
+in spam.
+
+### Either way
+
+`PUBLIC_URL` must be the real address, since it goes into every emailed link. Emails are sent
+in the background, so a slow or unreachable mail service never holds up a poster.
 
 To test: submit a post with your own email, or use **Manage your post → Email me my links**.
 If nothing arrives, check the server log for "Could not send email".
@@ -126,7 +176,7 @@ Many cheap hosts (Namecheap, A2 Hosting and others) offer **Setup Node.js App** 
 | `TRUST_PROXY` | `true` on Railway, Render, cPanel or behind Caddy/nginx |
 | `DB_*` | Your production database. Give the MySQL user access to this one database only. |
 | `PUBLIC_URL` | The live `https://` address, no trailing slash |
-| `MAIL_*` | From [step 2](#2-set-up-email). Without them, posters never get their links. |
+| `GMAIL_*` or `MAIL_*`, plus `MAIL_FROM` | From [step 2](#2-set-up-email). Without them, posters never get their links. |
 
 The site **must** use HTTPS in production. With `NODE_ENV=production` the admin cookie
 is only sent over HTTPS, so sign-in won't stick on plain HTTP.
@@ -162,5 +212,5 @@ their next click, even if they're signed in.
 | Signed in but immediately signed out again | The site isn't on HTTPS while `NODE_ENV=production`. |
 | "Missing required environment variable" on start | Compare `.env` with `.env.example`. |
 | Every visitor seems to share one rate limit | Set `TRUST_PROXY=true`. |
-| Posters say they never got their link | Check the log for "Could not send email" or "MAIL_HOST is empty". Check `MAIL_FROM` is verified with your provider. Ask them to check spam, or use **Email poster**. |
+| Posters say they never got their link | Check the log for "Could not send email" or "no mail settings". `invalid_grant` means the Gmail token was revoked or expired: rerun `tools/gmail-authorize.js`. `Connection timeout` with SMTP means the host blocks it: use the Gmail API. Check `MAIL_FROM` is verified with your provider. Ask them to check spam, or use **Email poster**. |
 | Links in emails point to localhost | Set `PUBLIC_URL` to the live address and restart. |

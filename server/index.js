@@ -2,13 +2,17 @@
 import config from './config.js';
 import { createApp } from './app.js';
 import { closePool } from './db/pool.js';
+import { mailMethod } from './lib/mailer.js';
 
 const server = createApp().listen(config.port, () => {
   console.log(`Catholic Business Directory running at http://localhost:${config.port}`);
-  if (!config.mail.host) {
+  const method = mailMethod();
+  if (method) {
+    console.log(`Sending email with ${method === 'gmail-api' ? 'the Gmail API' : `SMTP (${config.mail.host})`}.`);
+  } else {
     console.warn(config.isProduction
-      ? 'WARNING: MAIL_HOST is empty, so posters will not receive their "manage your post" links.'
-      : 'MAIL_HOST is empty: emails will be printed here instead of sent.');
+      ? 'WARNING: no mail settings, so posters will not receive their "manage your post" links.'
+      : 'No mail settings: emails will be printed here instead of sent.');
   }
   if (config.devAdminLogin) {
     console.warn('WARNING: email-only test sign-in is ON (NODE_ENV=development, DEV_ADMIN_LOGIN=true).');

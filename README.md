@@ -51,7 +51,7 @@ directory filters by type, category and search text.
 | Server | Node.js + [Express](https://expressjs.com/) | Small, well known, JavaScript on both sides |
 | Database | MySQL 8 | Any MySQL 8 / MariaDB 10.6+ host works |
 | Admin sign-in | Google Identity Services | No passwords to store or reset |
-| Email | Any SMTP provider, via `nodemailer` | Sends posters their private links |
+| Email | The Gmail API (HTTPS) or any SMTP provider, via `nodemailer` | Sends posters their private links |
 | Photos | [`sharp`](https://sharp.pixelplumbing.com/) | Re-encodes uploads and strips their GPS location; ships ready-built, nothing to compile |
 
 Six npm packages: `express`, `mysql2`, `google-auth-library`, `dotenv`, `nodemailer`, `sharp`.
@@ -72,7 +72,7 @@ docker compose up --build
 - Admin: <http://localhost:3000/admin/> (with `DEV_ADMIN_LOGIN=true` you can sign in by
   typing an admin email; this test-only shortcut only works when `NODE_ENV=development`)
 
-With `MAIL_HOST` empty, emails aren't sent: they're printed in the server log
+With no mail settings (`GMAIL_*` or `MAIL_HOST`), emails aren't sent: they're printed in the server log
 (`docker compose logs -f app`), so you can click the "manage your post" links.
 
 Port 3000 already in use? Run `APP_PORT=3100 docker compose up --build`, and set
@@ -122,7 +122,9 @@ All settings are environment variables (see [`.env.example`](.env.example)).
 | `GOOGLE_CLIENT_ID` | for Google sign-in | OAuth client ID ([how to get one](docs/deployment.md#1-create-the-google-sign-in-client)) |
 | `ADMIN_EMAILS` | yes | Comma-separated Google emails allowed into `/admin` |
 | `PUBLIC_URL` | yes in production | The site's address, e.g. `https://directory.example.org`. Used in emailed links. |
-| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD`, `MAIL_FROM` | yes in production | SMTP settings for poster emails ([setup](docs/deployment.md#2-set-up-email)) |
+| `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` | this or SMTP, in production | Send poster emails through the Gmail API ([setup](docs/deployment.md#option-a-gmail-api-use-this-on-railway)) |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD` | this or Gmail API, in production | SMTP settings for poster emails ([setup](docs/deployment.md#option-b-smtp)) |
+| `MAIL_FROM` | yes in production | Sender, e.g. `Catholic Business Directory <directory@gmail.com>` |
 | `REVERIFY_AFTER_DAYS` | no (90) | When a live business moves to "Needs reverification" |
 | `NODE_ENV` | no | Leave as `production` on the live server. Anything other than `development` is treated as production. |
 | `TRUST_PROXY` | no | `true` behind a hosting proxy (Render, Railway, nginx…) |
@@ -156,7 +158,7 @@ server/                     Node.js back end
 ├── validation/             Form rules and the FieldValidator helper
 ├── auth/                   Admin session cookie + Google token check
 ├── middleware/             requireAdmin, rate limits, security headers, errors
-├── lib/                    Small helpers (name check, manage tokens, mailer, shelf life, photos…)
+├── lib/                    Small helpers (name check, manage tokens, mailer + Gmail API, shelf life, photos…)
 └── db/pool.js              MySQL connection pool
 public/                     Everything the browser loads (served as-is)
 ├── index.html              Public directory (filters by type and category)
@@ -171,6 +173,7 @@ database/
 ├── migrations/             Changes for databases created before a feature existed
 └── sample-data.sql         Fake data for local testing only
 tests/                      `npm test`
+tools/gmail-authorize.js    One-time Gmail API setup for email (see docs/deployment.md)
 docs/                       Longer guides (below)
 ```
 
