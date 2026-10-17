@@ -168,6 +168,11 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 .card { border-radius: var(--radius); padding: 1.35rem; }
 .card-title { margin: 0 0 0.4rem; font-size: 1.25rem; }
 
+/* Privacy page: plain reading text inside one card. */
+.policy h2 { margin: 1.4rem 0 0.35rem; font-size: 1.15rem; }
+.policy h2:first-child { margin-top: 0; }
+.policy p, .policy li { max-width: 68ch; }
+
 .filter-panel { margin-top: 1rem; padding: 1rem 1.1rem; border-radius: var(--radius); }
 .toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 0.85rem; }
 .toolbar input[type="search"] { flex: 1 1 260px; border-radius: 999px; padding-left: 1.1rem; }
