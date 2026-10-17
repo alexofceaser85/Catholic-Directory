@@ -25,6 +25,7 @@ export function toPublicListing(row) {
     email: row.email,
     phone: row.phone,
     address: row.address,
+    parish: row.parish,
     description: row.description,
     website: row.website,
     links: splitLines(row.links),

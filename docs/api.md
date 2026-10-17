@@ -24,6 +24,7 @@ Errors always look like:
   "email": "jobs@sweetwatercreek.example",
   "phone": null,
   "address": "Douglasville, GA",
+  "parish": "St. Peter Chanel, Roswell",
   "description": "Picking, washing and packing vegetables…",
   "website": null,
   "links": [],
@@ -69,7 +70,7 @@ display order; each one is served at `GET /photos/<key>.webp`.
 | Method & path | Body | Result |
 |---|---|---|
 | `GET /api/listings` | none | Live listings (approved and not expired), A→Z |
-| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
+| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
 | `POST /api/listings/:id/reports` | `reason` | `201 { ok: true }`. Only for live listings, otherwise 404. 10 per IP per hour. |
 
 ### Photos
@@ -101,7 +102,7 @@ An unknown, malformed or denied post's token gets `404` with "This link doesn't 
 | Method & path | Body | Result |
 |---|---|---|
 | `POST /api/manage/post` | `token` | Poster listing |
-| `POST /api/manage/edit` | `token` + `title`, `category`, `email`, `phone`, `address`, `description`, `website`, `links`, `photos` | `{ needsReview }`. Pending posts change right away (`false`). Live posts get a pending edit for an admin (`true`); a newer edit replaces an older one. Removed posts: `409`. |
+| `POST /api/manage/edit` | `token` + `title`, `category`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links`, `photos` | `{ needsReview }`. Pending posts change right away (`false`). Live posts get a pending edit for an admin (`true`); a newer edit replaces an older one. Removed posts: `409`. |
 | `POST /api/manage/renew` | `token` | Approved only. Restarts the shelf life: businesses' "last verified" becomes today; other posts show for another full period. Otherwise `409`. |
 | `POST /api/manage/remove` | `token` | Pending or approved → removed. Closes open reports and drops a pending edit. |
 | `POST /api/manage/send-links` | `email` | Always `{ ok: true }`. Emails a fresh link for each pending or live post with that contact email; older links stop working. 5 per IP per hour. Accepts the `companyFax` honeypot. |

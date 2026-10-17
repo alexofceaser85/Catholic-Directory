@@ -12,7 +12,7 @@ const statusNode = document.getElementById('edit-status');
 const saveButton = form.querySelector('button[type="submit"]');
 const photoPicker = createPhotoPicker(document.getElementById('edit-photo-picker'));
 
-const EDITABLE_FIELDS = ['title', 'postType', 'category', 'email', 'phone', 'address', 'description', 'website', 'adminNotes'];
+const EDITABLE_FIELDS = ['title', 'postType', 'category', 'parish', 'email', 'phone', 'address', 'description', 'website', 'adminNotes'];
 
 dialog.querySelector('[data-close-dialog]').addEventListener('click', () => dialog.close());
 

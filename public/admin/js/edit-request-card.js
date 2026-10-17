@@ -11,6 +11,7 @@ import { notify } from './notify.js';
 const FIELD_LABELS = {
   title: 'Title',
   category: 'Category',
+  parish: 'Parish',
   email: 'Email',
   phone: 'Phone',
   address: 'Address',

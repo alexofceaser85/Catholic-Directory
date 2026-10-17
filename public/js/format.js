@@ -19,3 +19,13 @@ export function shortUrl(url) {
 export function plural(count, singular, pluralForm = `${singular}s`) {
   return `${count} ${count === 1 ? singular : pluralForm}`;
 }
+
+/**
+ * US numbers as "404-555-1234" (a leading country code 1 is dropped).
+ * Anything else, like an extension or a foreign number, is shown as typed.
+ */
+export function formatPhone(phone) {
+  const digits = phone.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+  if (digits.length !== 10) return phone;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+}

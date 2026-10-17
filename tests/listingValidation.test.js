@@ -19,6 +19,7 @@ const validSubmission = {
   email: 'Hello@PeachtreeBooks.example',
   phone: '(404) 555-0101',
   address: '',
+  parish: ' St. Peter Chanel, Roswell ',
   description: 'Bookkeeping for small businesses.',
   website: 'https://peachtreebooks.example',
   links: 'https://instagram.com/peachtree\n\n  https://facebook.com/peachtree  ',
@@ -40,6 +41,7 @@ test('cleans a valid submission', () => {
   assert.equal(values.submitterFirstName, 'Jordan');
   assert.equal(values.email, 'hello@peachtreebooks.example');
   assert.equal(values.address, null);
+  assert.equal(values.parish, 'St. Peter Chanel, Roswell');
   assert.deepEqual(values.links, ['https://instagram.com/peachtree', 'https://facebook.com/peachtree']);
   assert.equal('consent' in values, false, 'consent is checked but not stored');
 });
@@ -72,9 +74,9 @@ test('malformed manage tokens get the same 404 as wrong ones', () => {
 
 test('reports every invalid field at once', () => {
   const fields = fieldErrors(() =>
-    validateSubmission({ ...validSubmission, title: '', email: 'nope', website: 'javascript:alert(1)', consent: false }),
+    validateSubmission({ ...validSubmission, title: '', parish: ' ', email: 'nope', website: 'javascript:alert(1)', consent: false }),
   );
-  assert.deepEqual(Object.keys(fields).sort(), ['consent', 'email', 'title', 'website']);
+  assert.deepEqual(Object.keys(fields).sort(), ['consent', 'email', 'parish', 'title', 'website']);
 });
 
 test('rejects links that are not web URLs', () => {

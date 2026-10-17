@@ -1,6 +1,6 @@
 // Builds one listing card for the public directory.
 import { el, externalLink, safeHref } from './dom.js';
-import { formatDate, shortUrl } from './format.js';
+import { formatDate, formatPhone, shortUrl } from './format.js';
 import { findPostType } from './post-options.js';
 import { renderPhotoStrip } from './photo-strip.js';
 
@@ -9,7 +9,7 @@ function typeSlug(postType) {
   return postType.toLowerCase().replace(/[^a-z]+/g, '-');
 }
 
-/** Post type badge plus category, above the title. */
+/** Post type badge plus category, at the bottom of the card. */
 function tagsLine(listing) {
   return el('p', { class: 'card-tags' }, [
     el('span', { class: `badge type-badge type-${typeSlug(listing.postType)}` }, [listing.postType]),
@@ -32,8 +32,9 @@ function contactLine(label, node) {
 function contactSection(listing) {
   const telHref = listing.phone ? `tel:${listing.phone.replace(/[^\d+]/g, '')}` : null;
   return el('div', { class: 'contact' }, [
+    listing.parish && contactLine('Parish', el('span', {}, [listing.parish])),
     contactLine('Email', el('a', { href: `mailto:${listing.email}` }, [listing.email])),
-    listing.phone && contactLine('Phone', el('a', { href: telHref }, [listing.phone])),
+    listing.phone && contactLine('Phone', el('a', { href: telHref }, [formatPhone(listing.phone)])),
     listing.address && contactLine('Address', el('span', {}, [listing.address])),
     listing.website && safeHref(listing.website) && contactLine('Website', externalLink(listing.website, shortUrl(listing.website))),
   ]);
@@ -70,7 +71,6 @@ function descriptionSection(description) {
 export function renderListingCard(listing, onReport) {
   return el('li', { class: `card listing-card type-${typeSlug(listing.postType)}` }, [
     el('div', { class: 'listing-main' }, [
-      tagsLine(listing),
       el('h2', { class: 'card-title' }, [listing.title]),
       descriptionSection(listing.description),
       renderPhotoStrip(listing.photos, listing.title),
@@ -78,7 +78,7 @@ export function renderListingCard(listing, onReport) {
     ]),
     contactSection(listing),
     el('div', { class: 'card-footer' }, [
-      freshnessNote(listing),
+      el('div', { class: 'card-meta' }, [tagsLine(listing), freshnessNote(listing)]),
       el('button', { type: 'button', class: 'link-button subtle small', onclick: () => onReport(listing) }, [
         'Report outdated info',
       ]),
@@ -99,7 +99,7 @@ export function updateDescriptionToggles(container) {
 
 /** Text used by the search box to match a listing. */
 export function searchableText(listing) {
-  return [listing.title, listing.category, listing.description, listing.address, listing.website, ...listing.links]
+  return [listing.title, listing.category, listing.parish, listing.description, listing.address, listing.website, ...listing.links]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();

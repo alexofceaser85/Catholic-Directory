@@ -183,8 +183,9 @@ is only sent over HTTPS, so sign-in won't stick on plain HTTP.
 
 Never load `database/sample-data.sql` into the production database.
 
-**Upgrading an existing database:** if it was created before photo uploads (2026-10-15), run
-`database/migrations/2026-10-15-photos.sql` once. New databases get everything from `schema.sql`.
+**Upgrading an existing database:** run each file in `database/migrations/` that's newer than the
+database, oldest first, once: `2026-10-15-photos.sql` (photo uploads) and `2026-10-17-parish.sql`
+(parish field). New databases get everything from `schema.sql`.
 
 ## 5. Backups
 

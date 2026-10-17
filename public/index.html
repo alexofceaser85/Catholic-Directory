@@ -34,8 +34,12 @@
       <div class="toolbar">
         <label class="visually-hidden" for="category-filter">Category</label>
         <select id="category-filter" class="category-filter"></select>
+        <details id="parish-filter" class="parish-filter" hidden>
+          <summary>All parishes</summary>
+          <div class="parish-options" role="group" aria-label="Parishes"></div>
+        </details>
         <label class="visually-hidden" for="search">Search the directory</label>
-        <input id="search" type="search" placeholder="Search by name, service or area…" autocomplete="off">
+        <input id="search" type="search" placeholder="Search the directory…" autocomplete="off">
         <p id="result-count" class="muted" aria-live="polite"></p>
       </div>
     </section>

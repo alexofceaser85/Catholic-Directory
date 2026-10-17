@@ -14,8 +14,9 @@ with no server, but posters can't manage their own posts there.
 | Offering services | A carpenter or fencer looking for work | Hidden 60 days after approval, unless renewed |
 | Help wanted | A farm needing harvest help | Hidden 30 days after approval, unless renewed |
 
-Every post also has a category (Farm & livestock, Trades & construction, …). The
-directory filters by type, category and search text.
+Every post also has a category (Farm & livestock, Trades & construction, …) and the
+poster's parish, so people can find businesses and help close to home. The directory
+filters by type, category, parish (several at once, for neighboring parishes) and search text.
 
 ```
  Someone posts ──▶ Pending ──▶ Admin approves / denies / edits ──▶ Live
@@ -161,7 +162,7 @@ server/                     Node.js back end
 ├── lib/                    Small helpers (name check, manage tokens, mailer + Gmail API, shelf life, photos…)
 └── db/pool.js              MySQL connection pool
 public/                     Everything the browser loads (served as-is)
-├── index.html              Public directory (filters by type and category)
+├── index.html              Public directory (filters by type, category and parish)
 ├── submit.html             "Add a listing" form
 ├── manage.html             "Manage your post" (from the emailed link)
 ├── css/styles.css          Shared styles (colors and the background photo are variables at the top)

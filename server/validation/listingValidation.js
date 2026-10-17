@@ -16,6 +16,7 @@ function checkPublicFields(validator, { isNewPost = false } = {}) {
     .email('email', 'Contact email')
     .phone('phone', 'Phone')
     .text('address', 'Address', 500)
+    .requiredText('parish', 'Parish', 200)
     .requiredText('description', 'Description', 2000)
     .url('website', 'Website')
     .urlList('links', 'Links', MAX_LINKS)

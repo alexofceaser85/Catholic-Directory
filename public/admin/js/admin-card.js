@@ -1,7 +1,7 @@
 // Builds one listing card on the admin dashboard: every detail an admin needs
 // to make a decision, plus the action buttons and the history log.
 import { el, externalLink } from '/js/dom.js';
-import { formatDate, plural } from '/js/format.js';
+import { formatDate, formatPhone, plural } from '/js/format.js';
 import { renderPhotoStrip } from '/js/photo-strip.js';
 import { renderActions } from './card-actions.js';
 import { renderReports } from './reports.js';
@@ -69,8 +69,9 @@ function detailsList(listing) {
     : null;
 
   return el('dl', { class: 'detail-grid' }, [
+    ...detailRow('Parish', listing.parish),
     ...detailRow('Email', el('a', { href: `mailto:${listing.email}` }, [listing.email])),
-    ...detailRow('Phone', listing.phone),
+    ...detailRow('Phone', listing.phone && formatPhone(listing.phone)),
     ...detailRow('Address', listing.address),
     ...detailRow('Description', listing.description),
     ...detailRow('Website', listing.website && externalLink(listing.website)),

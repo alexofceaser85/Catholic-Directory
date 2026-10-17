@@ -167,6 +167,7 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 
 .card { border-radius: var(--radius); padding: 1.35rem; }
 .card-title { margin: 0 0 0.4rem; font-size: 1.25rem; }
+.listing-card .card-title { font-size: 1.6rem; }
 
 /* Privacy page: plain reading text inside one card. */
 .policy h2 { margin: 1.4rem 0 0.35rem; font-size: 1.15rem; }
@@ -174,9 +175,29 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 .policy p, .policy li { max-width: 68ch; }
 
 .filter-panel { margin-top: 1rem; padding: 1rem 1.1rem; border-radius: var(--radius); }
+/* Keeps the open parish dropdown above the listing cards (each glass panel is its own layer). */
+.filter-panel { position: relative; z-index: 5; }
 .toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 0.85rem; }
 .toolbar input[type="search"] { flex: 1 1 260px; border-radius: 999px; padding-left: 1.1rem; }
-.toolbar .category-filter { flex: 0 1 220px; width: auto; border-radius: 999px; }
+.toolbar .category-filter { flex: 1 1 190px; width: auto; border-radius: 999px; }
+
+/* Parish filter: a dropdown of checkboxes, so several nearby parishes can be picked at once. */
+.parish-filter { position: relative; flex: 1 1 190px; min-width: 0; }
+.parish-filter summary {
+  list-style: none; cursor: pointer; padding: 0.6rem 2rem 0.6rem 1.1rem; border-radius: 999px;
+  color: var(--color-field-text); background: var(--color-field-bg); border: 1px solid var(--color-field-border);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative;
+}
+.parish-filter summary::-webkit-details-marker { display: none; }
+.parish-filter summary::after { content: "▾"; position: absolute; right: 0.9rem; }
+.parish-options {
+  position: absolute; z-index: 10; top: calc(100% + 6px); left: 0; min-width: 100%; width: max-content; max-width: min(22rem, 90vw);
+  max-height: 18rem; overflow-y: auto; padding: 0.5rem 0.75rem; border-radius: var(--radius-small);
+  background: #f6f8f4; color: var(--color-field-text); border: 1px solid var(--color-field-border); box-shadow: var(--shadow);
+}
+.parish-option { display: flex; align-items: center; gap: 0.5rem; font-weight: 400; margin: 0; padding: 0.25rem 0; cursor: pointer; }
+.parish-option input { width: auto; }
+.parish-options .link-button { margin-top: 0.35rem; color: #1d5e34; }
 .toolbar p { margin: 0; font-size: 0.9rem; }
 
 /* One listing per row, scrolling down the page. */
@@ -213,6 +234,9 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 .listing-card.type-offering-services { box-shadow: inset 4px 0 0 var(--color-accent), var(--shadow); }
 .listing-card.type-help-wanted { box-shadow: inset 4px 0 0 #f0a58f, var(--shadow); }
 .card-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 0.35rem; font-size: 0.85rem; }
+/* Footer, left side: type badge and category, then the verified date. */
+.card-meta { display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
+.card-meta .card-tags { margin: 0; }
 .card-tags .category { color: var(--color-muted); }
 .type-badge.type-business { background: var(--color-success-bg); color: var(--color-success-text); }
 .type-badge.type-offering-services { background: var(--color-warning-bg); color: var(--color-warning-text); }

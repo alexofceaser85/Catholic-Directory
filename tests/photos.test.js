@@ -16,6 +16,7 @@ function phonePhoto(width, height) {
 const basePost = {
   title: 'Sweetwater Creek Farm',
   category: 'Farm & livestock',
+  parish: 'St. Thomas Aquinas, Alpharetta',
   email: 'hello@sweetwater.example',
   description: 'Eggs and vegetables.',
 };

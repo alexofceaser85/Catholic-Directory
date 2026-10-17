@@ -62,6 +62,7 @@ No framework and no build step. Each page loads one entry script as an ES module
 | `public/admin/js/admin-card.js` | One listing card. The buttons come from `card-actions.js`. |
 | `public/admin/js/edit-request-card.js` | A poster's requested changes, "now" vs "requested". |
 | `public/js/post-options.js` | Post types, shelf lives and categories. Also imported by the server. |
+| `public/js/parish-filter.js` | The multi-select parish filter. Parishes are free text, so spellings that differ only in case, punctuation or "Saint"/"St." are grouped together. |
 | `public/js/photo-rules.js` | Photo limits (count, size, pixels) and photo URLs. Also imported by the server. |
 | `public/js/photo-picker.js` | The "Photos" field: shrinks photos in the browser, previews them, sends `{ keep }` / `{ upload }`. |
 | `public/js/listing-card.js` | One row of the public directory, with the collapsible description. |

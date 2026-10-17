@@ -4,7 +4,7 @@ import { clearFieldErrors, readForm } from './form-errors.js';
 import { CATEGORIES, findPostType } from './post-options.js';
 import { createPhotoPicker } from './photo-picker.js';
 
-const FIELDS = ['title', 'category', 'email', 'phone', 'address', 'description', 'website'];
+const FIELDS = ['title', 'category', 'parish', 'email', 'phone', 'address', 'description', 'website'];
 
 const form = document.getElementById('edit-form');
 const hint = document.getElementById('edit-hint');
