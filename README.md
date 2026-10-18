@@ -1,12 +1,9 @@
-# Catholic Business Directory (database version)
+# Catholic Business Directory
 
 A website where anyone can browse Catholic farms, businesses and tradespeople, post their
 own listing, offer their skills, or ask for help, and where admins review every post
 before it goes live. Posters can edit, renew or remove their own posts through a private
 emailed link, with no account needed.
-
-This is the `sql` branch. The `sheets` branch runs the same workflow on Google Sheets
-with no server, but posters can't manage their own posts there.
 
 | Post type | Example | Shelf life |
 |---|---|---|
