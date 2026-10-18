@@ -5,7 +5,7 @@ import { formatDate } from './format.js';
 import { findPostType } from './post-options.js';
 
 const STATUS = {
-  pending: ['Waiting for review', 'warning', 'An admin will look at it soon. You can still edit it below.'],
+  pending: ['Waiting for approval', 'warning', 'An admin will look at it soon. You can still edit it below.'],
   approved: ['Live', 'success', 'It is showing in the directory.'],
   removed: ['Removed', 'neutral', "It's no longer in the directory."],
 };

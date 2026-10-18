@@ -227,14 +227,13 @@ h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 1.5rem 0 0.5rem; }
 .contact-label { color: var(--color-muted); font-size: 0.8rem; }
 .link-list { margin: 0.6rem 0 0; padding-left: 1.1rem; overflow-wrap: anywhere; font-size: 0.925rem; }
 .card-footer { padding-top: 0.65rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-.verified { color: #bfe8c9; font-size: 0.875rem; }
 
 /* Each post type gets its own color: a stripe down the left edge and a badge. */
 .listing-card { box-shadow: inset 4px 0 0 #9fd6b2, var(--shadow); }
 .listing-card.type-offering-services { box-shadow: inset 4px 0 0 var(--color-accent), var(--shadow); }
 .listing-card.type-help-wanted { box-shadow: inset 4px 0 0 #f0a58f, var(--shadow); }
 .card-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 0.35rem; font-size: 0.85rem; }
-/* Footer, left side: type badge and category, then the verified date. */
+/* Footer, left side: type badge and category, then the listed / until date. */
 .card-meta { display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
 .card-meta .card-tags { margin: 0; }
 .card-tags .category { color: var(--color-muted); }

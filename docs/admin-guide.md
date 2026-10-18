@@ -16,7 +16,7 @@ really you, so a strong Google account keeps the directory safe too.
 
 | Post type | What it is | How long it stays up |
 |---|---|---|
-| **Business** | A farm, shop or small business | Stays up. After 90 days it lands in **Needs reverification**. |
+| **Business** | A farm, shop or small business | Stays up. After 90 days it lands in **Due for check-in**. |
 | **Offering services** | Someone with a skill or trade looking for work | What the poster picked (see below), then it's hidden automatically |
 | **Help wanted** | Someone who needs a hand: farm help, a tradesperson, a tutor | What the poster picked (see below), then it's hidden automatically |
 
@@ -35,9 +35,9 @@ which restarts their chosen length (or the full maximum) from today.
 |---|---|---|
 | **Pending review** | New posts | Approve, deny, or edit then approve |
 | **Edit requests** | Posters asked to change their live post | Approve or reject the changes |
-| **Needs reverification** | Live businesses not confirmed in 90+ days | **Email poster**, or contact them and **Mark reverified** |
+| **Due for check-in** | Live businesses not confirmed in 90+ days | **Email poster**, or contact them and **Mark still current** |
 | **Expired** | Services / help-wanted posts past their date (already hidden) | Nothing needed. **Renew** if the poster asks, or **Remove** to tidy up. |
-| **Reports** | Live posts a visitor flagged as out of date | Email the poster, then reverify, edit, remove or dismiss |
+| **Reports** | Live posts a visitor flagged as out of date | Email the poster, then mark current or renew, edit, remove or dismiss |
 | **Live** | Everything on the public directory right now | Edit or remove when needed |
 | **Denied** | Posts that were turned down | Can still be approved later |
 | **Removed** | Posts taken down by an admin or by the poster | Can be restored |
@@ -64,6 +64,10 @@ Then choose:
 
 Every action asks for an optional note, which is saved in the card's **History**.
 
+Approving means the post looks genuine (not spam, nothing inappropriate, no personal names).
+It doesn't mean anyone checked the business or vouched for it, so the site never calls a
+listing "verified". Keep that word for a possible future verified tier.
+
 ## Edit requests
 
 When someone edits a post that's already live, the change waits for you. The live post
@@ -74,15 +78,15 @@ The card shows each changed field as **Now** (crossed out) and **Requested** (gr
 Check for personal names, then **Approve changes** or **Reject changes**. If the poster
 sends another edit before you get to it, the newer one replaces the older one.
 
-## Reverifying a business (every 90 days)
+## Checking in with a business (every 90 days)
 
-1. Open **Needs reverification**.
+1. Open **Due for check-in**.
 2. Click **✉ Email poster**. The site emails the business a private link where they can
    confirm the listing is still right, edit it, or remove it. Whatever they do shows up
    in the card's History, and confirming takes the listing off this tab by itself.
 3. Or contact them yourself (phone, your own email) and then:
-   - **Details are correct** → **Mark reverified**. The counter resets to 0 days.
-   - **Something changed** → **Edit**, then **Mark reverified**.
+   - **Details are correct** → **Mark still current**. The counter resets to 0 days.
+   - **Something changed** → **Edit**, then **Mark still current**.
    - **Closed, or no reply after a reasonable time** → **Remove**.
 
 ## Handling a report
@@ -90,8 +94,8 @@ sends another edit before you get to it, the newer one replaces the older one.
 1. Open **Reports**. The red box shows what visitors said.
 2. **✉ Email poster**, or contact them yourself.
 3. Then:
-   - **Mark reverified** / **Renew** if it's still accurate (closes all reports on that post).
-   - **Edit** if something changed, then reverify.
+   - **Mark still current** / **Renew** if it's still accurate (closes all reports on that post).
+   - **Edit** if something changed, then mark it current.
    - **Remove** if it's no longer valid (also closes the reports). For a filled job, remove it.
    - **Dismiss** next to a single report if that report is simply wrong. The post
      stays live and its clock is not reset.

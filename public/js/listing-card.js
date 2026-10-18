@@ -17,10 +17,13 @@ function tagsLine(listing) {
   ]);
 }
 
-/** Businesses show when they were last checked. Posts with a shelf life show until when they run. */
+/**
+ * Businesses show the date they were listed (or the owner last said the details are current).
+ * Posts with a shelf life show until when they run. Never "verified": admins only approve posts.
+ */
 function freshnessNote(listing) {
   if (!findPostType(listing.postType).expires) {
-    return listing.lastVerified ? el('span', { class: 'verified' }, [`✓ Verified ${formatDate(listing.lastVerified)}`]) : el('span');
+    return listing.lastVerified ? el('span', { class: 'muted small' }, [`Listed ${formatDate(listing.lastVerified)}`]) : el('span');
   }
   return listing.expires ? el('span', { class: 'muted small' }, [`Listed until ${formatDate(listing.expires)}`]) : el('span');
 }

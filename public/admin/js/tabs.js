@@ -28,14 +28,14 @@ export const TABS = [
   },
   {
     id: 'reverify',
-    label: 'Needs reverification',
+    label: 'Due for check-in',
     countKey: 'needsReverification',
     needsAction: true,
     url: '/api/admin/listings/needs-reverification',
     description: (summary) =>
-      `Businesses not verified in ${summary.reverifyAfterDays}+ days. "Email poster" sends them a private link to ` +
-      'confirm, edit or remove it themselves. Or contact them and mark it reverified (resets the counter to 0).',
-    empty: 'Every live business has been verified recently.',
+      `Businesses not confirmed in ${summary.reverifyAfterDays}+ days. "Email poster" sends them a private link to ` +
+      'confirm, edit or remove it themselves. Or contact them and mark it still current (resets the counter to 0).',
+    empty: 'Every live business has been confirmed recently.',
   },
   {
     id: 'expired',
@@ -55,7 +55,7 @@ export const TABS = [
     kind: 'reports',
     url: '/api/admin/reports',
     description: () =>
-      'Visitors flagged these listings as out of date. Email the poster, then reverify, edit, remove, or dismiss the report.',
+      'Visitors flagged these listings as out of date. Email the poster, then mark it current or renew it, edit, remove, or dismiss the report.',
     empty: 'No open reports.',
   },
   {

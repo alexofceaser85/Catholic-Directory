@@ -47,7 +47,7 @@ export function buildWelcomeEmail(post, token) {
     text: [
       'Hello,',
       '',
-      `Thank you for posting "${post.title}" to the ${SITE_NAME}. An admin will review it soon.`,
+      `Thank you for posting "${post.title}" to the ${SITE_NAME}. An admin will look at it soon.`,
       shelfLifeSentence(post),
       '',
       'Use this link any time to edit, renew or remove your post:',

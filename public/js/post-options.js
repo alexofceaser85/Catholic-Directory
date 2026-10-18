@@ -20,7 +20,7 @@ export const POST_TYPES = [
     label: BUSINESS,
     filterLabel: 'Businesses',
     expires: false,
-    summary: 'A farm, homestead, shop or small business. Stays listed; we check in every 90 days.',
+    summary: 'A farm, homestead, shop or small business. Stays listed; every 90 days we ask you to confirm it\'s still current.',
     titleLabel: 'Business name',
     titlePlaceholder: 'e.g. Sweetwater Creek Farm',
   },

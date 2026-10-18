@@ -7,7 +7,7 @@ const ACTION_LABELS = {
   approved: 'Approved',
   denied: 'Denied',
   removed: 'Removed',
-  reverified: 'Reverified',
+  reverified: 'Marked still current',
   renewed: 'Renewed',
   edited: 'Edited',
   edit_requested: 'Asked for changes',

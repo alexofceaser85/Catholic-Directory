@@ -24,7 +24,7 @@ const ACTIONS = {
     heading: (listing) => `Approve ${listing.title}?`,
     text: (listing) =>
       isBusiness(listing)
-        ? 'It will appear on the public directory right away, and its verification counter starts at 0 days.'
+        ? 'It will appear on the public directory right away, and its check-in counter starts at 0 days.'
         : `It will appear on the public directory right away and show ${approvalLength(listing)}.`,
   },
   deny: {
@@ -40,11 +40,11 @@ const ACTIONS = {
     danger: true,
   },
   reverify: {
-    label: (listing) => (isBusiness(listing) ? 'Mark reverified' : `Renew ${shelfLife(listing)} days`),
-    heading: (listing) => (isBusiness(listing) ? `Reverify ${listing.title}?` : `Renew ${listing.title}?`),
+    label: (listing) => (isBusiness(listing) ? 'Mark still current' : `Renew ${shelfLife(listing)} days`),
+    heading: (listing) => (isBusiness(listing) ? `Mark ${listing.title} still current?` : `Renew ${listing.title}?`),
     text: (listing) =>
       isBusiness(listing)
-        ? 'Confirm the business told you its details are current. The counter resets to 0 days and open reports are closed.'
+        ? 'Only do this once the business has told you its details are still right. The counter resets to 0 days and open reports are closed.'
         : `It will show for another ${shelfLife(listing)} days from today. Open reports are closed.`,
   },
   'check-in': {

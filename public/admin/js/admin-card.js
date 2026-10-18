@@ -14,19 +14,19 @@ const STATUS_BADGES = {
   removed: ['Removed', 'neutral'],
 };
 
-/** Businesses: days since verified. Other posts: when they expire (or that they have). */
+/** Businesses: days since approval or the owner last confirmed it. Other posts: when they expire (or that they have). */
 function freshnessBadge(listing) {
   if (listing.status !== 'approved') return null;
   if (listing.isExpired) return el('span', { class: 'badge danger' }, [`Expired ${formatDate(listing.expires)}`]);
   if (listing.expires) return el('span', { class: 'badge neutral' }, [`Shows until ${formatDate(listing.expires)}`]);
-  return verificationBadge(listing);
+  return checkInBadge(listing);
 }
 
-function verificationBadge(listing) {
+function checkInBadge(listing) {
   if (listing.daysSinceVerified === null) return null;
   const kind = listing.needsReverification ? 'danger' : 'neutral';
   const days = listing.daysSinceVerified;
-  const text = days === 0 ? 'Verified today' : `Verified ${plural(days, 'day')} ago`;
+  const text = days === 0 ? 'Confirmed today' : `Confirmed ${plural(days, 'day')} ago`;
   return el('span', { class: `badge ${kind}` }, [text]);
 }
 
