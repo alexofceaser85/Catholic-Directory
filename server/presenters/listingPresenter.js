@@ -2,7 +2,7 @@
 // The public shape deliberately leaves out submitter names, notes, status and the manage token.
 import config from '../config.js';
 import { findNameMatches } from '../lib/nameCheck.js';
-import { isReverifiedType } from '../lib/shelfLife.js';
+import { isReverifiedType, shelfLifeDays } from '../lib/shelfLife.js';
 import { findPostTypeById } from '../../public/js/post-options.js';
 
 /** Links and photo keys are stored as newline-separated text. */
@@ -47,6 +47,7 @@ export function toAdminListing(row) {
     submittedAt: row.submitted_at,
     reviewedAt: row.reviewed_at,
     daysSinceVerified,
+    renewDays: shelfLifeDays(row),
     isExpired: isApproved && Boolean(Number(row.is_expired)),
     needsReverification:
       isApproved && isReverifiedType(row.post_type) && daysSinceVerified !== null &&
@@ -64,6 +65,7 @@ export function toPosterListing(row, pendingEdit) {
   return {
     ...toPublicListing(row),
     status: row.status,
+    renewDays: shelfLifeDays(row),
     isExpired: row.status === 'approved' && Boolean(Number(row.is_expired)),
     pendingEdit: pendingEdit ? { submittedAt: pendingEdit.created_at, changes: pendingEdit.changes } : null,
   };
@@ -84,8 +86,10 @@ export function toEditRequest(editRow, listingRow) {
   };
 }
 
+/** Blank and missing count as the same (a blank phone is stored as NULL but shown as ''). */
 function asComparable(value) {
-  return Array.isArray(value) ? value.join('\n') : (value ?? null);
+  if (Array.isArray(value)) return value.join('\n');
+  return value === '' || value === undefined ? null : value;
 }
 
 /** Names of the fields in `changes` whose value differs from `current`. */

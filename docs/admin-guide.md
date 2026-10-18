@@ -17,11 +17,17 @@ really you, so a strong Google account keeps the directory safe too.
 | Post type | What it is | How long it stays up |
 |---|---|---|
 | **Business** | A farm, shop or small business | Stays up. After 90 days it lands in **Needs reverification**. |
-| **Offering services** | Someone with a skill or trade looking for work | **60 days** from approval, then it's hidden automatically |
-| **Help wanted** | Someone who needs a hand: farm help, a tradesperson, a tutor | **30 days** from approval, then it's hidden automatically |
+| **Offering services** | Someone with a skill or trade looking for work | What the poster picked (see below), then it's hidden automatically |
+| **Help wanted** | Someone who needs a hand: farm help, a tradesperson, a tutor | What the poster picked (see below), then it's hidden automatically |
 
-Approving a post starts its clock. Posters can renew their own posts from their private
-link. You can renew one too (**Renew** button), which restarts the full period from today.
+Posters choose how long a services or help-wanted post shows, up to `MAX_POST_DAYS` (90
+unless changed): a quarter, half, three quarters or all of it (23, 45, 68 or 90 days, counted
+from approval), or a last day within that window.
+
+Approving a post starts its clock (or keeps the poster's last day). To change the last day,
+**Edit** the post and set **Last day it shows**; a past date takes it down. Posters can
+renew their own posts from their private link. You can renew one too (**Renew** button),
+which restarts their chosen length (or the full maximum) from today.
 
 ## The tabs
 

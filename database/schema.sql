@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS listings (
   phone                 VARCHAR(40)  NULL,
   address               VARCHAR(500) NULL,
   parish                VARCHAR(200) NOT NULL DEFAULT '' COMMENT 'The parish the poster belongs to (free text)',
-  duration_days         SMALLINT UNSIGNED NULL COMMENT 'How long the poster asked it to show; NULL = the post type default',
+  duration_days         SMALLINT UNSIGNED NULL COMMENT 'Days the poster asked it to show, from approval; NULL = a picked last day, or MAX_POST_DAYS',
   description           TEXT         NOT NULL,
   website               VARCHAR(500) NULL,
   links                 TEXT         NULL COMMENT 'Newline-separated list of URLs',
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS listings (
   submitted_at          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   reviewed_at           DATETIME     NULL COMMENT 'Last approve/deny/remove decision',
   last_verified_at      DATETIME     NULL COMMENT 'Approval or last reverification/renewal; the 90-day counter starts here',
-  expires_on            DATE         NULL COMMENT 'Last day a services/help-wanted post shows. NULL for businesses.',
+  expires_on            DATE         NULL COMMENT 'Last day a services/help-wanted post shows (may be set while pending: kept on approval). NULL for businesses.',
   updated_at            DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   INDEX idx_listings_status (status),

@@ -19,7 +19,7 @@ function tagsLine(listing) {
 
 /** Businesses show when they were last checked. Posts with a shelf life show until when they run. */
 function freshnessNote(listing) {
-  if (findPostType(listing.postType).expiresAfterDays === null) {
+  if (!findPostType(listing.postType).expires) {
     return listing.lastVerified ? el('span', { class: 'verified' }, [`✓ Verified ${formatDate(listing.lastVerified)}`]) : el('span');
   }
   return listing.expires ? el('span', { class: 'muted small' }, [`Listed until ${formatDate(listing.expires)}`]) : el('span');

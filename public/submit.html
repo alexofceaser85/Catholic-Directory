@@ -32,13 +32,6 @@
         <legend>What are you posting?</legend>
         <div id="post-type-choices" class="choice-list"></div>
         <p class="field-error" data-error-for="postType"></p>
-
-        <div id="duration-field" class="field duration-field" hidden>
-          <label for="duration">How long should it show?</label>
-          <select id="duration" name="durationDays"></select>
-          <p class="hint">Counted from when an admin approves it. You can renew it or take it down
-             early from your private link.</p>
-        </div>
       </fieldset>
 
       <fieldset>
@@ -129,6 +122,23 @@
           <p class="hint">Up to 4. The first one shows first. Location data is removed from every photo. Please leave out photos of people who haven&rsquo;t agreed to be shown.</p>
           <p class="field-error" data-error-for="photos"></p>
         </div>
+      </fieldset>
+
+      <fieldset id="duration-field" hidden>
+        <legend>How long should it show?</legend>
+        <div class="field-row">
+          <div class="field">
+            <label for="duration">Show it for</label>
+            <select id="duration" name="durationDays"></select>
+          </div>
+          <div id="end-date-field" class="field" hidden>
+            <label for="end-date">Last day it shows</label>
+            <input id="end-date" name="expires" type="date">
+            <p class="field-error" data-error-for="expires"></p>
+          </div>
+        </div>
+        <p class="hint">Lengths count from when an admin approves it. You can renew it or take it
+           down early from your private link.</p>
       </fieldset>
 
       <div class="honeypot" aria-hidden="true">

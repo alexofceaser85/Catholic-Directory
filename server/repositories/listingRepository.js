@@ -14,6 +14,7 @@ const COLUMNS = {
   address: 'address',
   parish: 'parish',
   durationDays: 'duration_days',
+  expires: 'expires_on',
   description: 'description',
   website: 'website',
   links: 'links',
@@ -147,16 +148,35 @@ export async function updateStatus(id, status) {
 }
 
 /**
- * Starts the clock again: "last verified" becomes now and, for posts that expire,
- * the expiry date becomes today + `expiresAfterDays`. Used on approval, reverification and renewal.
- * @param {number|null} expiresAfterDays null for businesses (no expiry date).
+ * Approval: "last verified" becomes now. A post that expires keeps an end date that is still
+ * ahead (one the poster picked, or an admin set); otherwise it shows for `days` from today.
+ * @param {number|null} days null for businesses (no expiry date).
  */
-export async function restartShelfLife(id, expiresAfterDays) {
+export async function startShelfLife(id, days) {
+  await query(
+    `UPDATE listings
+     SET last_verified_at = NOW(),
+         expires_on = CASE
+           WHEN ? IS NULL THEN NULL
+           WHEN expires_on >= CURRENT_DATE() THEN expires_on
+           ELSE CURRENT_DATE() + INTERVAL ? DAY
+         END
+     WHERE id = ?`,
+    [days, days ?? 0, id],
+  );
+}
+
+/**
+ * Starts the clock again: "last verified" becomes now and, for posts that expire,
+ * the expiry date becomes today + `days`. Used on reverification and renewal.
+ * @param {number|null} days null for businesses (no expiry date).
+ */
+export async function restartShelfLife(id, days) {
   await query(
     `UPDATE listings
      SET last_verified_at = NOW(),
          expires_on = IF(? IS NULL, NULL, CURRENT_DATE() + INTERVAL ? DAY)
      WHERE id = ?`,
-    [expiresAfterDays, expiresAfterDays ?? 0, id],
+    [days, days ?? 0, id],
   );
 }

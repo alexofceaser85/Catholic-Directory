@@ -11,8 +11,11 @@ with no server, but posters can't manage their own posts there.
 | Post type | Example | Shelf life |
 |---|---|---|
 | Business | A farm, shop or small business | Stays up; rechecked every 90 days |
-| Offering services | A carpenter or fencer looking for work | Hidden after 2 weeks, 30 or 60 days (the poster picks; 60 by default), unless renewed |
-| Help wanted | A farm needing harvest help | Hidden after 1 week, 2 weeks or 30 days (the poster picks; 30 by default), unless renewed |
+| Offering services | A carpenter or fencer looking for work | Hidden after the time the poster picks, unless renewed |
+| Help wanted | A farm needing harvest help | Hidden after the time the poster picks, unless renewed |
+
+Posters pick a quarter, half, three quarters or all of `MAX_POST_DAYS` (90 by default: 23,
+45, 68 or 90 days from approval), or a last day within it. Admins can change the last day.
 
 Every post also has a category (Farm & livestock, Trades & construction, …) and the
 poster's parish, so people can find businesses and help close to home. The directory
@@ -127,12 +130,13 @@ All settings are environment variables (see [`.env.example`](.env.example)).
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD` | this or Gmail API, in production | SMTP settings for poster emails ([setup](docs/deployment.md#option-b-smtp)) |
 | `MAIL_FROM` | yes in production | Sender, e.g. `Catholic Business Directory <directory@gmail.com>` |
 | `REVERIFY_AFTER_DAYS` | no (90) | When a live business moves to "Needs reverification" |
+| `MAX_POST_DAYS` | no (90) | The longest a services or help-wanted post can show (4 to 365) |
 | `NODE_ENV` | no | Leave as `production` on the live server. Anything other than `development` is treated as production. |
 | `TRUST_PROXY` | no | `true` behind a hosting proxy (Render, Railway, nginx…) |
 | `DEV_ADMIN_LOGIN` | no | `true` = email-only admin sign-in for local testing. Only works when `NODE_ENV=development`. |
 | `PORT` | no (3000) | Port the server listens on |
 
-Post types, their shelf lives and the categories are in `public/js/post-options.js`.
+Post types (and which ones expire) and the categories are in `public/js/post-options.js`.
 Both the browser and the server read that one file.
 
 ## Project layout
@@ -170,7 +174,7 @@ public/                     Everything the browser loads (served as-is)
 ├── js/                     Page scripts + shared helpers; post-options.js has the lists
 └── admin/                  Admin dashboard (index.html, admin.css, js/)
 database/
-├── schema.sql              Creates the tables
+├── schema.sql              Creates the tables (diagram: docs/database.md)
 ├── migrations/             Changes for databases created before a feature existed
 └── sample-data.sql         Fake data for local testing only
 tests/                      `npm test`
@@ -182,6 +186,7 @@ docs/                       Longer guides (below)
 
 - [docs/admin-guide.md](docs/admin-guide.md): reviewing posts, edit requests, reverifying, reports
 - [docs/architecture.md](docs/architecture.md): how the code fits together, the data model and security
+- [docs/database.md](docs/database.md): diagram of every table and column
 - [docs/api.md](docs/api.md): every API endpoint
 - [docs/deployment.md](docs/deployment.md): Google sign-in, email, and putting the site online
 - [docs/logo.md](docs/logo.md): how the logo is built and how to swap the crucifix picture

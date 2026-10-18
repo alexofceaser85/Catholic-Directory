@@ -3,7 +3,7 @@ import { api } from '/js/api.js';
 import { showStatus } from '/js/dom.js';
 import { el } from '/js/dom.js';
 import { clearFieldErrors, showFieldErrors, readForm } from '/js/form-errors.js';
-import { CATEGORIES, POST_TYPES } from '/js/post-options.js';
+import { CATEGORIES, POST_TYPES, addDays, findPostType, isoDate } from '/js/post-options.js';
 import { createPhotoPicker } from '/js/photo-picker.js';
 import { setUpParishInput } from '/js/parish-input.js';
 
@@ -12,9 +12,20 @@ const form = document.getElementById('edit-form');
 const statusNode = document.getElementById('edit-status');
 const saveButton = form.querySelector('button[type="submit"]');
 const photoPicker = createPhotoPicker(document.getElementById('edit-photo-picker'));
+const expiresField = document.getElementById('edit-expires-field');
 setUpParishInput(form.elements.parish);
 
-const EDITABLE_FIELDS = ['title', 'postType', 'category', 'parish', 'email', 'phone', 'address', 'description', 'website', 'adminNotes'];
+const EDITABLE_FIELDS = ['title', 'postType', 'category', 'parish', 'email', 'phone', 'address', 'description', 'website', 'expires', 'adminNotes'];
+
+/** Businesses don't expire, so they have no last day. */
+function showExpiresForType() {
+  expiresField.hidden = !findPostType(form.elements.postType.value).expires;
+}
+form.elements.postType.addEventListener('change', showExpiresForType);
+
+/** The latest date the server accepts: MAX_POST_DAYS from today. */
+let maxPostDays = 90;
+api.get('/api/settings').then((settings) => { maxPostDays = settings.maxPostDays; }).catch(() => {});
 
 dialog.querySelector('[data-close-dialog]').addEventListener('click', () => dialog.close());
 
@@ -29,6 +40,8 @@ function fillForm(listing) {
     form.elements[field].value = listing[field] ?? '';
   }
   form.elements.links.value = listing.links.join('\n');
+  form.elements.expires.max = addDays(isoDate(new Date()), maxPostDays);
+  showExpiresForType();
   photoPicker.setPhotos(listing.photos);
 }
 

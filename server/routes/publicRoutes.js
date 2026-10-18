@@ -5,6 +5,7 @@ import { validateSubmission, validateReport, isLikelyBot } from '../validation/l
 import { rateLimit } from '../middleware/rateLimit.js';
 import { requireJson } from '../middleware/requireJson.js';
 import { parseId } from '../lib/parseId.js';
+import config from '../config.js';
 
 const ONE_HOUR = 60 * 60 * 1000;
 
@@ -22,6 +23,11 @@ const reportLimit = rateLimit({
 
 const router = Router();
 router.use(requireJson);
+
+// Settings the forms need: the longest a post can show (MAX_POST_DAYS).
+router.get('/settings', (req, res) => {
+  res.json({ maxPostDays: config.maxPostDays });
+});
 
 // Live listings for the public directory page.
 router.get('/listings', async (req, res) => {

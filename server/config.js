@@ -30,6 +30,14 @@ function readSessionSecret() {
   return secret;
 }
 
+function readMaxPostDays() {
+  const days = Number(process.env.MAX_POST_DAYS || 90);
+  if (!Number.isInteger(days) || days < 4 || days > 365) {
+    throw new Error('MAX_POST_DAYS must be a whole number of days from 4 to 365.');
+  }
+  return days;
+}
+
 const port = Number(process.env.PORT || 3000);
 
 const config = {
@@ -51,6 +59,9 @@ const config = {
   devAdminLogin: isDevelopment && process.env.DEV_ADMIN_LOGIN === 'true',
 
   reverifyAfterDays: Number(process.env.REVERIFY_AFTER_DAYS || 90),
+  // The longest a services or help-wanted post can show. Posters pick a quarter, half,
+  // three quarters or all of it, or a date within it.
+  maxPostDays: readMaxPostDays(),
 
   // The address people type to reach the site. Used to build the "manage your post" links in emails.
   publicUrl: (process.env.PUBLIC_URL || `http://localhost:${port}`).replace(/\/$/, ''),

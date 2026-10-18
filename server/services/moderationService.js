@@ -6,7 +6,7 @@
 //                   │                            │
 //                   └──────── approve ◀──────────┘  (restore)
 //
-// Approving, reverifying and renewing all restart the post's shelf life (lib/shelfLife.js).
+// Approving starts the post's shelf life and reverifying or renewing restarts it (lib/shelfLife.js).
 // Every action is written to the listing_history table.
 import * as listings from '../repositories/listingRepository.js';
 import * as edits from '../repositories/listingEditRepository.js';
@@ -47,7 +47,7 @@ async function loadListingFor(action, id) {
 export async function approve(id, adminEmail, note) {
   const listing = await loadListingFor('approve', id);
   await listings.updateStatus(id, 'approved');
-  await listings.restartShelfLife(id, shelfLifeDays(listing));
+  await listings.startShelfLife(id, shelfLifeDays(listing));
   await history.insert(id, adminEmail, 'approved', note);
 }
 

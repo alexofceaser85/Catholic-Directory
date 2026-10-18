@@ -2,13 +2,21 @@
 // mirroring the server's rules in server/services/moderationService.js.
 import { api } from '/js/api.js';
 import { el } from '/js/dom.js';
-import { findPostType } from '/js/post-options.js';
+import { formatDate } from '/js/format.js';
+import { findPostType, isoDate } from '/js/post-options.js';
 import { confirmAction } from './action-dialog.js';
 import { openEditDialog } from './edit-dialog.js';
 import { notify } from './notify.js';
 
-const isBusiness = (listing) => findPostType(listing.postType).expiresAfterDays === null;
-const shelfLife = (listing) => findPostType(listing.postType).expiresAfterDays;
+const isBusiness = (listing) => !findPostType(listing.postType).expires;
+const shelfLife = (listing) => listing.renewDays;
+
+/** Approval keeps an end date that's still ahead (picked by the poster or an admin). */
+function approvalLength(listing) {
+  return listing.expires && listing.expires >= isoDate(new Date())
+    ? `until ${formatDate(listing.expires)}`
+    : `for ${shelfLife(listing)} days`;
+}
 
 const ACTIONS = {
   approve: {
@@ -17,7 +25,7 @@ const ACTIONS = {
     text: (listing) =>
       isBusiness(listing)
         ? 'It will appear on the public directory right away, and its verification counter starts at 0 days.'
-        : `It will appear on the public directory right away and show for ${shelfLife(listing)} days.`,
+        : `It will appear on the public directory right away and show ${approvalLength(listing)}.`,
   },
   deny: {
     label: () => 'Deny',

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 const { buildWelcomeEmail, buildLinksEmail, buildCheckInEmail, manageUrl } = await import('../server/services/posterEmails.js');
 
 const token = 'A'.repeat(43);
-const post = { title: 'Fence building', email: 'fencing@example.com', postType: 'offering_services' };
+const post = { title: 'Fence building', email: 'fencing@example.com', postType: 'offering_services', durationDays: 45 };
 
 test('the manage link keeps the token after "#", so it never reaches server logs', () => {
   assert.equal(manageUrl(token), `https://directory.example.org/manage#token=${token}`);
@@ -15,7 +15,7 @@ test('the welcome email has the link, the shelf life and a warning not to share 
   const email = buildWelcomeEmail(post, token);
   assert.equal(email.to, 'fencing@example.com');
   assert.match(email.text, new RegExp(`manage#token=${token}`));
-  assert.match(email.text, /60 days/);
+  assert.match(email.text, /45 days/);
   assert.match(email.text, /don't share it/);
 });
 

@@ -69,8 +69,9 @@ display order; each one is served at `GET /photos/<key>.webp`.
 
 | Method & path | Body | Result |
 |---|---|---|
+| `GET /api/settings` | none | `{ maxPostDays }`: the longest a services or help-wanted post can show (`MAX_POST_DAYS`) |
 | `GET /api/listings` | none | Live listings (approved and not expired), A→Z |
-| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `durationDays` (optional: one of the post type's `durationChoices`, otherwise its default), `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
+| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `durationDays` (optional: a quarter, half, three quarters or all of `maxPostDays`, rounded; anything else means all of it), or `durationDays: "date"` with `expires` (`YYYY-MM-DD`, today to `maxPostDays` ahead). Both are ignored for businesses., `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
 | `POST /api/listings/:id/reports` | `reason` | `201 { ok: true }`. Only for live listings, otherwise 404. 10 per IP per hour. |
 
 ### Photos
@@ -130,7 +131,7 @@ Posters can't change the post type, their name, the status or admin notes.
 | `GET /api/admin/listings/:id/history` | none | `[{ actor, action, detail, createdAt }]`, newest first. `actor` is an admin email or `"poster"`. |
 | `GET /api/admin/reports` | none | `[{ listing, reports: [{ id, reason, createdAt }] }]`, open reports grouped by listing |
 | `GET /api/admin/edits` | none | `[{ listing, edit: { id, submittedAt, changes, changedFields } }]`, pending poster edits |
-| `PUT /api/admin/listings/:id` | Public fields (including `photos`) + `postType` (label) + `adminNotes` | Saves edits (submitter names can't be changed) |
+| `PUT /api/admin/listings/:id` | Public fields (including `photos`) + `postType` (label) + `adminNotes` + `expires` (optional `YYYY-MM-DD`, at most `maxPostDays` ahead; blank keeps the current date; cleared for businesses) | Saves edits (submitter names can't be changed) |
 | `POST /api/admin/listings/:id/approve` | `{ note? }` | pending/denied/removed → approved. Starts the shelf life. |
 | `POST /api/admin/listings/:id/deny` | `{ note? }` | pending → denied |
 | `POST /api/admin/listings/:id/remove` | `{ note? }` | pending/approved → removed. Closes open reports and drops a pending edit. |

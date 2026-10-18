@@ -38,7 +38,9 @@ Each layer has one job, so a change usually touches one file:
 | Change who can do what, or what an action does | `services/moderationService.js` (and the matching buttons in `public/admin/js/card-actions.js`) |
 | Change wording or layout | The HTML file, or `public/css/styles.css` |
 | Change the 90-day rule | `REVERIFY_AFTER_DAYS` in `.env`, no code change |
-| Change a shelf life or the lengths posters can choose, add a post type or category | `public/js/post-options.js` (`expiresAfterDays`, `durationChoices`; read by both browser and server). A new post type id also needs adding to the `post_type` ENUM in `schema.sql`. |
+| Change the longest a post can show | `MAX_POST_DAYS` in `.env` (the four lengths offered are its quarters), no code change |
+| Change which types expire, add a post type or category | `public/js/post-options.js` (`expires`; read by both browser and server). A new post type id also needs adding to the `post_type` ENUM in `schema.sql`. |
+| Change the database | `database/schema.sql`, a new file in `database/migrations/`, and the diagram in [database.md](database.md) |
 | Change what emails say | `server/services/posterEmails.js` |
 
 ### Errors
@@ -70,7 +72,7 @@ No framework and no build step. Each page loads one entry script as an ES module
 
 ## Data model
 
-Five tables (see `database/schema.sql`):
+Five tables (see `database/schema.sql`, and [database.md](database.md) for every column):
 
 ```
 listings ──< reports          "this listing is out of date" from the public
@@ -99,11 +101,15 @@ The allowed starting statuses for each action are in `ALLOWED_FROM` in
 
 ### Shelf life: reverification and expiry
 
-Approving, reverifying and renewing all call `restartShelfLife` (in `listingRepository.js`):
+Approving calls `startShelfLife`, and reverifying and renewing call `restartShelfLife`
+(both in `listingRepository.js`):
 
 - `last_verified_at` becomes now.
-- `expires_on` becomes today + the type's `expiresAfterDays` for services and help-wanted
-  posts, and stays `NULL` for businesses.
+- Businesses: `expires_on` stays `NULL`.
+- Services and help-wanted posts: on approval, an `expires_on` still ahead is kept (the
+  poster picked a last day, or an admin set one); otherwise, and on every renewal, it becomes
+  today + `duration_days` (the length the poster picked), or `MAX_POST_DAYS` when there's none.
+  Lengths are capped at today's `MAX_POST_DAYS`.
 
 Nothing runs on a schedule. Every query works it out from those two columns:
 

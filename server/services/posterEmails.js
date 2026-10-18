@@ -2,7 +2,8 @@
 // Emails never include the submitter's name: they go to the post's public contact address.
 import config from '../config.js';
 import { sendEmail } from '../lib/mailer.js';
-import { chosenDuration, durationLabel, findPostTypeById } from '../../public/js/post-options.js';
+import { durationLabel, findPostTypeById } from '../../public/js/post-options.js';
+import { formatDate } from '../../public/js/format.js';
 import { isReverifiedType } from '../lib/shelfLife.js';
 
 const SITE_NAME = 'Catholic Business Directory';
@@ -25,14 +26,20 @@ function sendSafely(message) {
   });
 }
 
-function shelfLifeSentence(postTypeId, durationDays) {
-  const days = chosenDuration(findPostTypeById(postTypeId), durationDays);
-  return days === null
-    ? "Business listings stay up; we'll check in every few months to make sure the details are still right."
-    : `It will show for ${durationLabel(days)} after it's approved. You can renew or remove it from the link below.`;
+function shelfLifeSentence({ postType, durationDays, expires }) {
+  if (!findPostTypeById(postType).expires) {
+    return "Business listings stay up; we'll check in every few months to make sure the details are still right.";
+  }
+  const until = expires
+    ? `It will show until ${formatDate(expires)} once it's approved.`
+    : `It will show for ${durationLabel(durationDays)} after it's approved.`;
+  return `${until} You can renew or remove it from the link below.`;
 }
 
-/** @param {{ title: string, email: string, postType: string, durationDays?: number }} post  postType is the database id. */
+/**
+ * @param {{ title: string, email: string, postType: string, durationDays?: number, expires?: string }} post
+ *   As validated: postType is the database id; a post that expires has durationDays or expires.
+ */
 export function buildWelcomeEmail(post, token) {
   return {
     to: post.email,
@@ -41,7 +48,7 @@ export function buildWelcomeEmail(post, token) {
       'Hello,',
       '',
       `Thank you for posting "${post.title}" to the ${SITE_NAME}. An admin will review it soon.`,
-      shelfLifeSentence(post.postType, post.durationDays),
+      shelfLifeSentence(post),
       '',
       'Use this link any time to edit, renew or remove your post:',
       manageUrl(token),

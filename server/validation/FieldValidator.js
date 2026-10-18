@@ -5,10 +5,20 @@ import { HttpError } from '../lib/httpError.js';
 import { isPhotoKey } from '../lib/photos.js';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 const PHONE_PATTERN = /^[0-9+().\-\s]*(ext\.?\s*\d+)?$/i;
 
 function toTrimmedString(value) {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+/** "2026-10-14" that names a real day (not "2026-02-30"). */
+function isCalendarDate(text) {
+  const match = DATE_PATTERN.exec(text);
+  if (!match) return false;
+  const [, year, month, day] = match.map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 }
 
 function isWebUrl(text) {
@@ -98,6 +108,18 @@ export class FieldValidator {
       photos.push({ upload });
     }
     this.values[field] = photos;
+    return this;
+  }
+
+  /**
+   * A "2026-10-14" date, no earlier than `min` and no later than `max` (same format; either
+   * may be left out). Blank is an error when `required`, otherwise the field is left out.
+   */
+  date(field, { min = '', max = '9999-12-31', required = false }, message) {
+    const text = toTrimmedString(this.body[field]);
+    if (!text) return required ? this.fail(field, message) : this;
+    if (!isCalendarDate(text) || text < min || text > max) return this.fail(field, message);
+    this.values[field] = text;
     return this;
   }
 

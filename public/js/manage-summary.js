@@ -21,7 +21,7 @@ function statusLine(post) {
 /** "Shows until …" for posts that expire, "Last confirmed …" for businesses. */
 function shelfLifeLine(post) {
   if (post.status !== 'approved' || post.isExpired) return null;
-  const isBusiness = findPostType(post.postType).expiresAfterDays === null;
+  const isBusiness = !findPostType(post.postType).expires;
   if (isBusiness) return el('p', { class: 'muted small' }, [`Last confirmed ${formatDate(post.lastVerified)}.`]);
   return el('p', { class: 'muted small' }, [`Shows until ${formatDate(post.expires)}.`]);
 }
@@ -35,8 +35,7 @@ function pendingEditNotice(post) {
 }
 
 function renewLabel(post) {
-  const type = findPostType(post.postType);
-  return type.expiresAfterDays === null ? 'Confirm it\'s still current' : `Renew for ${type.expiresAfterDays} days`;
+  return findPostType(post.postType).expires ? `Renew for ${post.renewDays} days` : 'Confirm it\'s still current';
 }
 
 /**

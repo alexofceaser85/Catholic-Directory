@@ -2,7 +2,10 @@
 import { FieldValidator } from './FieldValidator.js';
 import { HttpError } from '../lib/httpError.js';
 import { isWellFormedToken } from '../lib/manageToken.js';
-import { CATEGORIES, POST_TYPES, chosenDuration, findPostType } from '../../public/js/post-options.js';
+import config from '../config.js';
+import {
+  CATEGORIES, POST_TYPES, UNTIL_DATE, addDays, chosenDuration, findPostType, isoDate,
+} from '../../public/js/post-options.js';
 import { MAX_PHOTOS, MAX_UPLOAD_BYTES } from '../../public/js/photo-rules.js';
 
 const MAX_LINKS = 10;
@@ -30,12 +33,21 @@ function withPostTypeId(values) {
 }
 
 /**
- * "How long should it show?" is a dropdown, so anything other than one of the post type's
- * choices can only come from a tampered request: it quietly becomes the default.
+ * "How long should it show?": one of the lengths (counted from approval), or a last day the
+ * poster picks within MAX_POST_DAYS. The lengths are a dropdown, so any other number can only
+ * come from a tampered request: it quietly becomes the longest. Businesses get neither.
+ * Returns { durationDays }; a picked date is checked by the validator and saved as `expires`.
  */
-function withDuration(values, requestedDays) {
-  const type = findPostType(values.postType);
-  return { ...values, durationDays: chosenDuration(type, requestedDays) };
+function checkDuration(validator, body) {
+  const type = findPostType(body.postType);
+  const maxDays = config.maxPostDays;
+  if (type.expires && body.durationDays === UNTIL_DATE) {
+    const today = isoDate(new Date());
+    validator.date('expires', { min: today, max: addDays(today, maxDays), required: true },
+      `Please pick a date in the next ${maxDays} days.`);
+    return { durationDays: null };
+  }
+  return { durationDays: chosenDuration(type, body.durationDays, maxDays) };
 }
 
 /** Public "Add a listing" form. */
@@ -45,8 +57,9 @@ export function validateSubmission(body) {
     .requiredText('submitterFirstName', 'First name', 100)
     .requiredText('submitterLastName', 'Last name', 100)
     .mustBeTrue('consent', 'Please confirm these details may be shown publicly.');
+  const duration = checkDuration(validator, body);
   const values = checkPublicFields(validator, { isNewPost: true }).result();
-  return withPostTypeId(withDuration(values, body.durationDays));
+  return withPostTypeId({ ...values, ...duration });
 }
 
 /** A poster editing their own post. They can't change the post type or their name. */
@@ -54,12 +67,22 @@ export function validatePosterEdit(body) {
   return checkPublicFields(new FieldValidator(body)).result();
 }
 
-/** Admin "edit listing" form. Submitter names are kept as submitted. */
+/**
+ * Admin "edit listing" form. Submitter names are kept as submitted.
+ * The last day it shows (`expires`) may be any date up to MAX_POST_DAYS ahead; a past date
+ * takes it down. Blank leaves the date as it is. Businesses never have one.
+ */
 export function validateListingEdit(body) {
   const validator = checkPublicFields(new FieldValidator(body))
     .oneOf('postType', POST_TYPE_LABELS, 'Please choose a post type.')
     .text('adminNotes', 'Admin notes', 5000);
-  return withPostTypeId(validator.result());
+  const expires = findPostType(body.postType).expires;
+  if (expires) {
+    const latest = addDays(isoDate(new Date()), config.maxPostDays);
+    validator.date('expires', { max: latest }, `Please pick a date no more than ${config.maxPostDays} days from today.`);
+  }
+  const values = withPostTypeId(validator.result());
+  return expires ? values : { ...values, expires: null };
 }
 
 /** Public "report as out of date" form. */
