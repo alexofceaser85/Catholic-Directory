@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS listings (
   phone                 VARCHAR(40)  NULL,
   address               VARCHAR(500) NULL,
   parish                VARCHAR(200) NOT NULL DEFAULT '' COMMENT 'The parish the poster belongs to (free text)',
+  duration_days         SMALLINT UNSIGNED NULL COMMENT 'How long the poster asked it to show; NULL = the post type default',
   description           TEXT         NOT NULL,
   website               VARCHAR(500) NULL,
   links                 TEXT         NULL COMMENT 'Newline-separated list of URLs',

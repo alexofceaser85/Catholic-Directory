@@ -11,8 +11,8 @@ with no server, but posters can't manage their own posts there.
 | Post type | Example | Shelf life |
 |---|---|---|
 | Business | A farm, shop or small business | Stays up; rechecked every 90 days |
-| Offering services | A carpenter or fencer looking for work | Hidden 60 days after approval, unless renewed |
-| Help wanted | A farm needing harvest help | Hidden 30 days after approval, unless renewed |
+| Offering services | A carpenter or fencer looking for work | Hidden after 2 weeks, 30 or 60 days (the poster picks; 60 by default), unless renewed |
+| Help wanted | A farm needing harvest help | Hidden after 1 week, 2 weeks or 30 days (the poster picks; 30 by default), unless renewed |
 
 Every post also has a category (Farm & livestock, Trades & construction, …) and the
 poster's parish, so people can find businesses and help close to home. The directory

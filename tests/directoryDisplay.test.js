@@ -32,3 +32,8 @@ test('the parish filter lists each parish once, A to Z, skipping blanks', () => 
   ];
   assert.deepEqual(parishChoices(listings).map((choice) => choice.label), ['All Saints', 'St. Peter Chanel']);
 });
+
+test('"Catholic Church" and "Parish" in a parish name are ignored when matching', () => {
+  assert.equal(parishKey('St. Joseph Catholic Church, Marietta'), parishKey('Saint Joseph, Marietta'));
+  assert.equal(parishKey('Holy Spirit Parish, Atlanta'), parishKey('Holy Spirit, Atlanta'));
+});

@@ -3,12 +3,14 @@ import { el, showStatus } from './dom.js';
 import { clearFieldErrors, readForm } from './form-errors.js';
 import { CATEGORIES, findPostType } from './post-options.js';
 import { createPhotoPicker } from './photo-picker.js';
+import { setUpParishInput } from './parish-input.js';
 
 const FIELDS = ['title', 'category', 'parish', 'email', 'phone', 'address', 'description', 'website'];
 
 const form = document.getElementById('edit-form');
 const hint = document.getElementById('edit-hint');
 const photoPicker = createPhotoPicker(document.getElementById('photo-picker'));
+setUpParishInput(form.elements.parish);
 
 function fillCategories(select) {
   select.replaceChildren(...CATEGORIES.map((category) => el('option', { value: category }, [category])));

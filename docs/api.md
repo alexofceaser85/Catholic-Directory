@@ -70,7 +70,7 @@ display order; each one is served at `GET /photos/<key>.webp`.
 | Method & path | Body | Result |
 |---|---|---|
 | `GET /api/listings` | none | Live listings (approved and not expired), A→Z |
-| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
+| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `durationDays` (optional: one of the post type's `durationChoices`, otherwise its default), `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
 | `POST /api/listings/:id/reports` | `reason` | `201 { ok: true }`. Only for live listings, otherwise 404. 10 per IP per hour. |
 
 ### Photos

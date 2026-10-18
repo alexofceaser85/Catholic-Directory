@@ -38,7 +38,7 @@ Each layer has one job, so a change usually touches one file:
 | Change who can do what, or what an action does | `services/moderationService.js` (and the matching buttons in `public/admin/js/card-actions.js`) |
 | Change wording or layout | The HTML file, or `public/css/styles.css` |
 | Change the 90-day rule | `REVERIFY_AFTER_DAYS` in `.env`, no code change |
-| Change a shelf life, add a post type or category | `public/js/post-options.js` (read by both browser and server). A new post type id also needs adding to the `post_type` ENUM in `schema.sql`. |
+| Change a shelf life or the lengths posters can choose, add a post type or category | `public/js/post-options.js` (`expiresAfterDays`, `durationChoices`; read by both browser and server). A new post type id also needs adding to the `post_type` ENUM in `schema.sql`. |
 | Change what emails say | `server/services/posterEmails.js` |
 
 ### Errors

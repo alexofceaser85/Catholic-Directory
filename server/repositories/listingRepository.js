@@ -13,6 +13,7 @@ const COLUMNS = {
   phone: 'phone',
   address: 'address',
   parish: 'parish',
+  durationDays: 'duration_days',
   description: 'description',
   website: 'website',
   links: 'links',

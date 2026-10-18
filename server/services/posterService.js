@@ -61,7 +61,7 @@ export async function renewOwnPost(token) {
   const row = await loadOwnListing(token);
   requireStatus(row, ['approved'], 'Only approved posts can be renewed.');
 
-  await listings.restartShelfLife(row.id, shelfLifeDays(row.post_type));
+  await listings.restartShelfLife(row.id, shelfLifeDays(row));
   await history.insert(row.id, history.POSTER, isReverifiedType(row.post_type) ? 'reverified' : 'renewed');
 }
 

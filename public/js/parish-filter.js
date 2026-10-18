@@ -3,12 +3,16 @@
 // Nothing ticked = every parish.
 import { el } from './dom.js';
 
-/** "St. Joseph's", "Saint Joseph’s" and " st joseph's" all give the same key. */
+/**
+ * "St. Joseph's", "Saint Joseph’s Catholic Church" and " st joseph's parish" all give the same
+ * key: case, accents, punctuation, "Saint"/"St." and words like "Catholic Church" don't count.
+ */
 export function parishKey(name) {
   return (name || '')
     .toLowerCase()
     .normalize('NFKD').replace(/[̀-ͯ]/g, '') // é -> e
     .replace(/\bsaint\b/g, 'st')
+    .replace(/\b(catholic|church|parish)\b/g, ' ')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 }

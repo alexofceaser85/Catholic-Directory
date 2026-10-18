@@ -5,12 +5,14 @@ import { el } from '/js/dom.js';
 import { clearFieldErrors, showFieldErrors, readForm } from '/js/form-errors.js';
 import { CATEGORIES, POST_TYPES } from '/js/post-options.js';
 import { createPhotoPicker } from '/js/photo-picker.js';
+import { setUpParishInput } from '/js/parish-input.js';
 
 const dialog = document.getElementById('edit-dialog');
 const form = document.getElementById('edit-form');
 const statusNode = document.getElementById('edit-status');
 const saveButton = form.querySelector('button[type="submit"]');
 const photoPicker = createPhotoPicker(document.getElementById('edit-photo-picker'));
+setUpParishInput(form.elements.parish);
 
 const EDITABLE_FIELDS = ['title', 'postType', 'category', 'parish', 'email', 'phone', 'address', 'description', 'website', 'adminNotes'];
 

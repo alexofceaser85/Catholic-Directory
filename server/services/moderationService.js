@@ -47,7 +47,7 @@ async function loadListingFor(action, id) {
 export async function approve(id, adminEmail, note) {
   const listing = await loadListingFor('approve', id);
   await listings.updateStatus(id, 'approved');
-  await listings.restartShelfLife(id, shelfLifeDays(listing.post_type));
+  await listings.restartShelfLife(id, shelfLifeDays(listing));
   await history.insert(id, adminEmail, 'approved', note);
 }
 
@@ -73,7 +73,7 @@ export async function remove(id, adminEmail, note) {
  */
 export async function reverify(id, adminEmail, note) {
   const listing = await loadListingFor('reverify', id);
-  await listings.restartShelfLife(id, shelfLifeDays(listing.post_type));
+  await listings.restartShelfLife(id, shelfLifeDays(listing));
   await reports.resolveAllForListing(id, 'reverified', adminEmail);
   await history.insert(id, adminEmail, isReverifiedType(listing.post_type) ? 'reverified' : 'renewed', note);
 }

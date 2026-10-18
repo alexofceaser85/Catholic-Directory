@@ -2,7 +2,7 @@
 import { FieldValidator } from './FieldValidator.js';
 import { HttpError } from '../lib/httpError.js';
 import { isWellFormedToken } from '../lib/manageToken.js';
-import { CATEGORIES, POST_TYPES, findPostType } from '../../public/js/post-options.js';
+import { CATEGORIES, POST_TYPES, chosenDuration, findPostType } from '../../public/js/post-options.js';
 import { MAX_PHOTOS, MAX_UPLOAD_BYTES } from '../../public/js/photo-rules.js';
 
 const MAX_LINKS = 10;
@@ -29,6 +29,15 @@ function withPostTypeId(values) {
   return { ...values, postType: findPostType(values.postType).id };
 }
 
+/**
+ * "How long should it show?" is a dropdown, so anything other than one of the post type's
+ * choices can only come from a tampered request: it quietly becomes the default.
+ */
+function withDuration(values, requestedDays) {
+  const type = findPostType(values.postType);
+  return { ...values, durationDays: chosenDuration(type, requestedDays) };
+}
+
 /** Public "Add a listing" form. */
 export function validateSubmission(body) {
   const validator = new FieldValidator(body)
@@ -36,7 +45,8 @@ export function validateSubmission(body) {
     .requiredText('submitterFirstName', 'First name', 100)
     .requiredText('submitterLastName', 'Last name', 100)
     .mustBeTrue('consent', 'Please confirm these details may be shown publicly.');
-  return withPostTypeId(checkPublicFields(validator, { isNewPost: true }).result());
+  const values = checkPublicFields(validator, { isNewPost: true }).result();
+  return withPostTypeId(withDuration(values, body.durationDays));
 }
 
 /** A poster editing their own post. They can't change the post type or their name. */

@@ -32,6 +32,13 @@
         <legend>What are you posting?</legend>
         <div id="post-type-choices" class="choice-list"></div>
         <p class="field-error" data-error-for="postType"></p>
+
+        <div id="duration-field" class="field duration-field" hidden>
+          <label for="duration">How long should it show?</label>
+          <select id="duration" name="durationDays"></select>
+          <p class="hint">Counted from when an admin approves it. You can renew it or take it down
+             early from your private link.</p>
+        </div>
       </fieldset>
 
       <fieldset>
@@ -71,7 +78,7 @@
         <div class="field">
           <label for="parish">Parish *</label>
           <input id="parish" name="parish" maxlength="200" required>
-          <p class="hint">The parish you belong to, so neighbors in your parish can find you. For example: St. Peter Chanel, Roswell.</p>
+          <p class="hint">The parish you belong to, so neighbors in your parish can find you. Start typing and pick it from the list. If it isn't there, write it as "Name, City".</p>
           <p class="field-error" data-error-for="parish"></p>
         </div>
 

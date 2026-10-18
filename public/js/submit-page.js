@@ -4,18 +4,21 @@ import { showStatus } from './dom.js';
 import { clearFieldErrors, showFieldErrors, readForm } from './form-errors.js';
 import { setUpSubmitOptions } from './submit-options.js';
 import { createPhotoPicker } from './photo-picker.js';
+import { setUpParishInput } from './parish-input.js';
 
 const form = document.getElementById('submit-form');
 const formStatus = document.getElementById('form-status');
 const successPanel = document.getElementById('success');
 const submitButton = form.querySelector('button[type="submit"]');
 const photoPicker = createPhotoPicker(document.getElementById('photo-picker'));
+setUpParishInput(document.getElementById('parish'));
 
 setUpSubmitOptions(form, {
   typeContainer: document.getElementById('post-type-choices'),
   categorySelect: document.getElementById('category'),
   titleLabel: document.getElementById('title-label'),
   titleInput: document.getElementById('title'),
+  durationField: document.getElementById('duration-field'),
 });
 
 function showSuccess() {
