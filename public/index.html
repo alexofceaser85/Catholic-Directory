@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,78 +9,84 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="container header-row">
-      <a class="brand" href="./">
-        <img class="brand-logo" src="img/logo.svg" alt="">
-        <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Atlanta, GA</span></span>
-      </a>
-      <div class="header-actions">
-        <a class="button" href="submit.html">Add a listing</a>
+  <div id="image-opacity">
+    <header class="site-header">
+      <div class="container header-row">
+        <a class="brand" href="./">
+          <img class="brand-logo" src="img/logo.svg" alt="">
+          <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Atlanta,
+              GA</span></span>
+        </a>
+        <div class="header-actions">
+          <a class="button" href="submit.html">Add a listing</a>
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main class="container narrow">
-    <section class="hero">
-      <h1>Buy local, find help, offer your skills</h1>
-      <p>Farms, homesteads, makers and tradespeople from our Catholic community, plus who's
-         hiring and who's available. An admin approves each listing before it shows, and job and
-         service posts drop off on their own after a while so the list stays fresh.</p>
-    </section>
+    <main class="container narrow">
+      <section class="hero">
+        <h1>Buy local, find help, offer your skills</h1>
+        <p>Farms, homesteads, makers and tradespeople from our Catholic community, plus who's
+          hiring and who's available. An admin approves each listing before it shows, and job and
+          service posts drop off on their own after a while so the list stays fresh.</p>
+      </section>
 
-    <section class="filter-panel" aria-label="Filter the directory">
-      <div id="type-filter" class="chip-row" role="group" aria-label="Show"></div>
-      <div class="toolbar">
-        <label class="visually-hidden" for="category-filter">Category</label>
-        <select id="category-filter" class="category-filter"></select>
-        <details id="parish-filter" class="parish-filter" hidden>
-          <summary>All parishes</summary>
-          <div class="parish-options" role="group" aria-label="Parishes"></div>
-        </details>
-        <label class="visually-hidden" for="search">Search the directory</label>
-        <input id="search" type="search" placeholder="Search the directory…" autocomplete="off">
-        <p id="result-count" class="muted" aria-live="polite"></p>
+      <section class="filter-panel" aria-label="Filter the directory">
+        <div id="type-filter" class="chip-row" role="group" aria-label="Show"></div>
+        <div class="toolbar">
+          <label class="visually-hidden" for="category-filter">Category</label>
+          <select id="category-filter" class="category-filter"></select>
+          <details id="parish-filter" class="parish-filter" hidden>
+            <summary>All parishes</summary>
+            <div class="parish-options" role="group" aria-label="Parishes"></div>
+          </details>
+          <label class="visually-hidden" for="search">Search the directory</label>
+          <input id="search" type="search" placeholder="Search the directory…" autocomplete="off">
+          <p id="result-count" class="muted" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <p id="page-status" class="status" role="status" hidden></p>
+      <ul id="listings" class="listing-list"></ul>
+    </main>
+
+    <dialog id="report-dialog" class="dialog" aria-labelledby="report-title">
+      <form id="report-form" method="dialog" novalidate>
+        <h2 id="report-title">Report outdated information</h2>
+        <p class="muted">Reporting <strong id="report-listing"></strong>. An admin will check with the poster.</p>
+
+        <label for="report-reason">What looks wrong?</label>
+        <textarea id="report-reason" name="reason" rows="4" maxlength="1000" required
+          placeholder="e.g. The phone number is disconnected, the job is filled, or the business has closed."></textarea>
+        <p class="field-error" data-error-for="reason"></p>
+
+        <div class="honeypot" aria-hidden="true">
+          <label for="report-company-fax">Company fax</label>
+          <input id="report-company-fax" name="companyFax" tabindex="-1" autocomplete="off">
+        </div>
+
+        <p id="report-status" class="status" role="status" hidden></p>
+        <div class="dialog-actions">
+          <button type="button" class="button secondary" data-close-dialog>Cancel</button>
+          <button type="submit" class="button">Send report</button>
+        </div>
+      </form>
+    </dialog>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>Listings are written by the people who post them. Admins approve them but don't check
+          their details or vouch for anyone, so please do your own homework before buying or hiring.
+          Submitter names are never published.
+          <a href="manage">Manage your post</a> · <a href="privacy">Privacy</a> · <a href="admin/">Admin</a>
+        </p>
       </div>
-    </section>
+    </footer>
 
-    <p id="page-status" class="status" role="status" hidden></p>
-    <ul id="listings" class="listing-list"></ul>
-  </main>
-
-  <dialog id="report-dialog" class="dialog" aria-labelledby="report-title">
-    <form id="report-form" method="dialog" novalidate>
-      <h2 id="report-title">Report outdated information</h2>
-      <p class="muted">Reporting <strong id="report-listing"></strong>. An admin will check with the poster.</p>
-
-      <label for="report-reason">What looks wrong?</label>
-      <textarea id="report-reason" name="reason" rows="4" maxlength="1000" required
-                placeholder="e.g. The phone number is disconnected, the job is filled, or the business has closed."></textarea>
-      <p class="field-error" data-error-for="reason"></p>
-
-      <div class="honeypot" aria-hidden="true">
-        <label for="report-company-fax">Company fax</label>
-        <input id="report-company-fax" name="companyFax" tabindex="-1" autocomplete="off">
-      </div>
-
-      <p id="report-status" class="status" role="status" hidden></p>
-      <div class="dialog-actions">
-        <button type="button" class="button secondary" data-close-dialog>Cancel</button>
-        <button type="submit" class="button">Send report</button>
-      </div>
-    </form>
-  </dialog>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>Listings are written by the people who post them. Admins approve them but don't check
-         their details or vouch for anyone, so please do your own homework before buying or hiring.
-         Submitter names are never published.
-         <a href="manage">Manage your post</a> · <a href="privacy">Privacy</a> · <a href="admin/">Admin</a></p>
-    </div>
-  </footer>
-
-  <script type="module" src="js/directory-page.js"></script>
+    <script type="module" src="js/directory-page.js"></script>
+  </div>
 </body>
+
 </html>
