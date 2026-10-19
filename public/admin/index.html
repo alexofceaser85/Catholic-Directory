@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,153 +10,158 @@
   <link rel="stylesheet" href="/admin/admin.css">
   <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="container header-row">
-      <a class="brand" href="/admin/">
+  <div id="image-opacity">
+    <header class="site-header">
+      <div class="container header-row">
+        <a class="brand" href="/admin/">
+          <img class="brand-logo" src="/img/logo.svg" alt="">
+          <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Admin
+              dashboard</span></span>
+        </a>
+        <div class="header-actions">
+          <span id="admin-email" class="muted small"></span>
+          <a class="button secondary small" href="/" target="_blank" rel="noopener">View public site</a>
+          <button id="logout-button" type="button" class="button secondary small" hidden>Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Shown when nobody is signed in -->
+      <section id="login-view" class="card login-card" hidden>
         <img class="brand-logo" src="/img/logo.svg" alt="">
-        <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Admin dashboard</span></span>
-      </a>
-      <div class="header-actions">
-        <span id="admin-email" class="muted small"></span>
-        <a class="button secondary small" href="/" target="_blank" rel="noopener">View public site</a>
-        <button id="logout-button" type="button" class="button secondary small" hidden>Sign out</button>
-      </div>
-    </div>
-  </header>
+        <h1>Admin sign-in</h1>
+        <p class="muted">Sign in with a Google account that is on the admin list.</p>
+        <div id="google-button"></div>
 
-  <main class="container">
-    <!-- Shown when nobody is signed in -->
-    <section id="login-view" class="card login-card" hidden>
-      <img class="brand-logo" src="/img/logo.svg" alt="">
-      <h1>Admin sign-in</h1>
-      <p class="muted">Sign in with a Google account that is on the admin list.</p>
-      <div id="google-button"></div>
+        <form id="dev-login-form" class="dev-login" hidden novalidate>
+          <p><strong>Local testing sign-in.</strong> No password is checked here, so the server
+            only offers this when it runs with NODE_ENV=development. The live site only
+            shows the Google button.</p>
+          <label for="dev-email">Admin email</label>
+          <input id="dev-email" name="email" type="email" required>
+          <button type="submit" class="button">Sign in</button>
+        </form>
 
-      <form id="dev-login-form" class="dev-login" hidden novalidate>
-        <p><strong>Local testing sign-in.</strong> No password is checked here, so the server
-           only offers this when it runs with NODE_ENV=development. The live site only
-           shows the Google button.</p>
-        <label for="dev-email">Admin email</label>
-        <input id="dev-email" name="email" type="email" required>
-        <button type="submit" class="button">Sign in</button>
+        <p id="login-status" class="status" role="status" hidden></p>
+      </section>
+
+      <!-- Shown after sign-in -->
+      <section id="dashboard-view" hidden>
+        <nav id="tabs" class="tabs" aria-label="Listing queues"></nav>
+        <p id="tab-description" class="glass-note"></p>
+        <p id="panel-status" class="status" role="status" hidden></p>
+        <ul id="panel" class="admin-list"></ul>
+      </section>
+    </main>
+
+    <!-- Edit listing -->
+    <dialog id="edit-dialog" class="dialog wide" aria-labelledby="edit-title">
+      <form id="edit-form" method="dialog" class="form" novalidate>
+        <h2 id="edit-title">Edit listing</h2>
+        <p class="hint">Changes go live immediately for approved listings. Submitter names can't be edited.</p>
+
+        <div class="field">
+          <label for="edit-title">Title / business name *</label>
+          <input id="edit-title" name="title" maxlength="200" required>
+          <p class="field-error" data-error-for="title"></p>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="edit-post-type">Post type *</label>
+            <select id="edit-post-type" name="postType" required></select>
+            <p class="hint">Changing it takes effect on the next approval or renewal.</p>
+            <p class="field-error" data-error-for="postType"></p>
+          </div>
+          <div class="field">
+            <label for="edit-category">Category *</label>
+            <select id="edit-category" name="category" required></select>
+            <p class="field-error" data-error-for="category"></p>
+          </div>
+        </div>
+        <div id="edit-expires-field" class="field">
+          <label for="edit-expires">Last day it shows</label>
+          <input id="edit-expires" name="expires" type="date">
+          <p class="hint">A past date takes it down. Left blank on a pending post, it shows for the
+            poster&rsquo;s chosen length from approval.</p>
+          <p class="field-error" data-error-for="expires"></p>
+        </div>
+        <div class="field">
+          <label for="edit-parish">Parish *</label>
+          <input id="edit-parish" name="parish" maxlength="200" required>
+          <p class="field-error" data-error-for="parish"></p>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="edit-email">Contact email *</label>
+            <input id="edit-email" name="email" type="email" maxlength="254" required>
+            <p class="field-error" data-error-for="email"></p>
+          </div>
+          <div class="field">
+            <label for="edit-phone">Contact phone</label>
+            <input id="edit-phone" name="phone" maxlength="40">
+            <p class="field-error" data-error-for="phone"></p>
+          </div>
+        </div>
+        <div class="field">
+          <label for="edit-address">Address or area</label>
+          <input id="edit-address" name="address" maxlength="500">
+          <p class="field-error" data-error-for="address"></p>
+        </div>
+        <div class="field">
+          <label for="edit-description">Description *</label>
+          <textarea id="edit-description" name="description" rows="5" maxlength="2000" required></textarea>
+          <p class="field-error" data-error-for="description"></p>
+        </div>
+        <div class="field">
+          <label for="edit-website">Website</label>
+          <input id="edit-website" name="website" maxlength="500">
+          <p class="field-error" data-error-for="website"></p>
+        </div>
+        <div class="field">
+          <label for="edit-links">Marketing &amp; social links (one per line)</label>
+          <textarea id="edit-links" name="links" rows="3"></textarea>
+          <p class="field-error" data-error-for="links"></p>
+        </div>
+        <div class="field" role="group" aria-labelledby="edit-photo-picker-label">
+          <p class="field-label" id="edit-photo-picker-label">Photos</p>
+          <div id="edit-photo-picker"></div>
+          <p class="hint">Remove any photo that shouldn&rsquo;t be public. Changes go live when you save.</p>
+          <p class="field-error" data-error-for="photos"></p>
+        </div>
+        <div class="field">
+          <label for="edit-notes">Admin notes <span class="badge private">Private</span></label>
+          <textarea id="edit-notes" name="adminNotes" rows="3" maxlength="5000"
+            placeholder="e.g. Called on 3/4, left voicemail."></textarea>
+          <p class="field-error" data-error-for="adminNotes"></p>
+        </div>
+
+        <p id="edit-status" class="status" role="status" hidden></p>
+        <div class="dialog-actions">
+          <button type="button" class="button secondary" data-close-dialog>Cancel</button>
+          <button type="submit" class="button">Save changes</button>
+        </div>
       </form>
+    </dialog>
 
-      <p id="login-status" class="status" role="status" hidden></p>
-    </section>
-
-    <!-- Shown after sign-in -->
-    <section id="dashboard-view" hidden>
-      <nav id="tabs" class="tabs" aria-label="Listing queues"></nav>
-      <p id="tab-description" class="glass-note"></p>
-      <p id="panel-status" class="status" role="status" hidden></p>
-      <ul id="panel" class="admin-list"></ul>
-    </section>
-  </main>
-
-  <!-- Edit listing -->
-  <dialog id="edit-dialog" class="dialog wide" aria-labelledby="edit-title">
-    <form id="edit-form" method="dialog" class="form" novalidate>
-      <h2 id="edit-title">Edit listing</h2>
-      <p class="hint">Changes go live immediately for approved listings. Submitter names can't be edited.</p>
-
-      <div class="field">
-        <label for="edit-title">Title / business name *</label>
-        <input id="edit-title" name="title" maxlength="200" required>
-        <p class="field-error" data-error-for="title"></p>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="edit-post-type">Post type *</label>
-          <select id="edit-post-type" name="postType" required></select>
-          <p class="hint">Changing it takes effect on the next approval or renewal.</p>
-          <p class="field-error" data-error-for="postType"></p>
+    <!-- Confirm approve / deny / remove / reverify, with an optional note -->
+    <dialog id="action-dialog" class="dialog" aria-labelledby="action-title">
+      <form id="action-form" method="dialog" novalidate>
+        <h2 id="action-title"></h2>
+        <p id="action-message"></p>
+        <label for="action-note">Note for the history log (optional)</label>
+        <textarea id="action-note" name="note" rows="2" maxlength="1000"></textarea>
+        <div class="dialog-actions">
+          <button type="button" class="button secondary" data-close-dialog>Cancel</button>
+          <button id="action-confirm" type="submit" class="button"></button>
         </div>
-        <div class="field">
-          <label for="edit-category">Category *</label>
-          <select id="edit-category" name="category" required></select>
-          <p class="field-error" data-error-for="category"></p>
-        </div>
-      </div>
-      <div id="edit-expires-field" class="field">
-        <label for="edit-expires">Last day it shows</label>
-        <input id="edit-expires" name="expires" type="date">
-        <p class="hint">A past date takes it down. Left blank on a pending post, it shows for the
-           poster&rsquo;s chosen length from approval.</p>
-        <p class="field-error" data-error-for="expires"></p>
-      </div>
-      <div class="field">
-        <label for="edit-parish">Parish *</label>
-        <input id="edit-parish" name="parish" maxlength="200" required>
-        <p class="field-error" data-error-for="parish"></p>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="edit-email">Contact email *</label>
-          <input id="edit-email" name="email" type="email" maxlength="254" required>
-          <p class="field-error" data-error-for="email"></p>
-        </div>
-        <div class="field">
-          <label for="edit-phone">Contact phone</label>
-          <input id="edit-phone" name="phone" maxlength="40">
-          <p class="field-error" data-error-for="phone"></p>
-        </div>
-      </div>
-      <div class="field">
-        <label for="edit-address">Address or area</label>
-        <input id="edit-address" name="address" maxlength="500">
-        <p class="field-error" data-error-for="address"></p>
-      </div>
-      <div class="field">
-        <label for="edit-description">Description *</label>
-        <textarea id="edit-description" name="description" rows="5" maxlength="2000" required></textarea>
-        <p class="field-error" data-error-for="description"></p>
-      </div>
-      <div class="field">
-        <label for="edit-website">Website</label>
-        <input id="edit-website" name="website" maxlength="500">
-        <p class="field-error" data-error-for="website"></p>
-      </div>
-      <div class="field">
-        <label for="edit-links">Marketing &amp; social links (one per line)</label>
-        <textarea id="edit-links" name="links" rows="3"></textarea>
-        <p class="field-error" data-error-for="links"></p>
-      </div>
-      <div class="field" role="group" aria-labelledby="edit-photo-picker-label">
-        <p class="field-label" id="edit-photo-picker-label">Photos</p>
-        <div id="edit-photo-picker"></div>
-        <p class="hint">Remove any photo that shouldn&rsquo;t be public. Changes go live when you save.</p>
-        <p class="field-error" data-error-for="photos"></p>
-      </div>
-      <div class="field">
-        <label for="edit-notes">Admin notes <span class="badge private">Private</span></label>
-        <textarea id="edit-notes" name="adminNotes" rows="3" maxlength="5000"
-                  placeholder="e.g. Called on 3/4, left voicemail."></textarea>
-        <p class="field-error" data-error-for="adminNotes"></p>
-      </div>
+      </form>
+    </dialog>
 
-      <p id="edit-status" class="status" role="status" hidden></p>
-      <div class="dialog-actions">
-        <button type="button" class="button secondary" data-close-dialog>Cancel</button>
-        <button type="submit" class="button">Save changes</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- Confirm approve / deny / remove / reverify, with an optional note -->
-  <dialog id="action-dialog" class="dialog" aria-labelledby="action-title">
-    <form id="action-form" method="dialog" novalidate>
-      <h2 id="action-title"></h2>
-      <p id="action-message"></p>
-      <label for="action-note">Note for the history log (optional)</label>
-      <textarea id="action-note" name="note" rows="2" maxlength="1000"></textarea>
-      <div class="dialog-actions">
-        <button type="button" class="button secondary" data-close-dialog>Cancel</button>
-        <button id="action-confirm" type="submit" class="button"></button>
-      </div>
-    </form>
-  </dialog>
-
-  <script type="module" src="/admin/js/main.js"></script>
+    <script type="module" src="/admin/js/main.js"></script>
+  </div>
 </body>
+
 </html>

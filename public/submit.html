@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,165 +8,174 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="container header-row">
-      <a class="brand" href="./">
+  <div id="image-opacity">
+    <header class="site-header">
+      <div class="container header-row">
+        <a class="brand" href="./">
+          <img class="brand-logo" src="img/logo.svg" alt="">
+          <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Atlanta,
+              GA</span></span>
+        </a>
+        <div class="header-actions">
+          <a class="button secondary" href="./">Back to directory</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container narrow">
+      <section class="hero">
+        <h1>Add a listing</h1>
+        <p>List your farm or business, offer your skills, or ask for a hand. An admin
+          approves every post before it appears in the directory.</p>
+      </section>
+
+      <form id="submit-form" class="card form" novalidate>
+        <fieldset>
+          <legend><h2>What are you posting?</h2></legend>
+          <div id="post-type-choices" class="choice-list"></div>
+          <p class="field-error" data-error-for="postType"></p>
+        </fieldset>
+
+        <fieldset>
+          <legend><h2>About you</h2><span class="badge private">Private</span></legend>
+          <p class="hint">Only our admins see your name. It is used for approval and is never published.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="first-name">First name *</label>
+              <input id="first-name" name="submitterFirstName" maxlength="100" required autocomplete="given-name">
+              <p class="field-error" data-error-for="submitterFirstName"></p>
+            </div>
+            <div class="field">
+              <label for="last-name">Last name *</label>
+              <input id="last-name" name="submitterLastName" maxlength="100" required autocomplete="family-name">
+              <p class="field-error" data-error-for="submitterLastName"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><h2>Your listing</h2><span class="badge public">Public</span></legend>
+          <p class="hint">Everything in this section is shown in the directory. Please don't include personal names.</p>
+
+          <div class="field">
+            <label id="title-label" for="title">Business name *</label>
+            <input id="title" name="title" maxlength="200" required>
+            <p class="field-error" data-error-for="title"></p>
+          </div>
+
+          <div class="field">
+            <label for="category">Category *</label>
+            <select id="category" name="category" required></select>
+            <p class="field-error" data-error-for="category"></p>
+          </div>
+
+          <div class="field">
+            <label for="parish">Parish *</label>
+            <input id="parish" name="parish" maxlength="200" required>
+            <p class="hint">The parish you belong to, so neighbors in your parish can find you. Start typing and pick it
+              from the list. If it isn't there, write it as "Name, City".</p>
+            <p class="field-error" data-error-for="parish"></p>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="email">Contact email *</label>
+              <input id="email" name="email" type="email" maxlength="254" required>
+              <p class="hint">Use an address that doesn't contain your name. We'll email your private
+                link for editing or removing the post here.</p>
+              <p class="field-error" data-error-for="email"></p>
+            </div>
+            <div class="field">
+              <label for="phone">Contact phone</label>
+              <input id="phone" name="phone" type="tel" maxlength="40">
+              <p class="field-error" data-error-for="phone"></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="address">Address or area</label>
+            <input id="address" name="address" maxlength="500" placeholder="Street address, or just a city/area">
+            <p class="field-error" data-error-for="address"></p>
+          </div>
+
+          <div class="field">
+            <label for="description">Description *</label>
+            <textarea id="description" name="description" rows="5" maxlength="2000" required
+              placeholder="What do you offer or need? Where, when, and any pay or prices."></textarea>
+            <p class="field-error" data-error-for="description"></p>
+          </div>
+
+          <div class="field">
+            <label for="website">Website</label>
+            <input id="website" name="website" type="url" maxlength="500" placeholder="https://">
+            <p class="field-error" data-error-for="website"></p>
+          </div>
+
+          <div class="field">
+            <label for="links">Marketing &amp; social links</label>
+            <textarea id="links" name="links" rows="3"
+              placeholder="One link per line, e.g.&#10;https://instagram.com/yourfarm&#10;https://canva.com/your-flyer"></textarea>
+            <p class="hint">Flyers, Canva, Google Drive, Instagram, Facebook… Make sure shared files are viewable by
+              anyone with the link.</p>
+            <p class="field-error" data-error-for="links"></p>
+          </div>
+          <div class="field" role="group" aria-labelledby="photo-picker-label">
+            <p class="field-label" id="photo-picker-label">Photos</p>
+            <div id="photo-picker"></div>
+            <p class="hint">Up to 4. The first one shows first. Location data is removed from every photo. Please leave
+              out photos of people who haven&rsquo;t agreed to be shown.</p>
+            <p class="field-error" data-error-for="photos"></p>
+          </div>
+        </fieldset>
+
+        <fieldset id="duration-field" hidden>
+          <legend><h2>How long should it show?</h2></legend>
+          <div class="field-row">
+            <div class="field">
+              <label for="duration">Show it for</label>
+              <select id="duration" name="durationDays"></select>
+            </div>
+            <div id="end-date-field" class="field" hidden>
+              <label for="end-date">Last day it shows</label>
+              <input id="end-date" name="expires" type="date">
+              <p class="field-error" data-error-for="expires"></p>
+            </div>
+          </div>
+          <p class="hint">Lengths count from when an admin approves it. You can renew it or take it
+            down early from your private link.</p>
+        </fieldset>
+
+        <div class="honeypot" aria-hidden="true">
+          <label for="company-fax">Company fax</label>
+          <input id="company-fax" name="companyFax" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="field checkbox-field">
+          <input id="consent" name="consent" type="checkbox" required>
+          <label for="consent">I confirm the public details above may be shown in the directory. (<a href="privacy"
+              target="_blank">Privacy</a>)</label>
+          <p class="field-error" data-error-for="consent"></p>
+        </div>
+
+        <p id="form-status" class="status" role="status" hidden></p>
+        <button type="submit" class="button">Submit for approval</button>
+      </form>
+
+      <section id="success" class="card success-panel" hidden>
         <img class="brand-logo" src="img/logo.svg" alt="">
-        <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Atlanta, GA</span></span>
-      </a>
-      <div class="header-actions">
-        <a class="button secondary" href="./">Back to directory</a>
-      </div>
-    </div>
-  </header>
+        <h2 tabindex="-1">Thank you, we got it!</h2>
+        <p>An admin will look at your listing soon. Once approved, it will appear in the directory.</p>
+        <p>We've emailed you a private link to edit, renew or remove your post. Keep it somewhere safe.
+          Lost it? <a href="manage">Get a new one</a>.</p>
+        <a class="button" href="./">Back to directory</a>
+      </section>
+    </main>
 
-  <main class="container narrow">
-    <section class="hero">
-      <h1>Add a listing</h1>
-      <p>List your farm or business, offer your skills, or ask for a hand. An admin
-         approves every post before it appears in the directory.</p>
-    </section>
-
-    <form id="submit-form" class="card form" novalidate>
-      <fieldset>
-        <legend>What are you posting?</legend>
-        <div id="post-type-choices" class="choice-list"></div>
-        <p class="field-error" data-error-for="postType"></p>
-      </fieldset>
-
-      <fieldset>
-        <legend>About you <span class="badge private">Private</span></legend>
-        <p class="hint">Only our admins see your name. It is used for approval and is never published.</p>
-
-        <div class="field-row">
-          <div class="field">
-            <label for="first-name">First name *</label>
-            <input id="first-name" name="submitterFirstName" maxlength="100" required autocomplete="given-name">
-            <p class="field-error" data-error-for="submitterFirstName"></p>
-          </div>
-          <div class="field">
-            <label for="last-name">Last name *</label>
-            <input id="last-name" name="submitterLastName" maxlength="100" required autocomplete="family-name">
-            <p class="field-error" data-error-for="submitterLastName"></p>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Your listing <span class="badge public">Public</span></legend>
-        <p class="hint">Everything in this section is shown in the directory. Please don't include personal names.</p>
-
-        <div class="field">
-          <label id="title-label" for="title">Business name *</label>
-          <input id="title" name="title" maxlength="200" required>
-          <p class="field-error" data-error-for="title"></p>
-        </div>
-
-        <div class="field">
-          <label for="category">Category *</label>
-          <select id="category" name="category" required></select>
-          <p class="field-error" data-error-for="category"></p>
-        </div>
-
-        <div class="field">
-          <label for="parish">Parish *</label>
-          <input id="parish" name="parish" maxlength="200" required>
-          <p class="hint">The parish you belong to, so neighbors in your parish can find you. Start typing and pick it from the list. If it isn't there, write it as "Name, City".</p>
-          <p class="field-error" data-error-for="parish"></p>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label for="email">Contact email *</label>
-            <input id="email" name="email" type="email" maxlength="254" required>
-            <p class="hint">Use an address that doesn't contain your name. We'll email your private
-               link for editing or removing the post here.</p>
-            <p class="field-error" data-error-for="email"></p>
-          </div>
-          <div class="field">
-            <label for="phone">Contact phone</label>
-            <input id="phone" name="phone" type="tel" maxlength="40">
-            <p class="field-error" data-error-for="phone"></p>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="address">Address or area</label>
-          <input id="address" name="address" maxlength="500" placeholder="Street address, or just a city/area">
-          <p class="field-error" data-error-for="address"></p>
-        </div>
-
-        <div class="field">
-          <label for="description">Description *</label>
-          <textarea id="description" name="description" rows="5" maxlength="2000" required
-                    placeholder="What do you offer or need? Where, when, and any pay or prices."></textarea>
-          <p class="field-error" data-error-for="description"></p>
-        </div>
-
-        <div class="field">
-          <label for="website">Website</label>
-          <input id="website" name="website" type="url" maxlength="500" placeholder="https://">
-          <p class="field-error" data-error-for="website"></p>
-        </div>
-
-        <div class="field">
-          <label for="links">Marketing &amp; social links</label>
-          <textarea id="links" name="links" rows="3"
-                    placeholder="One link per line, e.g.&#10;https://instagram.com/yourfarm&#10;https://canva.com/your-flyer"></textarea>
-          <p class="hint">Flyers, Canva, Google Drive, Instagram, Facebook… Make sure shared files are viewable by anyone with the link.</p>
-          <p class="field-error" data-error-for="links"></p>
-        </div>
-        <div class="field" role="group" aria-labelledby="photo-picker-label">
-          <p class="field-label" id="photo-picker-label">Photos</p>
-          <div id="photo-picker"></div>
-          <p class="hint">Up to 4. The first one shows first. Location data is removed from every photo. Please leave out photos of people who haven&rsquo;t agreed to be shown.</p>
-          <p class="field-error" data-error-for="photos"></p>
-        </div>
-      </fieldset>
-
-      <fieldset id="duration-field" hidden>
-        <legend>How long should it show?</legend>
-        <div class="field-row">
-          <div class="field">
-            <label for="duration">Show it for</label>
-            <select id="duration" name="durationDays"></select>
-          </div>
-          <div id="end-date-field" class="field" hidden>
-            <label for="end-date">Last day it shows</label>
-            <input id="end-date" name="expires" type="date">
-            <p class="field-error" data-error-for="expires"></p>
-          </div>
-        </div>
-        <p class="hint">Lengths count from when an admin approves it. You can renew it or take it
-           down early from your private link.</p>
-      </fieldset>
-
-      <div class="honeypot" aria-hidden="true">
-        <label for="company-fax">Company fax</label>
-        <input id="company-fax" name="companyFax" tabindex="-1" autocomplete="off">
-      </div>
-
-      <div class="field checkbox-field">
-        <input id="consent" name="consent" type="checkbox" required>
-        <label for="consent">I confirm the public details above may be shown in the directory. (<a href="privacy" target="_blank">Privacy</a>)</label>
-        <p class="field-error" data-error-for="consent"></p>
-      </div>
-
-      <p id="form-status" class="status" role="status" hidden></p>
-      <button type="submit" class="button">Submit for approval</button>
-    </form>
-
-    <section id="success" class="card success-panel" hidden>
-      <img class="brand-logo" src="img/logo.svg" alt="">
-      <h2 tabindex="-1">Thank you, we got it!</h2>
-      <p>An admin will look at your listing soon. Once approved, it will appear in the directory.</p>
-      <p>We've emailed you a private link to edit, renew or remove your post. Keep it somewhere safe.
-         Lost it? <a href="manage">Get a new one</a>.</p>
-      <a class="button" href="./">Back to directory</a>
-    </section>
-  </main>
-
-  <script type="module" src="js/submit-page.js"></script>
+    <script type="module" src="js/submit-page.js"></script>
+  </div>
 </body>
+
 </html>

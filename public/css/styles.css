@@ -47,7 +47,7 @@
 
   --radius: 16px;
   --radius-small: 10px;
-  --shadow: 0 1px 1px rgb(0 0 0 / 0.08), 0 10px 30px rgb(0 0 0 / 0.22);
+  --shadow: 5px 5px 5px rgb(20 20 0 / 0.8), 0 10px 30px rgb(0 0 0 / 0.22);
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
   --font-heading: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
 }
