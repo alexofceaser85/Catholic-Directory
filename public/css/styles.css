@@ -17,7 +17,7 @@
   /* The glass: Ordinary Time green, see-through, with the photo blurred behind it. */
   --glass-opacity: 0.2;
   --glass:              rgb(24 84 46 / var(--glass-opacity));
-  --glass-strong:       rgb(20 70 38 / 0.86);   /* header, dialogs: always readable */
+  --glass-strong:       rgb(20 70 38 / 0.4);   /* header, dialogs: always readable */
   --glass-blur:         blur(22px) saturate(170%);
   --glass-edge:         rgb(255 255 255 / 0.22); /* thin light rim, like macOS windows */
 
@@ -354,6 +354,13 @@ input:focus, textarea:focus, select:focus { outline: 3px solid var(--color-accen
 .photo-controls input:focus-visible + .photo-add { outline: 3px solid var(--color-accent); outline-offset: 2px; }
 
 #image-opacity {
-  height: 100vh;
+  min-height: 100vh;
   background-color: rgba(45, 55, 45, .8);
+}
+
+@media (max-width:1620px) {
+  body::before {
+    background-size: 100% 100%, auto;
+    background-position: center top, center;
+  }
 }
