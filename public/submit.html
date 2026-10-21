@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Add a Listing · Catholic Business Directory</title>
+  <title>Add a Listing · Catholic Parish Directory</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
 </head>
@@ -15,7 +15,7 @@
       <div class="container header-row">
         <a class="brand" href="./">
           <img class="brand-logo" src="img/logo.svg" alt="">
-          <span><span class="brand-name">Catholic Business Directory</span><span class="brand-sub">Atlanta,
+          <span><span class="brand-name">Catholic Parish Directory</span><span class="brand-sub">Atlanta,
               GA</span></span>
         </a>
         <div class="header-actions">
@@ -33,13 +33,13 @@
 
       <form id="submit-form" class="card form" novalidate>
         <fieldset>
-          <legend><h2>What are you posting?</h2></legend>
+          <legend>What do you want to post?</legend>
           <div id="post-type-choices" class="choice-list"></div>
           <p class="field-error" data-error-for="postType"></p>
         </fieldset>
 
         <fieldset>
-          <legend><h2>About you</h2><span class="badge private">Private</span></legend>
+          <legend>About you<span class="badge private">Private</span></legend>
           <p class="hint">Only our admins see your name. It is used for approval and is never published.</p>
 
           <div class="field-row">
@@ -57,8 +57,26 @@
         </fieldset>
 
         <fieldset>
-          <legend><h2>Your listing</h2><span class="badge public">Public</span></legend>
-          <p class="hint">Everything in this section is shown in the directory. Please don't include personal names.</p>
+          <legend>How can People Contact You?<span class="badge public">Public</span></legend>
+          <p class="hint">Everything in this section is shown in the directory.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="email">Contact email *</label>
+              <input id="email" name="email" type="email" maxlength="254" required>
+              <p class="field-error" data-error-for="email"></p>
+            </div>
+            <div class="field">
+              <label for="phone">Contact phone</label>
+              <input id="phone" name="phone" type="tel" maxlength="40">
+              <p class="field-error" data-error-for="phone"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Your listing<span class="badge public">Public</span></legend>
+          <p class="hint">Everything in this section is shown in the directory.</p>
 
           <div class="field">
             <label id="title-label" for="title">Business name *</label>
@@ -75,24 +93,8 @@
           <div class="field">
             <label for="parish">Parish *</label>
             <input id="parish" name="parish" maxlength="200" required>
-            <p class="hint">The parish you belong to, so neighbors in your parish can find you. Start typing and pick it
-              from the list. If it isn't there, write it as "Name, City".</p>
+            <p class="hint">The parish you belong to, so neighbors in your parish can find you. If it isn't in the list, write it as "Name, City".</p>
             <p class="field-error" data-error-for="parish"></p>
-          </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label for="email">Contact email *</label>
-              <input id="email" name="email" type="email" maxlength="254" required>
-              <p class="hint">Use an address that doesn't contain your name. We'll email your private
-                link for editing or removing the post here.</p>
-              <p class="field-error" data-error-for="email"></p>
-            </div>
-            <div class="field">
-              <label for="phone">Contact phone</label>
-              <input id="phone" name="phone" type="tel" maxlength="40">
-              <p class="field-error" data-error-for="phone"></p>
-            </div>
           </div>
 
           <div class="field">
@@ -118,8 +120,6 @@
             <label for="links">Marketing &amp; social links</label>
             <textarea id="links" name="links" rows="3"
               placeholder="One link per line, e.g.&#10;https://instagram.com/yourfarm&#10;https://canva.com/your-flyer"></textarea>
-            <p class="hint">Flyers, Canva, Google Drive, Instagram, Facebook… Make sure shared files are viewable by
-              anyone with the link.</p>
             <p class="field-error" data-error-for="links"></p>
           </div>
           <div class="field" role="group" aria-labelledby="photo-picker-label">
@@ -132,7 +132,7 @@
         </fieldset>
 
         <fieldset id="duration-field" hidden>
-          <legend><h2>How long should it show?</h2></legend>
+          <legend>How long should it show?</legend>
           <div class="field-row">
             <div class="field">
               <label for="duration">Show it for</label>

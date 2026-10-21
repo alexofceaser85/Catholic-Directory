@@ -6,7 +6,7 @@ import { durationLabel, findPostTypeById } from '../../public/js/post-options.js
 import { formatDate } from '../../public/js/format.js';
 import { isReverifiedType } from '../lib/shelfLife.js';
 
-const SITE_NAME = 'Catholic Business Directory';
+const SITE_NAME = 'Catholic Parish Directory';
 
 const LINK_WARNING =
   'This link is private: anyone who has it can change or remove your post, so please don\'t share it.';

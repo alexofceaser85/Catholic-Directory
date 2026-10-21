@@ -1,4 +1,4 @@
--- Catholic Business Directory database schema (MySQL 8+).
+-- Catholic Parish Directory database schema (MySQL 8+).
 -- Safe to run on an empty database. See docs/architecture.md for how the tables relate.
 
 -- One row per post: a business, someone offering services, or a help-wanted request.
