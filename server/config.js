@@ -38,6 +38,14 @@ function readMaxPostDays() {
   return days;
 }
 
+function readPosterEmailLimitHours() {
+  const hours = Number(process.env.POSTER_EMAIL_LIMIT_HOURS ?? 24);
+  if (!Number.isInteger(hours) || hours < 0 || hours > 720) {
+    throw new Error('POSTER_EMAIL_LIMIT_HOURS must be a whole number of hours from 0 (no limit) to 720.');
+  }
+  return hours;
+}
+
 const port = Number(process.env.PORT || 3000);
 
 const config = {
@@ -62,6 +70,9 @@ const config = {
   // The longest a services or help-wanted post can show. Posters pick a quarter, half,
   // three quarters or all of it, or a date within it.
   maxPostDays: readMaxPostDays(),
+  // Each email address can post once, and ask for its links once, per this many hours. Keeps
+  // the site well inside the mail provider's sending limit. 0 turns the limit off.
+  posterEmailLimitHours: readPosterEmailLimitHours(),
 
   // The address people type to reach the site. Used to build the "manage your post" links in emails.
   publicUrl: (process.env.PUBLIC_URL || `http://localhost:${port}`).replace(/\/$/, ''),

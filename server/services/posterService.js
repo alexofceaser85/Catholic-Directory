@@ -16,6 +16,7 @@ import { sendLinksEmail } from './posterEmails.js';
 import { preparePhotos, savePhotos, pruneUnusedPhotos } from './photoService.js';
 import { LINK_NOT_VALID } from '../validation/listingValidation.js';
 import { HttpError } from '../lib/httpError.js';
+import config from '../config.js';
 
 const MANAGEABLE = ['pending', 'approved'];
 
@@ -80,10 +81,14 @@ export async function removeOwnPost(token) {
  * "I lost my link": emails a fresh link for every post with this contact email.
  * New tokens replace the old ones (only hashes are stored, so old links can't be re-sent).
  * Callers always answer the same way, so this can't be used to find out who has posted.
+ * Sent at most once per POSTER_EMAIL_LIMIT_HOURS per email. Returns true when a recent
+ * email already went out, so the page can point the poster back to their inbox.
  */
 export async function sendFreshLinks(email) {
+  const hours = config.posterEmailLimitHours;
+  if (hours > 0 && await listings.hasLinksEmailedSince(email, hours)) return true;
   const rows = await listings.findManageableByEmail(email);
-  if (rows.length === 0) return;
+  if (rows.length === 0) return false;
 
   const posts = [];
   for (const row of rows) {
@@ -91,5 +96,7 @@ export async function sendFreshLinks(email) {
     await listings.setManageTokenHash(row.id, hash);
     posts.push({ post: row, token });
   }
+  await listings.markLinksEmailed(email);
   await sendLinksEmail(email, posts);
+  return false;
 }

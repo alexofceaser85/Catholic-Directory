@@ -46,13 +46,15 @@ router.post('/remove', manageLimit, async (req, res) => {
   res.json({ ok: true });
 });
 
-// "Email me my links". Always the same answer, whether or not the email has posts.
+// "Email me my links". Same answer whether or not the email has posts; `alreadySent` only
+// says a links email went out recently.
 router.post('/send-links', linkRequestLimit, async (req, res) => {
+  let alreadySent = false;
   if (!isLikelyBot(req.body)) {
     const { email } = validateEmailRequest(req.body);
-    await posters.sendFreshLinks(email);
+    alreadySent = await posters.sendFreshLinks(email);
   }
-  res.json({ ok: true });
+  res.json({ ok: true, alreadySent });
 });
 
 export default router;

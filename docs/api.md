@@ -71,7 +71,7 @@ display order; each one is served at `GET /photos/<key>.webp`.
 |---|---|---|
 | `GET /api/settings` | none | `{ maxPostDays }`: the longest a services or help-wanted post can show (`MAX_POST_DAYS`) |
 | `GET /api/listings` | none | Live listings (approved and not expired), A→Z |
-| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `durationDays` (optional: a quarter, half, three quarters or all of `maxPostDays`, rounded; anything else means all of it), or `durationDays: "date"` with `expires` (`YYYY-MM-DD`, today to `maxPostDays` ahead). Both are ignored for businesses., `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour. |
+| `POST /api/listings` | `postType` (label), `category`, `submitterFirstName`, `submitterLastName`, `title`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links` (array or newline text), `photos` (optional, see below), `durationDays` (optional: a quarter, half, three quarters or all of `maxPostDays`, rounded; anything else means all of it), or `durationDays: "date"` with `expires` (`YYYY-MM-DD`, today to `maxPostDays` ahead). Both are ignored for businesses., `consent: true` | `201 { ok: true }`. Created as pending; the poster is emailed their manage link. 5 per IP per hour, and one per email address per `POSTER_EMAIL_LIMIT_HOURS` (24) or `429`. |
 | `POST /api/listings/:id/reports` | `reason` | `201 { ok: true }`. Only for live listings, otherwise 404. 10 per IP per hour. |
 
 ### Photos
@@ -106,7 +106,7 @@ An unknown, malformed or denied post's token gets `404` with "This link doesn't 
 | `POST /api/manage/edit` | `token` + `title`, `category`, `email`, `phone`, `address`, `parish`, `description`, `website`, `links`, `photos` | `{ needsReview }`. Pending posts change right away (`false`). Live posts get a pending edit for an admin (`true`); a newer edit replaces an older one. Removed posts: `409`. |
 | `POST /api/manage/renew` | `token` | Approved only. Restarts the shelf life: businesses' "last verified" becomes today; other posts show for another full period. Otherwise `409`. |
 | `POST /api/manage/remove` | `token` | Pending or approved → removed. Closes open reports and drops a pending edit. |
-| `POST /api/manage/send-links` | `email` | Always `{ ok: true }`. Emails a fresh link for each pending or live post with that contact email; older links stop working. 5 per IP per hour. Accepts the `companyFax` honeypot. |
+| `POST /api/manage/send-links` | `email` | `{ ok: true, alreadySent }`. Emails a fresh link for each pending or live post with that contact email; older links stop working. 5 per IP per hour; an email address is sent its links at most once per `POSTER_EMAIL_LIMIT_HOURS` (later requests get `{ ok: true, alreadySent: true }` and send nothing). Accepts the `companyFax` honeypot. |
 
 Posters can't change the post type, their name, the status or admin notes.
 

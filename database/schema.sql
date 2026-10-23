@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS listings (
   -- The poster's private "manage my post" link holds a random token. Only its SHA-256 hash
   -- is stored, so a database leak doesn't hand out working links.
   manage_token_hash     CHAR(64)     NULL,
+  links_emailed_at      DATETIME     NULL COMMENT 'Last "Email me my links" email; limits how often it is sent',
 
   submitted_at          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   reviewed_at           DATETIME     NULL COMMENT 'Last approve/deny/remove decision',

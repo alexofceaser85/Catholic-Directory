@@ -82,6 +82,22 @@ export function findManageableByEmail(email) {
   return query(`${ADMIN_SELECT} WHERE email = ? AND status IN ('pending', 'approved') ORDER BY submitted_at`, [email]);
 }
 
+/** True when this email sent a post within the last `hours` hours. */
+export async function hasSubmittedSince(email, hours) {
+  const rows = await query('SELECT 1 FROM listings WHERE email = ? AND submitted_at > NOW() - INTERVAL ? HOUR LIMIT 1', [email, hours]);
+  return rows.length > 0;
+}
+
+/** True when this email was sent its "manage your post" links within the last `hours` hours. */
+export async function hasLinksEmailedSince(email, hours) {
+  const rows = await query('SELECT 1 FROM listings WHERE email = ? AND links_emailed_at > NOW() - INTERVAL ? HOUR LIMIT 1', [email, hours]);
+  return rows.length > 0;
+}
+
+export async function markLinksEmailed(email) {
+  await query('UPDATE listings SET links_emailed_at = NOW() WHERE email = ?', [email]);
+}
+
 export async function setManageTokenHash(id, hash) {
   await query('UPDATE listings SET manage_token_hash = ? WHERE id = ?', [hash, id]);
 }

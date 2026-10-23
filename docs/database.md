@@ -32,6 +32,7 @@ erDiagram
         text photos "newline-separated photo keys, in order"
         text admin_notes "private, nullable"
         char manage_token_hash UK "SHA-256 of the poster's link token"
+        datetime links_emailed_at "nullable: last 'email me my links'"
         datetime submitted_at
         datetime reviewed_at "nullable"
         datetime last_verified_at "nullable: approval or last renewal"

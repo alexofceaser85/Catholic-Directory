@@ -128,6 +128,7 @@ All settings are environment variables (see [`.env.example`](.env.example)).
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD` | one mail option, in production | SMTP settings for poster emails ([setup](docs/deployment.md#option-c-smtp)) |
 | `MAIL_FROM` | yes in production | Sender, e.g. `Local Catholic Bulletin <hello@localcatholicbulletin.com>`. With Resend it must be on the domain you verified there. |
 | `REVERIFY_AFTER_DAYS` | no (90) | When a live business moves to "Due for check-in" |
+| `POSTER_EMAIL_LIMIT_HOURS` | no (24) | Each email address can post once, and ask for its links once, per this many hours. `0` = no limit. |
 | `MAX_POST_DAYS` | no (90) | The longest a services or help-wanted post can show (4 to 365) |
 | `NODE_ENV` | no | Leave as `production` on the live server. Anything other than `development` is treated as production. |
 | `TRUST_PROXY` | no | `true` behind a hosting proxy (Render, Railway, nginx…) |

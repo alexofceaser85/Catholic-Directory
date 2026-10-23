@@ -38,6 +38,7 @@ Each layer has one job, so a change usually touches one file:
 | Change who can do what, or what an action does | `services/moderationService.js` (and the matching buttons in `public/admin/js/card-actions.js`) |
 | Change wording or layout | The HTML file, or `public/css/styles.css` |
 | Change the 90-day rule | `REVERIFY_AFTER_DAYS` in `.env`, no code change |
+| Change how often one email address can post or ask for its links | `POSTER_EMAIL_LIMIT_HOURS` in `.env` (24; 0 = no limit), no code change |
 | Change the longest a post can show | `MAX_POST_DAYS` in `.env` (the four lengths offered are its quarters), no code change |
 | Change which types expire, add a post type or category | `public/js/post-options.js` (`expires`; read by both browser and server). A new post type id also needs adding to the `post_type` ENUM in `schema.sql`. |
 | Change the database | `database/schema.sql`, a new file in `database/migrations/`, and the diagram in [database.md](database.md) |

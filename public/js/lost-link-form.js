@@ -13,9 +13,12 @@ async function requestLinks(event) {
   clearFieldErrors(form);
   button.disabled = true;
   try {
-    await api.post('/api/manage/send-links', readForm(form));
-    // Same message either way, so nobody can use this to check who has posted.
-    showStatus(statusNode, 'If there are posts with that email, we\'ve sent a link for each one. Check your inbox (and spam folder).', 'success');
+    const { alreadySent } = await api.post('/api/manage/send-links', readForm(form));
+    // Same message whether or not the email has posts, so nobody can use this to check who has posted.
+    const message = alreadySent
+      ? 'Please double check your inbox for your links.'
+      : 'If there are posts with that email, we\'ve sent a link for each one. Check your inbox (and spam folder).';
+    showStatus(statusNode, message, 'success');
   } catch (error) {
     showFieldErrors(form, error.fields || {});
     showStatus(statusNode, error.message, 'error');
