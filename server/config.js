@@ -66,7 +66,8 @@ const config = {
   // The address people type to reach the site. Used to build the "manage your post" links in emails.
   publicUrl: (process.env.PUBLIC_URL || `http://localhost:${port}`).replace(/\/$/, ''),
 
-  // Outgoing email: the Gmail API (over HTTPS) when GMAIL_REFRESH_TOKEN is set, otherwise SMTP.
+  // Outgoing email, first match wins: Resend (RESEND_API_KEY), the Gmail API (GMAIL_REFRESH_TOKEN),
+  // then SMTP (MAIL_HOST). Resend and the Gmail API go over HTTPS, so they work where SMTP is blocked.
   // With neither, emails are printed to the console in development and skipped (with a warning)
   // in production.
   mail: {
@@ -75,6 +76,7 @@ const config = {
     user: process.env.MAIL_USER || '',
     password: process.env.MAIL_PASSWORD || '',
     from: process.env.MAIL_FROM || 'Local Catholic Bulletin <no-reply@example.com>',
+    resendApiKey: process.env.RESEND_API_KEY || '',
     gmail: {
       clientId: process.env.GMAIL_CLIENT_ID || '',
       clientSecret: process.env.GMAIL_CLIENT_SECRET || '',

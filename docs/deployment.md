@@ -34,15 +34,40 @@ checking that tokens were issued for this ID and that the email is in `ADMIN_EMA
 ## 2. Set up email
 
 Posters get their private "manage your post" link by email, so the live site needs a way
-to send mail. There are two ways: the **Gmail API** (works everywhere) or **SMTP** (simpler,
-but some hosts block it). If both are set, the Gmail API is used.
+to send mail. There are three ways: **Resend** (from your own domain), the **Gmail API**
+(from a Gmail account) or **SMTP** (simpler, but some hosts block it). Resend and the Gmail API
+work everywhere. If more than one is set, Resend wins, then the Gmail API, then SMTP.
 
-### Option A: Gmail API (use this on Railway)
+### Option A: Resend (use this on Railway)
 
-Railway blocks outgoing SMTP on its Free, Trial and Hobby plans, so the app sends through
-Gmail's API over normal HTTPS instead. It's free and needs no domain. Use a Gmail account made
-just for the directory (not anyone's personal or chapter account). About 15 minutes, all signed
-in as that account:
+Railway blocks outgoing SMTP on its Free, Trial and Hobby plans. Resend sends over normal HTTPS
+from an address on the site's own domain (e.g. `hello@localcatholicbulletin.com`). The free tier
+covers 3,000 emails a month, far more than the directory sends.
+
+1. Sign up at <https://resend.com/> → **Domains → Add domain** → enter the site's domain.
+2. Add the DNS records it lists (DKIM on `resend._domainkey`, plus an MX and SPF record on
+   `send`). With Cloudflare, the **Auto configure** button adds them for you. Wait until the
+   domain shows **Verified**.
+3. **API Keys → Create API key**, permission **Sending access**, limited to that domain.
+4. Put it into Railway without it appearing on screen:
+
+   ```bash
+   read -rsp "Resend API key: " KEY; echo
+   railway variables --service Catholic-Directory --set "RESEND_API_KEY=$KEY"; unset KEY
+   ```
+
+5. Set `MAIL_FROM` to an address on that domain, e.g.
+   `Local Catholic Bulletin <hello@localcatholicbulletin.com>`. Resend refuses any other domain.
+
+On startup the log says "Sending email with Resend". To cut it off, delete the key in Resend.
+Replies go to the domain's mail, so set up forwarding (e.g. Cloudflare **Email Routing**) if
+you want to read them.
+
+### Option B: Gmail API
+
+Sends over HTTPS through Gmail's API, so it also works on Railway. It's free and needs no
+domain. Use a Gmail account made just for the directory (not anyone's personal or chapter
+account). About 15 minutes, all signed in as that account:
 
 1. <https://console.cloud.google.com/> → create a project, e.g. "Directory mail".
 2. **APIs & Services → Library** → search **Gmail API** → **Enable**.
@@ -77,7 +102,7 @@ it off, remove the app at <https://myaccount.google.com/permissions> (signed in 
 directory account) and delete `GMAIL_REFRESH_TOKEN`. On startup the log says
 "Sending email with the Gmail API" when it's set up.
 
-### Option B: SMTP
+### Option C: SMTP
 
 Any SMTP service works on hosts that allow it (a VPS, cPanel, Railway Pro). Put its settings in `MAIL_*`:
 
@@ -213,5 +238,5 @@ their next click, even if they're signed in.
 | Signed in but immediately signed out again | The site isn't on HTTPS while `NODE_ENV=production`. |
 | "Missing required environment variable" on start | Compare `.env` with `.env.example`. |
 | Every visitor seems to share one rate limit | Set `TRUST_PROXY=true`. |
-| Posters say they never got their link | Check the log for "Could not send email" or "no mail settings". `invalid_grant` means the Gmail token was revoked or expired: rerun `tools/gmail-authorize.js`. `Connection timeout` with SMTP means the host blocks it: use the Gmail API. Check `MAIL_FROM` is verified with your provider. Ask them to check spam, or use **Email poster**. |
+| Posters say they never got their link | Check the log for "Could not send email" or "no mail settings". `invalid_grant` means the Gmail token was revoked or expired: rerun `tools/gmail-authorize.js`. `Connection timeout` with SMTP means the host blocks it: use Resend or the Gmail API. `Resend refused the email (403)` usually means `MAIL_FROM` isn't on the verified domain. Check `MAIL_FROM` is verified with your provider. Ask them to check spam, or use **Email poster**. |
 | Links in emails point to localhost | Set `PUBLIC_URL` to the live address and restart. |

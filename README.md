@@ -123,9 +123,10 @@ All settings are environment variables (see [`.env.example`](.env.example)).
 | `GOOGLE_CLIENT_ID` | for Google sign-in | OAuth client ID ([how to get one](docs/deployment.md#1-create-the-google-sign-in-client)) |
 | `ADMIN_EMAILS` | yes | Comma-separated Google emails allowed into `/admin` |
 | `PUBLIC_URL` | yes in production | The site's address, e.g. `https://directory.example.org`. Used in emailed links. |
-| `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` | this or SMTP, in production | Send poster emails through the Gmail API ([setup](docs/deployment.md#option-a-gmail-api-use-this-on-railway)) |
-| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD` | this or Gmail API, in production | SMTP settings for poster emails ([setup](docs/deployment.md#option-b-smtp)) |
-| `MAIL_FROM` | yes in production | Sender, e.g. `Local Catholic Bulletin <directory@gmail.com>` |
+| `RESEND_API_KEY` | one mail option, in production | Send poster emails through Resend from your own domain ([setup](docs/deployment.md#option-a-resend-use-this-on-railway)) |
+| `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` | one mail option, in production | Send poster emails through the Gmail API ([setup](docs/deployment.md#option-b-gmail-api)) |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD` | one mail option, in production | SMTP settings for poster emails ([setup](docs/deployment.md#option-c-smtp)) |
+| `MAIL_FROM` | yes in production | Sender, e.g. `Local Catholic Bulletin <hello@localcatholicbulletin.com>`. With Resend it must be on the domain you verified there. |
 | `REVERIFY_AFTER_DAYS` | no (90) | When a live business moves to "Due for check-in" |
 | `MAX_POST_DAYS` | no (90) | The longest a services or help-wanted post can show (4 to 365) |
 | `NODE_ENV` | no | Leave as `production` on the live server. Anything other than `development` is treated as production. |

@@ -8,7 +8,8 @@ const server = createApp().listen(config.port, () => {
   console.log(`Local Catholic Bulletin running at http://localhost:${config.port}`);
   const method = mailMethod();
   if (method) {
-    console.log(`Sending email with ${method === 'gmail-api' ? 'the Gmail API' : `SMTP (${config.mail.host})`}.`);
+    const names = { resend: 'Resend', 'gmail-api': 'the Gmail API', smtp: `SMTP (${config.mail.host})` };
+    console.log(`Sending email with ${names[method]}.`);
   } else {
     console.warn(config.isProduction
       ? 'WARNING: no mail settings, so posters will not receive their "manage your post" links.'
