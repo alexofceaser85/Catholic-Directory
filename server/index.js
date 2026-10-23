@@ -5,7 +5,7 @@ import { closePool } from './db/pool.js';
 import { mailMethod } from './lib/mailer.js';
 
 const server = createApp().listen(config.port, () => {
-  console.log(`Catholic Parish Directory running at http://localhost:${config.port}`);
+  console.log(`Local Catholic Bulletin running at http://localhost:${config.port}`);
   const method = mailMethod();
   if (method) {
     console.log(`Sending email with ${method === 'gmail-api' ? 'the Gmail API' : `SMTP (${config.mail.host})`}.`);

@@ -74,7 +74,7 @@ const config = {
     port: Number(process.env.MAIL_PORT || 587),
     user: process.env.MAIL_USER || '',
     password: process.env.MAIL_PASSWORD || '',
-    from: process.env.MAIL_FROM || 'Catholic Parish Directory <no-reply@example.com>',
+    from: process.env.MAIL_FROM || 'Local Catholic Bulletin <no-reply@example.com>',
     gmail: {
       clientId: process.env.GMAIL_CLIENT_ID || '',
       clientSecret: process.env.GMAIL_CLIENT_SECRET || '',

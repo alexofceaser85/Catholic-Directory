@@ -10,10 +10,10 @@ sign-in button. This takes about 10 minutes and is free.
 
 1. Go to <https://console.cloud.google.com/> and sign in with the Google account that
    will own the directory.
-2. Create a project (top bar → project picker → **New project**), e.g. "Catholic Parish Directory".
+2. Create a project (top bar → project picker → **New project**), e.g. "Local Catholic Bulletin".
 3. **APIs & Services → OAuth consent screen** (may be shown as **Google Auth Platform → Branding**):
    - User type: **External**
-   - App name: *Catholic Parish Directory*, plus a support email and developer email
+   - App name: *Local Catholic Bulletin*, plus a support email and developer email
    - No scopes need to be added. The button only asks for name and email.
    - Publish the app (**Audience → Publish app**), or add each admin as a *test user*.
 4. **APIs & Services → Credentials → Create credentials → OAuth client ID**:
@@ -47,7 +47,7 @@ in as that account:
 1. <https://console.cloud.google.com/> → create a project, e.g. "Directory mail".
 2. **APIs & Services → Library** → search **Gmail API** → **Enable**.
 3. **OAuth consent screen** (or **Google Auth Platform → Branding**): User type **External**,
-   app name e.g. *Catholic Parish Directory mail*, the directory Gmail as both emails.
+   app name e.g. *Local Catholic Bulletin mail*, the directory Gmail as both emails.
    Then **Audience → Publish app** so it's **In production**. In "Testing", Google expires
    the token after 7 days and email silently stops. Google will call the app "unverified":
    that's fine, since the only account that ever uses it is the directory's own.
@@ -69,7 +69,7 @@ in as that account:
 
    Google's warning page ("Google hasn't verified this app"): click **Advanced → Go to …**.
    The script prints `Authorized: <address>`. Check it's the directory account.
-6. Set `MAIL_FROM` to that same address, e.g. `Catholic Parish Directory <directory@gmail.com>`.
+6. Set `MAIL_FROM` to that same address, e.g. `Local Catholic Bulletin <directory@gmail.com>`.
    Gmail replaces any other From address with the account's own.
 
 The app can only **send**: the token can't read, search or delete the account's mail. To cut
@@ -92,7 +92,7 @@ MAIL_HOST=smtp-relay.brevo.com
 MAIL_PORT=587
 MAIL_USER=you@example.org
 MAIL_PASSWORD=the-smtp-key
-MAIL_FROM=Catholic Parish Directory <directory@example.org>
+MAIL_FROM=Local Catholic Bulletin <directory@example.org>
 PUBLIC_URL=https://directory.example.org
 ```
 

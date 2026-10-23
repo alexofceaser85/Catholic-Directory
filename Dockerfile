@@ -1,4 +1,4 @@
-# Production image for the Catholic Parish Directory web app.
+# Production image for the Local Catholic Bulletin web app.
 FROM node:22-alpine
 
 WORKDIR /app
